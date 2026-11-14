@@ -14,7 +14,7 @@ export const en = {
   'nav.farm': 'My farm',
   'nav.calendar': 'Calendar',
   'nav.crop': 'My crop',
-  'nav.potatoes': 'Potatoes',
+  'nav.potatoes': 'Products',
   'nav.alerts': 'Alerts',
   'nav.mars': 'Mars',
 

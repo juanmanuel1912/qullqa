@@ -14,7 +14,6 @@ export const qu: Partial<Record<Key, string>> = {
   'nav.farm': 'Chakray',
   'nav.calendar': 'Killakuna',
   'nav.crop': 'Tarpuyniy',
-  'nav.potatoes': 'Papakuna',
   'nav.mars': 'Marte',
 
   // Meses: nombres del calendario inca

@@ -14,7 +14,7 @@ export const es: Record<Key, string> = {
   'nav.farm': 'Mi chacra',
   'nav.calendar': 'Calendario',
   'nav.crop': 'Mi cultivo',
-  'nav.potatoes': 'Papas',
+  'nav.potatoes': 'Productos',
   'nav.alerts': 'Alertas',
   'nav.mars': 'Marte',
 
