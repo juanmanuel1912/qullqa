@@ -6,6 +6,7 @@ import { Attribution, IconArrow, IconPlanet, Mountains, Pleiades, ProgressRing, 
 import { VARIETIES } from '@/lib/agro'
 import { weatherIcon } from '@/services/weather/openMeteo'
 import { useEnso } from '@/hooks/useEnso'
+import { useLocateFarm } from '@/hooks/useLocateFarm'
 
 export function HomeScreen() {
   const { profile } = useQullqa()
@@ -32,6 +33,7 @@ export function HomeScreen() {
         <Mountains className="absolute inset-x-0 bottom-0 h-12 w-full" />
       </section>
 
+      {!profile.onboarded && <LocationBanner />}
       <EnsoBanner />
       <WeatherCard />
       <StatusCard />
@@ -242,6 +244,35 @@ function ApodCard() {
         <p className="line-clamp-3 text-sm text-noche-100">{fallback ? t('apod.fallbackText') : apod.explanation}</p>
         {apod.copyright && <p className="pt-1 text-xs text-noche-300">© {apod.copyright}</p>}
       </div>
+    </section>
+  )
+}
+
+/** Aviso: la app muestra Cusco como ejemplo hasta que el agricultor elige su chacra. */
+function LocationBanner() {
+  const { profile } = useQullqa()
+  const { t } = useI18n()
+  const { status, locate } = useLocateFarm()
+  return (
+    <section className="card space-y-3 ring-2 ring-inti-300">
+      <div className="flex items-start gap-3">
+        <span className="text-3xl" aria-hidden="true">
+          📍
+        </span>
+        <div>
+          <p className="font-display text-lg leading-tight">{t('home.loc.title', { place: profile.placeName })}</p>
+          <p className="mt-0.5 text-sm text-tierra-700">{t('home.loc.text')}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <button onClick={() => locate({ onboarded: true })} disabled={status === 'locating'} className="btn-dark px-3 text-sm">
+          {status === 'locating' ? t('farm.locating') : `🛰️ ${t('home.loc.gps')}`}
+        </button>
+        <Link to="/chacra" className="btn-ghost px-3 text-sm">
+          🔎 {t('home.loc.pick')}
+        </Link>
+      </div>
+      {status === 'error' && <p className="text-xs font-semibold text-risk">{t('farm.gpsError')}</p>}
     </section>
   )
 }

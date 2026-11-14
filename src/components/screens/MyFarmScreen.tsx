@@ -5,6 +5,8 @@ import { useI18n, type Key } from '@/i18n'
 import { VARIETY_LIST } from '@/lib/agro'
 import { IconArrow, IconGps, IconPin, Notice, Skeleton, Attribution } from '@/components/common'
 import { todayIso } from '@/utils/format'
+import { useLocateFarm } from '@/hooks/useLocateFarm'
+import { PlaceSearch } from '@/components/farm/PlaceSearch'
 
 const FarmMap = lazy(() => import('@/components/map/FarmMap'))
 
@@ -24,24 +26,8 @@ export default function MyFarmScreen() {
   const navigate = useNavigate()
   const { profile, updateProfile, climatology, sowing } = useQullqa()
   const { t, fmtLong } = useI18n()
-  const [gps, setGps] = useState<'idle' | 'locating' | 'error'>('idle')
+  const { status: gps, locate, pick } = useLocateFarm()
   const [planted, setPlanted] = useState(profile.plantingDate !== null)
-
-  const pick = (lat: number, lon: number, placeName: string) =>
-    updateProfile({ lat: Math.round(lat * 1e4) / 1e4, lon: Math.round(lon * 1e4) / 1e4, placeName })
-
-  const useGps = () => {
-    if (!navigator.geolocation) return setGps('error')
-    setGps('locating')
-    navigator.geolocation.getCurrentPosition(
-      (p) => {
-        pick(p.coords.latitude, p.coords.longitude, t('farm.gpsName'))
-        setGps('idle')
-      },
-      () => setGps('error'),
-      { timeout: 10_000, maximumAge: 600_000 },
-    )
-  }
 
   return (
     <div className="space-y-4">
@@ -58,8 +44,9 @@ export default function MyFarmScreen() {
             <IconPin size={20} className="text-inti-600" /> {t('farm.where')}
           </h2>
         </div>
+        <p className="-mt-2 text-sm text-tierra-700">{t('farm.whereHelp', { place: profile.placeName })}</p>
 
-        <button onClick={useGps} className="btn-dark w-full" disabled={gps === 'locating'}>
+        <button onClick={() => locate({ onboarded: true })} className="btn-dark w-full" disabled={gps === 'locating'}>
           <IconGps size={20} />
           {gps === 'locating' ? t('farm.locating') : t('farm.gps')}
         </button>
@@ -67,13 +54,17 @@ export default function MyFarmScreen() {
           <Notice tone="warning">{t('farm.gpsError')}</Notice>
         )}
 
+        <PlaceSearch onPick={(p) => pick(p.lat, p.lon, p.name, { onboarded: true })} />
+
+        <p className="text-xs font-bold text-tierra-600">{t('farm.quick')}</p>
+
         <div className="-mx-1 flex flex-wrap gap-2">
           {PLACES.map((p) => {
             const active = profile.placeName === p.name
             return (
               <button
                 key={p.name}
-                onClick={() => pick(p.lat, p.lon, p.name)}
+                onClick={() => pick(p.lat, p.lon, p.name, { onboarded: true })}
                 className={`chip ${active ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'}`}
               >
                 {p.name}
@@ -83,7 +74,7 @@ export default function MyFarmScreen() {
         </div>
 
         <Suspense fallback={<Skeleton className="h-56" />}>
-          <FarmMap lat={profile.lat} lon={profile.lon} onPick={(lat, lon) => pick(lat, lon, t('farm.mapPoint'))} />
+          <FarmMap lat={profile.lat} lon={profile.lon} onPick={(lat, lon) => pick(lat, lon, t('farm.mapPoint'), { onboarded: true })} />
         </Suspense>
         <div className="flex items-center justify-between text-xs text-tierra-600">
           <span>

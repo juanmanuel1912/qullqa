@@ -901,6 +901,17 @@ export const en = {
   'rot.svg.bare': "Bare field after the harvest",
   'rot.svg.choose': "Choosing the next crop with Qullqa",
   'rot.svg.green': "Field covered by a new crop",
+  'farm.whereHelp': "Now showing: {place}. Use your GPS, search your town, pick a place or tap the map. All the advice changes for that place.",
+  'farm.quick': "Quick picks (Andean potato areas):",
+  'farm.search.label': "Search your town or district",
+  'farm.search.placeholder': "e.g. Ollantaytambo, Juliaca, Andahuaylas…",
+  'farm.search.searching': "Searching…",
+  'farm.search.none': "No places found. Try another name or tap the map.",
+  'farm.search.error': "Search needs internet. Use the GPS or tap the map.",
+  'home.loc.title': "You are seeing {place} as an example",
+  'home.loc.text': "Is your farm somewhere else? Use your location or choose the place: the climate, calendar and advice will change for your land.",
+  'home.loc.gps': "Use my location",
+  'home.loc.pick': "Choose a place",
 } as const
 
 export type Key = keyof typeof en
