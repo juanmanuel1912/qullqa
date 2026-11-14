@@ -7,6 +7,8 @@ export interface Place {
   name: string
   /** Región / departamento */
   admin1?: string
+  /** Provincia */
+  admin2?: string
   country?: string
   countryCode?: string
   lat: number
@@ -18,6 +20,7 @@ interface RawResult {
   id: number
   name: string
   admin1?: string
+  admin2?: string
   country?: string
   country_code?: string
   latitude: number
@@ -33,6 +36,7 @@ export function parsePlaces(json: unknown): Place[] {
       id: r.id,
       name: r.name,
       admin1: r.admin1,
+      admin2: r.admin2,
       country: r.country,
       countryCode: r.country_code,
       lat: r.latitude,

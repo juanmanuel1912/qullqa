@@ -52,7 +52,7 @@ export const NEXT_CROPS: Record<NextCropId, NextCrop> = {
   avenaVicia: { id: 'avenaVicia', emoji: '🌱', family: 'cover', feeder: 'giver', altitude: [2000, 4000], minMeanTemp: 4, frostSensitive: false, cycle: 5, perennial: false, waterMm: 250 },
   maiz: { id: 'maiz', emoji: '🌽', family: 'cereal', feeder: 'heavy', altitude: [0, 3500], minMeanTemp: 10, frostSensitive: true, cycle: 6, perennial: false, waterMm: 500 },
   aji: { id: 'aji', emoji: '🌶️', family: 'solanacea', feeder: 'heavy', altitude: [0, 2500], minMeanTemp: 16, frostSensitive: true, cycle: 6, perennial: false, waterMm: 600 },
-  palta: { id: 'palta', emoji: '🥑', family: 'tree', feeder: 'medium', altitude: [0, 2500], minMeanTemp: 15, frostSensitive: true, cycle: 3, perennial: true, waterMm: 1000 },
+  palta: { id: 'palta', emoji: '🥑', family: 'tree', feeder: 'medium', altitude: [0, 2700], minMeanTemp: 15, frostSensitive: true, cycle: 3, perennial: true, waterMm: 1000 },
   mango: { id: 'mango', emoji: '🥭', family: 'tree', feeder: 'medium', altitude: [0, 1500], minMeanTemp: 20, frostSensitive: true, cycle: 4, perennial: true, waterMm: 900 },
 }
 
@@ -60,8 +60,14 @@ export const NEXT_IDS = Object.keys(NEXT_CROPS) as NextCropId[]
 export const PREV_IDS: PrevCropId[] = [...NEXT_IDS, 'descanso']
 export const prevEmoji = (id: PrevCropId) => (id === 'descanso' ? '🌿' : NEXT_CROPS[id].emoji)
 
-export type Factor = 'land' | 'climate' | 'time' | 'water' | 'soil' | 'product'
-export const FACTORS: Factor[] = ['land', 'climate', 'time', 'water', 'soil', 'product']
+export type Factor = 'land' | 'climate' | 'time' | 'water' | 'soil' | 'texture' | 'product'
+export const FACTORS: Factor[] = ['land', 'climate', 'time', 'water', 'soil', 'texture', 'product']
+
+/** Tipo de tierra: franca (suave y oscura), arcillosa (pegajosa) o arenosa (suelta) */
+export type SoilType = 'loam' | 'clay' | 'sandy' | 'unknown'
+
+/** Cultivos que se pudren con exceso de agua en suelos pesados */
+const CLAY_SENSITIVE: NextCropId[] = ['papa', 'oca', 'palta', 'tarwi', 'quinua', 'aji']
 export type Level = 'ok' | 'warn' | 'bad'
 
 export interface FactorResult {
@@ -95,6 +101,8 @@ export interface NextCropInput {
   irrigation: boolean
   /** Altitud exacta del punto (m) */
   elevation: number
+  /** Tipo de tierra (opcional) */
+  soil?: SoilType
 }
 
 const r10 = (n: number) => Math.round(n * 10) / 10
@@ -167,7 +175,19 @@ export function assessNextCrop(input: NextCropInput, clim: Climatology): NextCro
   // 5. Suelo: qué deja el cultivo anterior y qué pide el nuevo
   factors.push(soilFactor(prev, c))
 
-  // 6. El producto
+  // 6. Tipo de tierra
+  const soil = input.soil ?? 'unknown'
+  if (soil === 'loam') factors.push({ factor: 'texture', level: 'ok', code: 'textureLoam', vars: {} })
+  else if (soil === 'clay')
+    factors.push(CLAY_SENSITIVE.includes(next) ? { factor: 'texture', level: 'warn', code: 'textureClay', vars: {} } : { factor: 'texture', level: 'ok', code: 'textureClayOk', vars: {} })
+  else if (soil === 'sandy')
+    factors.push(
+      c.waterMm >= 450 && !irrigation
+        ? { factor: 'texture', level: 'warn', code: 'textureSandy', vars: {} }
+        : { factor: 'texture', level: 'ok', code: 'textureSandyOk', vars: {} },
+    )
+
+  // 7. El producto
   factors.push({ factor: 'product', level: c.perennial ? 'warn' : 'ok', code: `prod.${next}`, vars: { years: c.cycle } })
 
   const bad = factors.some((f) => f.level === 'bad')

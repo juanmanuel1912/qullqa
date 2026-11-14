@@ -122,3 +122,16 @@ export function weatherIcon(code: number, isDay = true): { emoji: string; key: s
   if (code >= 95) return { emoji: '⛈️', key: 'storm' }
   return { emoji: '🌥️', key: 'cloudy' }
 }
+
+/** Altitud exacta de un punto (m), con el modelo de terreno de Open-Meteo (Copernicus DEM 90 m). */
+export async function fetchElevation(lat: number, lon: number, signal?: AbortSignal): Promise<number | null> {
+  try {
+    const res = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`, { signal })
+    if (!res.ok) return null
+    const json = (await res.json()) as { elevation?: number[] }
+    const e = json.elevation?.[0]
+    return typeof e === 'number' && Number.isFinite(e) ? Math.round(e) : null
+  } catch {
+    return null
+  }
+}

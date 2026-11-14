@@ -9,6 +9,7 @@ import { getCropStatus, projectDateForGdd, recommendSowing, VARIETIES } from '@/
 import { DEMO_FARMER, DEMO_FARMS, type Farm } from '@/lib/farms/demo'
 import { Attribution, IconArrow, Notice, ProgressRing, Skeleton } from '@/components/common'
 import { fetchForecast, weatherIcon, type Forecast } from '@/services/weather/openMeteo'
+import { MyFarmsSection } from '@/components/farm/MyFarmsSection'
 
 const PointsMap = lazy(() => import('@/components/map/PointsMap'))
 
@@ -91,6 +92,9 @@ export default function LandsScreen() {
         </Link>
       </header>
 
+      <MyFarmsSection />
+
+      <h2 className="pt-4 font-display text-2xl text-noche-800">👩‍🌾 {t('myf.exampleTitle')}</h2>
       <Notice tone="info">{t('lands.demo')}</Notice>
 
       <div className="grid grid-cols-3 gap-2 text-center">

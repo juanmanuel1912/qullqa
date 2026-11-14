@@ -21,6 +21,9 @@ const ElNinoScreen = lazy(() => import('@/components/screens/ElNinoScreen'))
 const AlertsScreen = lazy(() => import('@/components/screens/AlertsScreen'))
 const ChatScreen = lazy(() => import('@/components/screens/ChatScreen'))
 const RotationScreen = lazy(() => import('@/components/screens/RotationScreen'))
+const FarmFormScreen = lazy(() => import('@/components/screens/FarmFormScreen'))
+const FarmPlanScreen = lazy(() => import('@/components/screens/FarmPlanScreen'))
+const PeruMapScreen = lazy(() => import('@/components/screens/PeruMapScreen'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -75,6 +78,10 @@ function Shell() {
               <Route path="/alertas" element={<AlertsScreen />} />
               <Route path="/asistente" element={<ChatScreen />} />
               <Route path="/rotacion" element={<RotationScreen />} />
+              <Route path="/mis-chacras/nueva" element={<FarmFormScreen key="new" />} />
+              <Route path="/mis-chacras/:id/editar" element={<FarmFormScreen key="edit" />} />
+              <Route path="/mis-chacras/:id" element={<FarmPlanScreen />} />
+              <Route path="/mapa-peru" element={<PeruMapScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

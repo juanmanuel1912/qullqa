@@ -41,6 +41,10 @@ export function PlaceSearch({ onPick }: { onPick: (p: Place) => void }) {
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          // Enter no debe enviar el formulario de la chacra
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') e.preventDefault()
+          }}
           placeholder={t('farm.search.placeholder')}
           className="mt-1 block min-h-[48px] w-full rounded-2xl border-2 border-tierra-200 bg-white px-4 text-base font-semibold"
           autoComplete="off"
@@ -65,7 +69,7 @@ export function PlaceSearch({ onPick }: { onPick: (p: Place) => void }) {
               >
                 <span className="min-w-0">
                   <span className="block truncate font-extrabold">📍 {p.name}</span>
-                  <span className="block truncate text-xs text-tierra-600">{[p.admin1, p.country].filter(Boolean).join(', ')}</span>
+                  <span className="block truncate text-xs text-tierra-600">{[p.admin2, p.admin1, p.country].filter(Boolean).join(', ')}</span>
                 </span>
                 {p.elevation != null && (
                   <span className="shrink-0 rounded-full bg-tierra-100 px-2 py-0.5 text-xs font-bold text-tierra-800">

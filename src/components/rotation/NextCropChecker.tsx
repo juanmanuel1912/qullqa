@@ -16,10 +16,10 @@ import {
   type PrevCropId,
 } from '@/lib/rotation/nextCrop'
 
-const FACTOR_ICON: Record<Factor, string> = { land: '🏔️', climate: '🌡️', time: '📅', water: '💧', soil: '🪱', product: '🧺' }
-const LEVEL_ICON = { ok: '✅', warn: '⚠️', bad: '❌' } as const
-const LEVEL_BG = { ok: 'bg-green-50', warn: 'bg-inti-50', bad: 'bg-red-50' } as const
-const VERDICT_STYLE: Record<NextVerdict, { emoji: string; box: string; text: string }> = {
+export const FACTOR_ICON: Record<Factor, string> = { land: '🏔️', climate: '🌡️', time: '📅', water: '💧', soil: '🪱', texture: '🟤', product: '🧺' }
+export const LEVEL_ICON = { ok: '✅', warn: '⚠️', bad: '❌' } as const
+export const LEVEL_BG = { ok: 'bg-green-50', warn: 'bg-inti-50', bad: 'bg-red-50' } as const
+export const VERDICT_STYLE: Record<NextVerdict, { emoji: string; box: string; text: string }> = {
   good: { emoji: '👍', box: 'bg-green-50 ring-2 ring-good', text: 'text-green-800' },
   fair: { emoji: '🤔', box: 'bg-inti-50 ring-2 ring-inti-300', text: 'text-inti-900' },
   bad: { emoji: '👎', box: 'bg-red-50 ring-2 ring-red-300', text: 'text-red-800' },
@@ -47,11 +47,6 @@ export function NextCropChecker({ climatology, elevation }: { climatology: Clima
     }
   }, [next, prev, sowMonth, irrigation, elevation, climatology])
 
-  const factorText = (f: FactorResult) => {
-    const vars: Record<string, string | number> = { ...f.vars, crop: name(next!), prev: name(prev) }
-    for (const [k, v] of Object.entries(f.vars)) if (k.endsWith('Idx')) vars[k.slice(0, -3)] = month(v)
-    return t(`nc.${f.code}` as Key, vars)
-  }
 
   const chip = (active: boolean) =>
     `chip shrink-0 ${active ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'}`
@@ -143,21 +138,7 @@ export function NextCropChecker({ climatology, elevation }: { climatology: Clima
           </div>
 
           <h3 className="text-sm font-extrabold text-tierra-700">{t('rot.check.why')}</h3>
-          <ul className="space-y-1.5">
-            {result.factors.map((f) => (
-              <li key={f.factor} className={`flex gap-2.5 rounded-2xl p-2.5 ${LEVEL_BG[f.level]}`}>
-                <span className="text-xl leading-none" aria-hidden="true">
-                  {FACTOR_ICON[f.factor]}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-tierra-700">
-                    {t(`fac.${f.factor}` as Key)} <span aria-label={f.level}>{LEVEL_ICON[f.level]}</span>
-                  </p>
-                  <p className="text-sm text-tierra-900">{factorText(f)}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <FactorList factors={result.factors} next={result.next} prev={prev} />
 
           {goodMonths.length > 0 && (
             <p className="rounded-2xl bg-noche-50 p-3 text-sm font-semibold text-noche-800">
@@ -190,5 +171,38 @@ export function NextCropChecker({ climatology, elevation }: { climatology: Clima
         </div>
       )}
     </section>
+  )
+}
+
+/** Texto amigable de un factor (traduce meses y nombres de cultivos). */
+export function useFactorText() {
+  const { t, month } = useI18n()
+  return (f: FactorResult, next: NextCropId, prev: PrevCropId) => {
+    const vars: Record<string, string | number> = { ...f.vars, crop: t(`rotcrop.${next}` as Key), prev: t(`rotcrop.${prev}` as Key) }
+    for (const [k, v] of Object.entries(f.vars)) if (k.endsWith('Idx')) vars[k.slice(0, -3)] = month(v)
+    return t(`nc.${f.code}` as Key, vars)
+  }
+}
+
+/** Lista de factores con semáforo (reutilizable). */
+export function FactorList({ factors, next, prev }: { factors: FactorResult[]; next: NextCropId; prev: PrevCropId }) {
+  const { t } = useI18n()
+  const text = useFactorText()
+  return (
+    <ul className="space-y-1.5">
+      {factors.map((f) => (
+        <li key={f.factor} className={`flex gap-2.5 rounded-2xl p-2.5 ${LEVEL_BG[f.level]}`}>
+          <span className="text-xl leading-none" aria-hidden="true">
+            {FACTOR_ICON[f.factor]}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-extrabold uppercase tracking-wide text-tierra-700">
+              {t(`fac.${f.factor}` as Key)} <span aria-label={f.level}>{LEVEL_ICON[f.level]}</span>
+            </p>
+            <p className="text-sm text-tierra-900">{text(f, next, prev)}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
   )
 }
