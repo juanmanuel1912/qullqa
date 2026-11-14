@@ -21,8 +21,8 @@ Meta: **28 s** (deja 2 s de margen). Unas 65–70 palabras en total: frases cort
 | 0–3 s | Tú hablando a cámara (o tu nombre en texto sobre el cielo nocturno) | "Soy [Nombre], del equipo [Equipo]." | "I'm [Name], team [Team]." |
 | 3–6 s | Texto grande: **Field Shift: Adapting Farms with NASA Data** sobre foto de chacra andina | "Nuestro reto: adaptar las chacras con datos de la NASA." | "Our challenge: adapting farms with NASA data." |
 | 6–10 s | Foto NASA de las Pléyades → zoom → aparece **QULLQA** + lámina inca de la app (pantalla *Cielo*) | "Los incas miraban las Pléyades, *Qullqa*, para saber cuándo sembrar papa." | "The Incas read the Pleiades — *Qullqa* — to know when to plant potatoes." |
-| 10–15 s | App: **Calendario** → rueda inca, tocar noviembre (verde) | "Qullqa usa 25 años de datos NASA POWER: te dice cuándo sembrar y evitar heladas." | "Qullqa uses 25 years of NASA POWER data to tell you when to plant and avoid frost." |
-| 15–20 s | App: **El Niño** (alerta en vivo, muy fuerte) → **Rotación** (3 estrategias con puntaje) | "Te alerta de El Niño y compara rotaciones para cuidar suelo y agua." | "It warns you about El Niño and compares crop rotations to protect soil and water." |
+| 10–15 s | App: **Calendario** → rueda inca, tocar noviembre (verde) → 1 s de la alerta **El Niño** | "Con datos NASA te dice cuándo sembrar, evitar heladas y te alerta de El Niño." | "With NASA data it tells you when to plant, avoid frost, and warns you about El Niño." |
+| 15–20 s | App: **Rotación → ¿Qué siembro después?** Papa → tocar **Mango** (👎 rojo) → tocar **Habas** (👍 ⭐) | "¿Mango después de papa? Mala idea aquí. Mejor habas: alimentan el suelo." | "Mango after potato? Bad idea here. Broad beans instead: they feed the soil." |
 | 20–25 s | App: **Mi cultivo** (anillo de progreso + días para cosecha) → **Asistente** respondiendo | "Sigue tu cultivo día a día y te dice cuándo cosechar." | "It tracks your crop day by day and tells you when to harvest." |
 | 25–30 s | App: **Marte** (mover el slider, aparece el domo) → cierre: **QULLQA** + link `qullqa-five.vercel.app` + "Data: NASA POWER · GIBS · APOD" | "Mañana, papa en Marte. Qullqa: sabiduría inca, datos de la NASA." | "Tomorrow, potatoes on Mars. Qullqa: Inca wisdom, NASA data." |
 
@@ -120,7 +120,38 @@ En spaceappschallenge.org → tu perfil → **My Team → Project → Edit**:
 
 ---
 
-## E. Checklist final
+## E. IA para imágenes y video (opcional, solo para las tomas de ambiente)
+
+**Regla de oro:** el 80 % del video debe ser la **app real grabada** (eso es lo que evalúa el jurado). La IA sirve solo para 1–2 tomas de ambiente (0–10 s). Todo lo generado con IA lleva **marca de agua visible "AI-generated"** y se declara en la descripción. Sin logos NASA, sin niños, sin personas reales reconocibles.
+
+| Para qué | Herramienta (revisa el plan gratuito vigente) | Nota |
+|---|---|---|
+| Imágenes | **Gemini** (Google), **ChatGPT** (imágenes), **Microsoft Designer / Bing Image Creator**, **Canva Magic Media** | Bing y Canva tienen opción gratis |
+| Video corto (5–8 s) desde texto o desde una imagen | **Google Veo** (en Gemini / Flow), **Runway**, **Kling**, **Luma Dream Machine** | Créditos gratis limitados: genera pocas tomas y bien pensadas |
+| Voz (si no usas la tuya) | Texto a voz de **Clipchamp** o **ElevenLabs** | Se debe declarar; mejor tu propia voz |
+| Edición | **Clipchamp** (Windows 11) o **CapCut** | Ambos gratis; tienen subtítulos automáticos |
+
+Las fotos reales de las Pléyades de la NASA (`public/sky/`) son mejores que una imagen de IA para la toma del cielo: son reales y de dominio público.
+
+**Prompts listos (en inglés funcionan mejor):**
+
+1. *Imagen — chacra andina al amanecer (toma 3–6 s):*
+   > Photorealistic wide shot of terraced potato fields in the Peruvian Andes at dawn, around 3,800 m altitude, snowy peaks in the background, an adult farmer in a traditional woven poncho walking between furrows, golden light, no text, no logos.
+
+2. *Imagen — el cielo inca (toma 6–10 s):*
+   > Night sky over Andean mountains, the Pleiades star cluster bright above the horizon, an adult Quechua farmer seen from behind looking up at the stars, stone Inca terraces in the foreground, cinematic, no text, no logos.
+
+3. *Video — animar la imagen 2 (image-to-video, 5 s):*
+   > Slow camera push-in toward the Pleiades, stars twinkling gently, light wind moving the poncho, calm and cinematic.
+
+4. *Imagen — Marte (toma final 25–28 s, opcional):*
+   > A transparent dome greenhouse on the red surface of Mars with green potato plants growing inside under LED lights, Earth-like Andean terraces design, photorealistic, no text, no logos, no flags.
+
+Después de generarlas: en Clipchamp o Canva agrega un texto pequeño **"AI-generated"** en una esquina, visible durante toda la toma.
+
+---
+
+## F. Checklist final
 
 - [ ] Video ≤ 30 s, subtítulos en inglés legibles
 - [ ] Sin logos NASA, sin menores de 18, IA marcada/declarada
