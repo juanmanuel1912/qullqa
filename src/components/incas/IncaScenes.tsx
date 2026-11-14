@@ -204,29 +204,5 @@ export function SceneNasa() {
   )
 }
 
-export const INCA_STEPS = [
-  {
-    Scene: SceneStars,
-    when: 'Junio · Inti Raymi',
-    title: 'Miraban las Qullqa',
-    text: 'Antes del amanecer subían a los cerros a mirar las Pléyades. Si brillaban claras, vendrían buenas lluvias.',
-  },
-  {
-    Scene: ScenePlanting,
-    when: "Noviembre · Aya Marq'ay",
-    title: 'Sembraban con las lluvias',
-    text: 'Con la chakitaqlla abrían la tierra de los andenes y sembraban la papa cuando llegaba la lluvia.',
-  },
-  {
-    Scene: SceneHarvest,
-    when: 'Mayo · Aymuray',
-    title: 'Cosechaban y compartían',
-    text: 'La familia cocinaba la papa en la huatia y guardaba el resto en las qullqas, los depósitos del ayllu.',
-  },
-  {
-    Scene: SceneNasa,
-    when: 'Hoy · Qullqa',
-    title: 'Ahora miramos con la NASA',
-    text: 'Satélites y telescopios de la NASA miden la lluvia, el frío y el suelo de tu chacra. La misma sabiduría, con nuevos ojos.',
-  },
-]
+/** Escenas en orden; los textos están en i18n (incas.1.* … incas.4.*). */
+export const INCA_STEPS = [SceneStars, ScenePlanting, SceneHarvest, SceneNasa]

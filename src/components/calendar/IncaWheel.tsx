@@ -3,7 +3,7 @@
  * Enero arriba, avanzando en sentido horario. Tocar un mes lo selecciona.
  */
 import type { CalendarMonth, TrafficLight } from '@/lib/agro'
-import { MONTHS_SHORT } from '@/utils/format'
+import { useI18n, type Key } from '@/i18n'
 
 export const LIGHT_COLOR: Record<TrafficLight, string> = {
   good: '#2f9e44',
@@ -41,10 +41,16 @@ interface Props {
 }
 
 export function IncaWheel({ months, selected, currentMonth, onSelect }: Props) {
+  const { t, lang } = useI18n()
   const sel = months[selected]
+  const light = (s: TrafficLight) => t(`light.${s}` as Key)
+  // En quechua los meses ya son los nombres incas: arriba va el mes en español como referencia.
+  const centerTitle = lang === 'qu' ? sel.quechua : t(`month.${selected}` as Key)
+  const centerSub = lang === 'qu' ? sel.spanish : sel.quechua
+  const shortLabel = (i: number) => t(`monthShort.${i}` as Key)
+
   return (
-    <svg viewBox={`-16 -16 ${SIZE + 32} ${SIZE + 32}`} className="mx-auto block w-full max-w-[360px]" role="group" aria-label="Calendario inca de 12 meses">
-      {/* Anillo de fondo */}
+    <svg viewBox={`-16 -16 ${SIZE + 32} ${SIZE + 32}`} className="mx-auto block w-full max-w-[360px]" role="group" aria-label={t('cal.wheel')}>
       <circle cx={C} cy={C} r={R_OUT + 12} fill="none" stroke="#e6d5b8" strokeWidth="1.5" strokeDasharray="2 5" />
 
       {months.map((m) => {
@@ -53,13 +59,15 @@ export function IncaWheel({ months, selected, currentMonth, onSelect }: Props) {
         const rOut = active ? R_OUT + 8 : R_OUT
         const [lx, ly] = polar((rOut + R_IN) / 2, i * 30)
         const status = m.condition.status
+        const [mx, my] = polar(R_OUT + 24, i * 30)
+        const [dx, dy] = polar(R_IN - 9, i * 30)
         return (
           <g
             key={i}
             role="button"
             tabIndex={0}
             aria-pressed={active}
-            aria-label={`${m.spanish}, ${m.quechua}: ${status === 'good' ? 'bueno' : status === 'caution' ? 'cuidado' : 'riesgo'}`}
+            aria-label={`${t(`month.${i}` as Key)}, ${m.quechua}: ${light(status)}`}
             onClick={() => onSelect(i)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -77,48 +85,19 @@ export function IncaWheel({ months, selected, currentMonth, onSelect }: Props) {
               strokeWidth={active ? 3 : 1}
               style={{ transition: 'all 0.2s ease' }}
             />
-            <text
-              x={lx}
-              y={ly}
-              textAnchor="middle"
-              dominantBaseline="central"
-              fontSize="14"
-              fontWeight="800"
-              fill={LIGHT_TEXT[status]}
-              pointerEvents="none"
-            >
-              {MONTHS_SHORT[i]}
+            <text x={lx} y={ly} textAnchor="middle" dominantBaseline="central" fontSize="14" fontWeight="800" fill={LIGHT_TEXT[status]} pointerEvents="none">
+              {shortLabel(i)}
             </text>
             {(m.isBestSowing || m.isHarvest) && (
-              <text
-                {...(() => {
-                  const [x, y] = polar(R_OUT + 24, i * 30)
-                  return { x, y }
-                })()}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize="20"
-                pointerEvents="none"
-              >
+              <text x={mx} y={my} textAnchor="middle" dominantBaseline="central" fontSize="20" pointerEvents="none">
                 {m.isBestSowing ? '🌱' : '🥔'}
               </text>
             )}
-            {i === currentMonth && (
-              <circle
-                {...(() => {
-                  const [cx, cy] = polar(R_IN - 9, i * 30)
-                  return { cx, cy }
-                })()}
-                r="4.5"
-                fill="#d4af37"
-                pointerEvents="none"
-              />
-            )}
+            {i === currentMonth && <circle cx={dx} cy={dy} r="4.5" fill="#d4af37" pointerEvents="none" />}
           </g>
         )
       })}
 
-      {/* Centro: mes elegido */}
       <circle cx={C} cy={C} r={R_IN - 18} fill="#1a1a2e" />
       {[
         [C - 22, C - 44, 2.2],
@@ -131,14 +110,14 @@ export function IncaWheel({ months, selected, currentMonth, onSelect }: Props) {
       ].map(([x, y, r], k) => (
         <circle key={k} cx={x} cy={y} r={r} fill="#faefc5" className="twinkle" style={{ animationDelay: `${k * 0.3}s` }} />
       ))}
-      <text x={C} y={C - 6} textAnchor="middle" fontSize="22" fontWeight="700" fill="#fff" fontFamily="Fraunces, Georgia, serif">
-        {sel.spanish}
+      <text x={C} y={C - 6} textAnchor="middle" fontSize={centerTitle.length > 11 ? 16 : 22} fontWeight="700" fill="#fff" fontFamily="Fraunces, Georgia, serif">
+        {centerTitle.charAt(0).toUpperCase() + centerTitle.slice(1)}
       </text>
       <text x={C} y={C + 16} textAnchor="middle" fontSize="12.5" fontWeight="700" fill="#ecc955">
-        {sel.quechua}
+        {centerSub}
       </text>
       <text x={C} y={C + 38} textAnchor="middle" fontSize="11" fontWeight="800" fill={LIGHT_COLOR[sel.condition.status]} letterSpacing="1">
-        {sel.condition.status === 'good' ? 'BUENO' : sel.condition.status === 'caution' ? 'CUIDADO' : 'RIESGO'}
+        {light(sel.condition.status).toUpperCase()}
       </text>
     </svg>
   )

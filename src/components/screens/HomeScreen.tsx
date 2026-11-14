@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
-import { INCA_MONTHS, motivationFor, VARIETIES } from '@/lib/agro'
+import { useI18n, type Key } from '@/i18n'
 import { IncaStory } from '@/components/incas/IncaStory'
 import { Attribution, IconArrow, IconPlanet, Mountains, Pleiades, ProgressRing, Skeleton, Starfield } from '@/components/common'
-import { capitalize, fmtLong } from '@/utils/format'
+import { VARIETIES } from '@/lib/agro'
 
 export function HomeScreen() {
   const { profile } = useQullqa()
+  const { t } = useI18n()
 
   return (
     <div className="space-y-4">
@@ -15,26 +16,35 @@ export function HomeScreen() {
         <Starfield />
         <Pleiades className="absolute right-3 top-4 w-36 opacity-95" />
         <div className="relative max-w-[78%]">
-          <p className="eyebrow text-inti-300">Allillanchu · Hola</p>
-          <h1 className="mt-3 font-display text-[2rem] leading-[1.1]">
-            Siembra mirando las estrellas
-          </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-noche-100">
-            Los incas leían las Pléyades para saber cuándo sembrar. Hoy leemos los satélites de la NASA para cuidar tu papa.
-          </p>
+          <p className="eyebrow text-inti-300">{t('home.greeting')}</p>
+          <h1 className="mt-3 font-display text-[2rem] leading-[1.1]">{t('home.title')}</h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-noche-100">{t('home.subtitle')}</p>
         </div>
         <Link to={profile.onboarded ? '/calendario' : '/chacra'} className="btn-primary relative mt-6 w-full text-lg">
-          {profile.onboarded ? 'Ver mi calendario' : 'Empezar'}
+          {profile.onboarded ? t('home.openCalendar') : t('home.start')}
           <IconArrow size={20} />
         </Link>
         <Link to="/cielo" className="btn relative mt-2 w-full border-2 border-noche-400 text-white hover:bg-noche-700">
-          🔭 Mira el cielo como los incas
+          {t('home.sky')}
         </Link>
         <Mountains className="absolute inset-x-0 bottom-0 h-12 w-full" />
       </section>
 
       <StatusCard />
       <IncaStory />
+
+      {/* Papas */}
+      <Link to="/papas" className="card flex items-center gap-4">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-inti-100 text-3xl" aria-hidden="true">
+          🥔
+        </span>
+        <div className="flex-1">
+          <p className="font-display text-lg leading-tight">{t('home.potatoTitle')}</p>
+          <p className="mt-0.5 text-sm text-tierra-700">{t('home.potatoText')}</p>
+        </div>
+        <IconArrow className="shrink-0 text-tierra-500" />
+      </Link>
+
       <ApodCard />
 
       {/* Marte */}
@@ -45,8 +55,8 @@ export function HomeScreen() {
             <IconPlanet size={30} />
           </span>
           <div className="flex-1">
-            <p className="font-display text-lg">Qullqa en Marte</p>
-            <p className="text-sm text-noche-100">¿Cuánto tardaría tu papa en crecer en un invernadero marciano?</p>
+            <p className="font-display text-lg">{t('home.marsTitle')}</p>
+            <p className="text-sm text-noche-100">{t('home.marsText')}</p>
           </div>
           <IconArrow className="shrink-0" />
         </div>
@@ -60,22 +70,24 @@ export function HomeScreen() {
 /** Tarjeta personalizada: qué hacer ahora según los datos de la NASA. */
 function StatusCard() {
   const { profile, sowing, crop, climateLoading, today } = useQullqa()
+  const { t, month, fmtLong } = useI18n()
   const variety = VARIETIES[profile.variety]
 
   if (climateLoading && !sowing) return <Skeleton className="h-40" />
 
   if (crop) {
+    const pick = today.getUTCDate() % 2
     return (
       <Link to="/cultivo" className="card flex items-center gap-4">
         <ProgressRing value={crop.progress} size={92} stroke={10}>
           <span className="text-xl font-extrabold">{Math.round(crop.progress * 100)}%</span>
         </ProgressRing>
         <div className="flex-1">
-          <p className="eyebrow text-good">Tu {variety.name} · {crop.stage.name}</p>
+          <p className="eyebrow text-good">{t('status.cropKicker', { variety: variety.name, stage: t(`stage.${crop.stage.id}` as Key) })}</p>
           <p className="mt-1 text-2xl font-extrabold leading-tight">
-            {crop.daysToHarvest === 0 ? '¡Lista para cosechar!' : `Faltan ${crop.daysToHarvest} días`}
+            {crop.daysToHarvest === 0 ? t('status.ready') : t('status.daysLeft', { n: crop.daysToHarvest ?? '—' })}
           </p>
-          <p className="mt-1 text-sm text-tierra-700">{motivationFor(crop.stage.id, today)}</p>
+          <p className="mt-1 text-sm text-tierra-700">{t(`motivation.${crop.stage.id}.${pick}` as Key)}</p>
         </div>
       </Link>
     )
@@ -83,26 +95,24 @@ function StatusCard() {
 
   if (!sowing) return null
   const best = sowing.best
-  const month = INCA_MONTHS[best.month]
   return (
     <Link to="/calendario" className="card block">
-      <p className="eyebrow text-good">Según la NASA para {profile.placeName}</p>
+      <p className="eyebrow text-good">{t('status.according', { place: profile.placeName })}</p>
       {sowing.daysUntil === 0 ? (
-        <p className="mt-2 font-display text-2xl leading-tight">¡Este mes es bueno para sembrar!</p>
+        <p className="mt-2 font-display text-2xl leading-tight">{t('status.sowNow')}</p>
       ) : (
         <p className="mt-2 font-display text-2xl leading-tight">
-          Siembra en {month.spanish.toLowerCase()} <span className="text-tierra-500">· faltan {sowing.daysUntil} días</span>
+          {t('status.sowIn', { month: month(best.month) })}{' '}
+          <span className="text-tierra-500">· {t('status.daysLeft', { n: sowing.daysUntil })}</span>
         </p>
       )}
-      <p className="mt-1 text-sm font-semibold text-inti-700">{month.quechua}</p>
       {best.harvestDate && (
         <p className="mt-3 text-[15px] text-tierra-800">
-          Si siembras {variety.name} el {fmtLong(best.sowDate)}, cosecharías cerca del{' '}
-          <strong>{fmtLong(best.harvestDate)}</strong>.
+          {t('status.ifSow', { variety: variety.name, sow: fmtLong(best.sowDate), harvest: fmtLong(best.harvestDate) })}
         </p>
       )}
       <p className="mt-3 flex items-center gap-1 text-sm font-bold text-noche-600">
-        Ver calendario inca <IconArrow size={16} />
+        {t('status.viewCalendar')} <IconArrow size={16} />
       </p>
     </Link>
   )
@@ -110,7 +120,9 @@ function StatusCard() {
 
 function ApodCard() {
   const { apod } = useQullqa()
+  const { t } = useI18n()
   if (!apod) return <Skeleton className="h-64" />
+  const fallback = apod.source === 'fallback'
   return (
     <section className="overflow-hidden rounded-3xl bg-noche-800 text-white shadow-card">
       <div className="relative aspect-[4/3] bg-noche-700">
@@ -124,12 +136,12 @@ function ApodCard() {
           }}
         />
         <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-bold">
-          {apod.source === 'fallback' ? 'Imagen NASA' : 'Foto del día · NASA APOD'}
+          {fallback ? t('apod.nasaImage') : t('apod.today')}
         </span>
       </div>
       <div className="space-y-1 p-5">
-        <p className="font-display text-lg leading-snug">{capitalize(apod.title)}</p>
-        <p className="line-clamp-3 text-sm text-noche-100">{apod.explanation}</p>
+        <p className="font-display text-lg leading-snug">{fallback ? t('apod.fallbackTitle') : apod.title}</p>
+        <p className="line-clamp-3 text-sm text-noche-100">{fallback ? t('apod.fallbackText') : apod.explanation}</p>
         {apod.copyright && <p className="pt-1 text-xs text-noche-300">© {apod.copyright}</p>}
       </div>
     </section>

@@ -1,4 +1,15 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { translate, type Lang } from '@/i18n'
+
+function savedLang(): Lang {
+  try {
+    const v = localStorage.getItem('qullqa:v1:lang')
+    if (v === 'es' || v === 'qu') return v
+  } catch {
+    /* ignorar */
+  }
+  return 'en'
+}
 
 interface Props {
   children: ReactNode
@@ -24,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="flex min-h-screen items-center justify-center bg-noche-800 p-6 text-center text-white">
         <div className="max-w-sm space-y-4">
-          <p className="font-display text-2xl">Algo salió mal</p>
+          <p className="font-display text-2xl">{translate(savedLang(), 'error.title')}</p>
           <p className="text-noche-100">{this.state.error.message}</p>
           <button
             className="btn-primary w-full"
@@ -37,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
               window.location.assign('/')
             }}
           >
-            Volver a empezar
+            {translate(savedLang(), 'error.restart')}
           </button>
         </div>
       </div>

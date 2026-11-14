@@ -1,9 +1,10 @@
 import { lazy, Suspense, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
+import { useI18n, type Key } from '@/i18n'
 import { VARIETY_LIST } from '@/lib/agro'
 import { IconArrow, IconGps, IconPin, Notice, Skeleton, Attribution } from '@/components/common'
-import { fmtLong, todayIso } from '@/utils/format'
+import { todayIso } from '@/utils/format'
 
 const FarmMap = lazy(() => import('@/components/map/FarmMap'))
 
@@ -22,6 +23,7 @@ const PLACES = [
 export default function MyFarmScreen() {
   const navigate = useNavigate()
   const { profile, updateProfile, climatology, sowing } = useQullqa()
+  const { t, fmtLong } = useI18n()
   const [gps, setGps] = useState<'idle' | 'locating' | 'error'>('idle')
   const [planted, setPlanted] = useState(profile.plantingDate !== null)
 
@@ -33,7 +35,7 @@ export default function MyFarmScreen() {
     setGps('locating')
     navigator.geolocation.getCurrentPosition(
       (p) => {
-        pick(p.coords.latitude, p.coords.longitude, 'Mi chacra (GPS)')
+        pick(p.coords.latitude, p.coords.longitude, t('farm.gpsName'))
         setGps('idle')
       },
       () => setGps('error'),
@@ -44,25 +46,25 @@ export default function MyFarmScreen() {
   return (
     <div className="space-y-4">
       <header className="pt-2">
-        <p className="eyebrow text-inti-700">Paso 1 de 2</p>
-        <h1 className="mt-1 font-display text-3xl text-noche-800">Mi chacra</h1>
-        <p className="mt-1 text-[15px] text-tierra-700">Dinos dónde siembras y qué papa. La NASA hará el resto.</p>
+        <p className="eyebrow text-inti-700">{t('farm.step')}</p>
+        <h1 className="mt-1 font-display text-3xl text-noche-800">{t('farm.title')}</h1>
+        <p className="mt-1 text-[15px] text-tierra-700">{t('farm.subtitle')}</p>
       </header>
 
       {/* Ubicación */}
       <section className="card space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-lg font-extrabold">
-            <IconPin size={20} className="text-inti-600" /> ¿Dónde está tu chacra?
+            <IconPin size={20} className="text-inti-600" /> {t('farm.where')}
           </h2>
         </div>
 
         <button onClick={useGps} className="btn-dark w-full" disabled={gps === 'locating'}>
           <IconGps size={20} />
-          {gps === 'locating' ? 'Buscando tu ubicación…' : 'Usar mi ubicación (GPS)'}
+          {gps === 'locating' ? t('farm.locating') : t('farm.gps')}
         </button>
         {gps === 'error' && (
-          <Notice tone="warning">No pudimos usar el GPS. Elige un lugar o toca el mapa.</Notice>
+          <Notice tone="warning">{t('farm.gpsError')}</Notice>
         )}
 
         <div className="-mx-1 flex flex-wrap gap-2">
@@ -81,22 +83,25 @@ export default function MyFarmScreen() {
         </div>
 
         <Suspense fallback={<Skeleton className="h-56" />}>
-          <FarmMap lat={profile.lat} lon={profile.lon} onPick={(lat, lon) => pick(lat, lon, 'Punto en el mapa')} />
+          <FarmMap lat={profile.lat} lon={profile.lon} onPick={(lat, lon) => pick(lat, lon, t('farm.mapPoint'))} />
         </Suspense>
         <div className="flex items-center justify-between text-xs text-tierra-600">
           <span>
-            Toca el mapa para mover tu chacra. <span className="font-bold text-good">Verde</span> = cultivos sanos (NASA NDVI)
+            {t('farm.mapHint')}{' '}
+            {t('farm.ndvi', { green: '§' }).split('§')[0]}
+            <span className="font-bold text-good">{t('farm.green')}</span>
+            {t('farm.ndvi', { green: '§' }).split('§')[1]}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="stat">
-            <p className="stat-label">Coordenadas</p>
+            <p className="stat-label">{t('farm.coords')}</p>
             <p className="mt-0.5 text-sm font-extrabold">
               {profile.lat.toFixed(3)}, {profile.lon.toFixed(3)}
             </p>
           </div>
           <div className="stat">
-            <p className="stat-label">Altitud (NASA)</p>
+            <p className="stat-label">{t('farm.altitude')}</p>
             <p className="mt-0.5 text-sm font-extrabold">
               {climatology?.elevation ? `${Math.round(climatology.elevation).toLocaleString('es-PE')} m` : '—'}
             </p>
@@ -106,8 +111,8 @@ export default function MyFarmScreen() {
 
       {/* Variedad */}
       <section className="card space-y-3">
-        <h2 className="text-lg font-extrabold">🥔 ¿Qué papa siembras?</h2>
-        <div className="space-y-2" role="radiogroup" aria-label="Variedad de papa">
+        <h2 className="text-lg font-extrabold">🥔 {t('farm.variety')}</h2>
+        <div className="space-y-2" role="radiogroup" aria-label={t('farm.variety')}>
           {VARIETY_LIST.map((v) => {
             const active = profile.variety === v.id
             return (
@@ -129,7 +134,7 @@ export default function MyFarmScreen() {
                 </span>
                 <span className="flex-1">
                   <span className="block font-extrabold">{v.name}</span>
-                  <span className="block text-sm text-tierra-700">{v.description}</span>
+                  <span className="block text-sm text-tierra-700">{t(`variety.${v.id}` as Key)}</span>
                 </span>
                 <span className="shrink-0 rounded-full bg-tierra-100 px-2.5 py-1 text-xs font-bold text-tierra-800">
                   {v.typicalDays[0]}–{v.typicalDays[1]} d
@@ -142,7 +147,7 @@ export default function MyFarmScreen() {
 
       {/* Fecha de siembra */}
       <section className="card space-y-3">
-        <h2 className="text-lg font-extrabold">🌱 ¿Ya sembraste?</h2>
+        <h2 className="text-lg font-extrabold">🌱 {t('farm.planted')}</h2>
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => {
@@ -151,7 +156,7 @@ export default function MyFarmScreen() {
             }}
             className={`chip justify-center ${!planted ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white'}`}
           >
-            Todavía no
+            {t('farm.notYet')}
           </button>
           <button
             onClick={() => {
@@ -160,12 +165,12 @@ export default function MyFarmScreen() {
             }}
             className={`chip justify-center ${planted ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white'}`}
           >
-            Sí, ya sembré
+            {t('farm.yesPlanted')}
           </button>
         </div>
         {planted ? (
           <label className="block">
-            <span className="text-sm font-semibold text-tierra-700">Fecha de siembra</span>
+            <span className="text-sm font-semibold text-tierra-700">{t('farm.plantingDate')}</span>
             <input
               type="date"
               max={todayIso()}
@@ -177,7 +182,7 @@ export default function MyFarmScreen() {
         ) : (
           sowing && (
             <p className="text-sm text-tierra-700">
-              Te diremos el mejor momento. Hoy la NASA recomienda sembrar desde el <strong>{fmtLong(sowing.best.sowDate)}</strong>.
+              {t('farm.recommend', { date: fmtLong(sowing.best.sowDate) })}
             </p>
           )
         )}
@@ -190,7 +195,7 @@ export default function MyFarmScreen() {
         }}
         className="btn-primary w-full text-lg"
       >
-        {profile.plantingDate ? 'Ver mi cultivo' : 'Ver mi calendario'} <IconArrow size={20} />
+        {profile.plantingDate ? t('farm.ctaCrop') : t('farm.ctaCalendar')} <IconArrow size={20} />
       </button>
 
       <Attribution />

@@ -35,6 +35,9 @@ export interface Alert {
   level: 'info' | 'warning' | 'danger';
   title: string;
   message: string;
+  /** Traducible: claves i18n alert.<code>.title / alert.<code>.msg */
+  code: 'frostObserved' | 'frostMonth' | 'needWater' | 'tooMuchRain' | 'waterOk';
+  value?: number;
 }
 
 export interface CropStatus {
@@ -97,12 +100,16 @@ export function buildAlerts(progress: number, clim: Climatology, daily: DailyRec
     const coldest = Math.min(...recentFrost.map((d) => d.t2mMin as number));
     alerts.push({
       level: 'danger',
+      code: 'frostObserved',
+      value: coldest,
       title: 'Hubo helada esta semana',
       message: `NASA registró ${coldest.toFixed(1)} °C. Riega al atardecer (el suelo húmedo guarda calor) y revisa las hojas.`,
     });
   } else if (monthClim.t2mMin < 0 && progress < 1) {
     alerts.push({
       level: 'warning',
+      code: 'frostMonth',
+      value: monthClim.t2mMin,
       title: 'Mes con riesgo de helada',
       message: `En este mes la temperatura puede bajar hasta ${monthClim.t2mMin.toFixed(1)} °C. Vigila las noches despejadas.`,
     });
@@ -117,17 +124,21 @@ export function buildAlerts(progress: number, clim: Climatology, daily: DailyRec
     if (rain7 < need * 0.5 && gwet < 0.55) {
       alerts.push({
         level: 'warning',
+        code: 'needWater',
+        value: Math.round(rain7),
         title: 'Tu chacra necesita agua',
         message: `Llovieron ${Math.round(rain7)} mm esta semana y el suelo está seco. Riega si puedes.`,
       });
     } else if (rain7 > need * 2.5) {
       alerts.push({
         level: 'info',
+        code: 'tooMuchRain',
+        value: Math.round(rain7),
         title: 'Mucha lluvia',
         message: `Llovieron ${Math.round(rain7)} mm esta semana. Abre surcos de drenaje y vigila la rancha (hongo).`,
       });
     } else {
-      alerts.push({ level: 'info', title: 'Agua en buen nivel', message: 'Las lluvias van bien. No hace falta regar.' });
+      alerts.push({ level: 'info', code: 'waterOk', title: 'Agua en buen nivel', message: 'Las lluvias van bien. No hace falta regar.' });
     }
   }
   return alerts;

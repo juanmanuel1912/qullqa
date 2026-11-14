@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useQullqa } from '@/context/QullqaContext'
+import { useI18n, type Key } from '@/i18n'
 import { VARIETY_LIST, type VarietyId } from '@/lib/agro'
 import { MARS, MARS_FACTS, MARS_PRESETS, simulateMars, type MarsInput } from '@/lib/mars'
 import { Attribution, Starfield } from '@/components/common'
@@ -8,6 +9,7 @@ type Env = Omit<MarsInput, 'variety'>
 
 export default function MarsScreen() {
   const { profile, sowing } = useQullqa()
+  const { t } = useI18n()
   const [variety, setVariety] = useState<VarietyId>(profile.variety)
   const [env, setEnv] = useState<Env>(MARS_PRESETS[1].input)
   const result = useMemo(() => simulateMars({ ...env, variety }), [env, variety])
@@ -21,11 +23,9 @@ export default function MarsScreen() {
       <Starfield className="opacity-70" />
 
       <header className="relative">
-        <p className="eyebrow text-marte-400">El futuro de la papa</p>
-        <h1 className="mt-1 font-display text-3xl">Qullqa en Marte</h1>
-        <p className="mt-1 text-[15px] text-noche-100">
-          El mismo modelo que cuida tu chacra en los Andes, en un invernadero marciano.
-        </p>
+        <p className="eyebrow text-marte-400">{t('mars.kicker')}</p>
+        <h1 className="mt-1 font-display text-3xl">{t('mars.title')}</h1>
+        <p className="mt-1 text-[15px] text-noche-100">{t('mars.subtitle')}</p>
       </header>
 
       <Greenhouse env={env} viable={result.viable} speed={result.gddPerSol} />
@@ -34,40 +34,40 @@ export default function MarsScreen() {
       <section className="relative rounded-3xl bg-noche-700/90 p-5 ring-1 ring-noche-500" aria-live="polite">
         {result.viable && result.sols !== null ? (
           <>
-            <p className="eyebrow text-good">¡La papa crece!</p>
+            <p className="eyebrow text-good">{t('mars.growing')}</p>
             <div className="mt-2 flex items-end gap-4">
               <div>
                 <p className="font-display text-5xl leading-none">{result.sols}</p>
-                <p className="text-sm font-bold text-noche-200">soles hasta cosechar</p>
+                <p className="text-sm font-bold text-noche-200">{t('mars.solsLabel')}</p>
               </div>
               <div className="pb-1 text-noche-200">
-                <p className="text-xl font-extrabold text-white">{result.earthDays} días</p>
-                <p className="text-xs font-bold">terrestres</p>
+                <p className="text-xl font-extrabold text-white">{t('mars.earthDays', { n: result.earthDays ?? '—' })}</p>
+                <p className="text-xs font-bold">{t('mars.terrestrial')}</p>
               </div>
             </div>
             {earthDays && result.earthDays !== null && (
               <p className="mt-3 rounded-2xl bg-noche-600 px-4 py-3 text-sm">
-                En {profile.placeName}: <strong>{earthDays} días</strong>.{' '}
+                <strong>{t('mars.inPlace', { place: profile.placeName, n: earthDays })}</strong>{' '}
                 {result.earthDays < earthDays
-                  ? `En Marte, ${earthDays - result.earthDays} días más rápido gracias al invernadero.`
+                  ? t('mars.faster', { n: earthDays - result.earthDays })
                   : result.earthDays === earthDays
-                    ? 'Igual que en tu chacra.'
-                    : `En Marte tardaría ${result.earthDays - earthDays} días más.`}
+                    ? t('mars.same')
+                    : t('mars.slower', { n: result.earthDays - earthDays })}
               </p>
             )}
           </>
         ) : (
           <>
-            <p className="eyebrow text-marte-400">No crece</p>
-            <p className="mt-2 font-display text-2xl">La papa no sobrevive así</p>
+            <p className="eyebrow text-marte-400">{t('mars.noGrow')}</p>
+            <p className="mt-2 font-display text-2xl">{t('mars.noSurvive')}</p>
           </>
         )}
-        {result.notes.length > 0 && (
+        {result.noteCodes.length > 0 && (
           <ul className="mt-3 space-y-1.5 text-sm text-noche-100">
-            {result.notes.map((n) => (
+            {result.noteCodes.map((n) => (
               <li key={n} className="flex gap-2">
                 <span aria-hidden="true">›</span>
-                {n}
+                {t(`marsNote.${n}` as Key)}
               </li>
             ))}
           </ul>
@@ -84,8 +84,8 @@ export default function MarsScreen() {
               presetId === p.id ? 'border-inti bg-inti/15' : 'border-noche-500 bg-noche-700/80'
             }`}
           >
-            <span className="block text-sm font-extrabold">{p.name}</span>
-            <span className="mt-1 block text-noche-200">{p.description}</span>
+            <span className="block text-sm font-extrabold">{t(`preset.${p.id}.name` as Key)}</span>
+            <span className="mt-1 block text-noche-200">{t(`preset.${p.id}.desc` as Key)}</span>
           </button>
         ))}
       </section>
@@ -93,34 +93,34 @@ export default function MarsScreen() {
       {/* Controles */}
       <section className="relative space-y-5 rounded-3xl bg-noche-700/90 p-5 ring-1 ring-noche-500">
         <Slider
-          label="🌡️ Temperatura en el domo"
+          label={t('mars.temp')}
           value={env.tempC}
           min={-80}
           max={35}
           unit="°C"
-          hint={`Marte afuera: ${MARS.avgSurfaceTempC} °C · ideal para papa: 14–20 °C`}
+          hint={t('mars.tempHint', { t: MARS.avgSurfaceTempC })}
           onChange={(tempC) => setEnv({ ...env, tempC })}
         />
         <Slider
-          label="☀️ Luz para las plantas"
+          label={t('mars.light')}
           value={env.lightPct}
           min={0}
           max={100}
           unit="%"
-          hint="Sol de Marte = 43 % del de la Tierra. Más de 43 % = luces LED"
+          hint={t('mars.lightHint')}
           onChange={(lightPct) => setEnv({ ...env, lightPct })}
         />
         <Slider
-          label="💧 Agua en el suelo"
+          label={t('mars.water')}
           value={env.waterPct}
           min={0}
           max={100}
           unit="%"
-          hint="Del hielo marciano derretido. Ideal: 60–90 %"
+          hint={t('mars.waterHint')}
           onChange={(waterPct) => setEnv({ ...env, waterPct })}
         />
         <div>
-          <p className="mb-2 text-sm font-bold">Variedad</p>
+          <p className="mb-2 text-sm font-bold">{t('mars.variety')}</p>
           <div className="flex gap-2">
             {VARIETY_LIST.map((v) => (
               <button
@@ -137,17 +137,17 @@ export default function MarsScreen() {
 
       {/* Datos curiosos */}
       <section className="relative space-y-2">
-        <h2 className="text-lg font-extrabold">¿Sabías que…?</h2>
-        {MARS_FACTS.map((f) => (
+        <h2 className="text-lg font-extrabold">{t('mars.didYouKnow')}</h2>
+        {MARS_FACTS.map((f, i) => (
           <p key={f} className="rounded-2xl bg-noche-700/80 p-4 text-sm text-noche-100 ring-1 ring-noche-600">
-            {f}
+            {t(`marsFact.${i}` as Key)}
           </p>
         ))}
       </section>
 
       <div className="relative">
         <Attribution dark />
-        <p className="-mt-3 text-center text-[11px] text-noche-300">Datos de Marte: NASA Mars Fact Sheet</p>
+        <p className="-mt-3 text-center text-[11px] text-noche-300">{t('mars.factSheet')}</p>
       </div>
     </div>
   )

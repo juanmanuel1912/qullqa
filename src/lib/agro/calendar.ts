@@ -7,6 +7,12 @@ import type { VarietyId } from './varieties';
 
 export type TrafficLight = 'good' | 'caution' | 'risk';
 
+/** Razón traducible: `code` es la clave i18n, `value` el número a mostrar. */
+export interface Reason {
+  code: string;
+  value?: number;
+}
+
 export interface IncaMonth {
   month: number;
   /** Nombre quechua del mes */
@@ -41,6 +47,8 @@ export interface MonthCondition {
   soilWettening: boolean;
   /** Razones en español sencillo */
   reasons: string[];
+  /** Las mismas razones como códigos traducibles (reason.*) */
+  codes: Reason[];
 }
 
 /** Umbrales del semáforo */
@@ -52,6 +60,7 @@ export const HARD_FROST_C = -2;
 /** Semáforo climático de un mes (¿es buen mes para tener papa en el campo?). */
 export function classifyMonth(m: MonthlyClimate, prev: MonthlyClimate): MonthCondition {
   const reasons: string[] = [];
+  const codes: Reason[] = [];
   const frostRisk = m.t2mMin < FROST_C;
   const hardFrost = m.t2mMin < HARD_FROST_C;
   const soilWettening = m.gwetRoot > prev.gwetRoot;
@@ -60,25 +69,34 @@ export function classifyMonth(m: MonthlyClimate, prev: MonthlyClimate): MonthCon
   if (m.precipMmMonth >= RAIN_GOOD_MM) {
     score += 2;
     reasons.push(`Buena lluvia: ${m.precipMmMonth} mm en el mes`);
+    codes.push({ code: 'rainGood', value: m.precipMmMonth });
   } else if (m.precipMmMonth >= RAIN_LOW_MM) {
     score += 1;
     reasons.push(`Lluvia escasa: ${m.precipMmMonth} mm, puede necesitar riego`);
+    codes.push({ code: 'rainLow', value: m.precipMmMonth });
   } else {
     reasons.push(`Mes seco: solo ${m.precipMmMonth} mm de lluvia`);
+    codes.push({ code: 'rainDry', value: m.precipMmMonth });
   }
 
   if (hardFrost) {
     score -= 3;
     reasons.push(`Heladas fuertes: hasta ${m.t2mMin.toFixed(1)} °C`);
+    codes.push({ code: 'frostHard', value: m.t2mMin });
   } else if (frostRisk) {
     score -= 1;
     reasons.push(`Riesgo de helada: hasta ${m.t2mMin.toFixed(1)} °C`);
+    codes.push({ code: 'frostRisk', value: m.t2mMin });
   } else {
     score += 1;
     reasons.push('Sin heladas esperadas');
+    codes.push({ code: 'noFrost' });
   }
 
-  if (soilWettening) reasons.push('El suelo se está humedeciendo');
+  if (soilWettening) {
+    reasons.push('El suelo se está humedeciendo');
+    codes.push({ code: 'soilWet' });
+  }
 
   const status: TrafficLight = score >= 3 ? 'good' : score >= 1 ? 'caution' : 'risk';
   return {
@@ -89,6 +107,7 @@ export function classifyMonth(m: MonthlyClimate, prev: MonthlyClimate): MonthCon
     frostRisk,
     soilWettening,
     reasons,
+    codes,
   };
 }
 

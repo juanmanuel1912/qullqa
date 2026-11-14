@@ -4,6 +4,9 @@
 import type { Climatology } from '../../services/nasa/types';
 import { addDays, daysBetween, projectDateForGdd } from './gdd';
 import { getVariety, type VarietyId } from './varieties';
+import type { Reason } from './calendar';
+
+export type SowingLabelCode = 'excellent' | 'good' | 'fair' | 'notRecommended';
 
 export interface SowingEvaluation {
   /** Mes de siembra (0-11) */
@@ -18,6 +21,10 @@ export interface SowingEvaluation {
   rainAtSowingMm: number;
   label: 'Excelente' | 'Buena' | 'Regular' | 'No recomendada';
   reasons: string[];
+  /** Traducible: clave i18n sowLabel.* */
+  labelCode: SowingLabelCode;
+  /** Traducible: claves i18n sreason.* */
+  codes: Reason[];
 }
 
 /** Meses (0-11) que toca el ciclo entre dos fechas. */
@@ -50,27 +57,33 @@ export function evaluateSowingMonth(
   const m = clim.months[month];
   const prev = clim.months[(month + 11) % 12];
   const reasons: string[] = [];
+  const codes: Reason[] = [];
   let score = 0;
 
   if (m.precipMmMonth >= 60) {
     score += 30;
     reasons.push('Las lluvias ya llegaron');
+    codes.push({ code: 'rainsArrived' });
   } else if (m.precipMmMonth >= 30) {
     score += 15;
     reasons.push('Lluvias recién empiezan: ten riego a mano');
+    codes.push({ code: 'rainsStarting' });
   } else {
     reasons.push('Muy seco para sembrar sin riego');
+    codes.push({ code: 'tooDry' });
   }
 
   if (m.gwetRoot >= 0.5 || m.gwetRoot > prev.gwetRoot) {
     score += 15;
     reasons.push('Suelo con humedad');
+    codes.push({ code: 'soilMoist' });
   }
 
   if (m.t2mMin >= 0) {
     score += 15;
   } else {
     reasons.push('Helada al brotar');
+    codes.push({ code: 'frostAtSprout' });
   }
 
   if (!harvestDate) {
@@ -83,7 +96,9 @@ export function evaluateSowingMonth(
       frostMonths: [],
       rainAtSowingMm: m.precipMmMonth,
       label: 'No recomendada',
+      labelCode: 'notRecommended',
       reasons: ['Hace demasiado frío: la papa no llegaría a madurar'],
+      codes: [{ code: 'tooCold' }],
     };
   }
 
@@ -93,18 +108,25 @@ export function evaluateSowingMonth(
   for (const i of frostMonths) cycleScore -= clim.months[i].t2mMin < -2 ? 25 : 15;
   // Puede ser negativo: muchas heladas en el ciclo hunden el puntaje.
   score += cycleScore;
-  if (frostMonths.length === 0) reasons.push('Todo el ciclo libre de heladas');
-  else reasons.push(`Heladas durante el cultivo (${frostMonths.length} mes${frostMonths.length > 1 ? 'es' : ''})`);
+  if (frostMonths.length === 0) {
+    reasons.push('Todo el ciclo libre de heladas');
+    codes.push({ code: 'cycleFrostFree' });
+  } else {
+    reasons.push(`Heladas durante el cultivo (${frostMonths.length} mes${frostMonths.length > 1 ? 'es' : ''})`);
+    codes.push({ code: 'cycleFrost', value: frostMonths.length });
+  }
 
   const early = cycle.slice(0, 3);
   const earlyRain = early.reduce((s, i) => s + clim.months[i].precipMmDay, 0) / early.length;
   if (earlyRain < 2) {
     score -= 20;
     reasons.push('Poca lluvia en el crecimiento: necesitará riego');
+    codes.push({ code: 'lowEarlyRain' });
   }
 
   score = Math.max(0, Math.min(100, Math.round(score)));
   const label = score >= 80 ? 'Excelente' : score >= 60 ? 'Buena' : score >= 40 ? 'Regular' : 'No recomendada';
+  const labelCode: SowingLabelCode = score >= 80 ? 'excellent' : score >= 60 ? 'good' : score >= 40 ? 'fair' : 'notRecommended';
 
   return {
     month,
@@ -115,7 +137,9 @@ export function evaluateSowingMonth(
     frostMonths,
     rainAtSowingMm: m.precipMmMonth,
     label,
+    labelCode,
     reasons,
+    codes,
   };
 }
 

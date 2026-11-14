@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { DataSource } from '@/services/nasa/types'
+import { useI18n } from '@/i18n'
 import { IconAlert, IconInfo, IconSatellite } from './Icons'
 
 export function Spinner({ label }: { label?: string }) {
@@ -17,20 +18,22 @@ export function Skeleton({ className = '' }: { className?: string }) {
 }
 
 export function Attribution({ dark = false }: { dark?: boolean }) {
+  const { t } = useI18n()
   return (
     <p className={`flex items-center justify-center gap-1.5 py-4 text-xs font-semibold ${dark ? 'text-noche-200' : 'text-tierra-500'}`}>
       <IconSatellite size={14} />
-      Datos: NASA POWER · GIBS · APOD
+      {t('data')}: NASA POWER · GIBS · APOD
     </p>
   )
 }
 
 /** Aviso cuando los datos no son en vivo. */
 export function SourceNotice({ source }: { source: DataSource | undefined }) {
+  const { lang } = useI18n()
   if (source !== 'fallback') return null
   return (
     <Notice tone="warning">
-      Sin conexión con la NASA. Mostramos los datos guardados de Cusco.
+      {lang === 'en' ? 'No connection to NASA. Showing saved data for Cusco.' : 'Sin conexión con la NASA. Mostramos los datos guardados de Cusco.'}
     </Notice>
   )
 }

@@ -26,8 +26,11 @@ For centuries, Andean farmers have watched the **Pleiades** (in Quechua, **_Qull
 | **My field** | GPS location (Cusco by default) and potato variety: Yungay, Canchán or Huayro |
 | **Inca calendar** | A circular calendar of the 12 Inca agricultural months, each colored green, yellow or red for rain and frost risk. It marks the best month to plant and the expected harvest month |
 | **My crop** | Growth progress from real NASA daily temperatures, current crop stage, a countdown to harvest, and frost and irrigation alerts |
+| **Potatoes** | A guide to Peru's potatoes: a curated catalog of improved, native and bitter varieties with their altitude, regions and best uses; the Andean altitude zones; how to plant in 7 steps; which potato for which dish (causa, papa rellena, pastel de papa…); and how chuño, tunta, papa seca and potato starch are made |
 | **Qullqa telescope** | A live planetarium aimed at the Pleiades from the farmer's location, both now and at dawn on the Inti Raymi (June 20) as the Incas saw them. It computes tonight's viewing window, shows real NASA images of the Pleiades (Spitzer, WISE, Cassini, and from the surface of Mars), and tells the Inca story in three illustrated steps |
 | **Qullqa on Mars** | A Martian greenhouse simulator with temperature, light and water sliders. It runs the same crop model and compares the result with Earth |
+
+**Languages:** English (default), Spanish and Quechua (beta). Pick one in the top bar. The Quechua version covers navigation, headings and key phrases and falls back to Spanish for longer texts; it still needs review by a native speaker.
 
 ## NASA data used
 

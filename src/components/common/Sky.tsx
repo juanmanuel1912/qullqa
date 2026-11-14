@@ -11,7 +11,7 @@ const PLEIADES: [number, number, number][] = [
   [58, 52, 3], // Taygeta
 ]
 
-export function Pleiades({ className = '', glow = true }: { className?: string; glow?: boolean }) {
+export function Pleiades({ className = '', glow = true, color = '#fffaf0' }: { className?: string; glow?: boolean; color?: string }) {
   return (
     <svg viewBox="0 0 110 70" className={className} aria-hidden="true">
       <defs>
@@ -23,7 +23,7 @@ export function Pleiades({ className = '', glow = true }: { className?: string; 
       {PLEIADES.map(([x, y, r], i) => (
         <g key={i} className="twinkle" style={{ animationDelay: `${i * 0.4}s` }}>
           {glow && <circle cx={x} cy={y} r={r * 2.6} fill="url(#pl-glow)" />}
-          <circle cx={x} cy={y} r={r * 0.75} fill="#fffaf0" />
+          <circle cx={x} cy={y} r={r * 0.75} fill={color} />
         </g>
       ))}
     </svg>

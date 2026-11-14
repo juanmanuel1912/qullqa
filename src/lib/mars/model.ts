@@ -43,6 +43,8 @@ export interface MarsResult {
   tempFactor: number;
   /** Mensajes para explicar el resultado */
   notes: string[];
+  /** Traducible: claves i18n marsNote.* */
+  noteCodes: string[];
 }
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
@@ -77,20 +79,25 @@ export function simulateMars(input: MarsInput): MarsResult {
   // Un sol es un poco más largo que un día: más horas de crecimiento.
   const gddPerSol = baseGdd * MARS.solInEarthDays * lf * wf * tf;
   const notes: string[] = [];
+  const noteCodes: string[] = [];
+  const note = (code: string, text: string) => {
+    noteCodes.push(code);
+    notes.push(text);
+  };
 
-  if (input.tempC <= GDD_BASE) notes.push('Demasiado frío: la papa no crece bajo 2 °C. Calienta el invernadero.');
-  else if (input.tempC >= 25) notes.push('Mucho calor: la papa deja de formar tubérculos sobre 25 °C.');
-  else if (input.tempC >= 14 && input.tempC <= 20) notes.push('Temperatura ideal, como un buen día en los Andes.');
+  if (input.tempC <= GDD_BASE) note('tooCold', 'Demasiado frío: la papa no crece bajo 2 °C. Calienta el invernadero.');
+  else if (input.tempC >= 25) note('tooHot', 'Mucho calor: la papa deja de formar tubérculos sobre 25 °C.');
+  else if (input.tempC >= 14 && input.tempC <= 20) note('idealTemp', 'Temperatura ideal, como un buen día en los Andes.');
 
-  if (input.lightPct < 15) notes.push('Muy poca luz: las plantas no pueden hacer fotosíntesis.');
-  else if (input.lightPct <= 50) notes.push('Luz natural de Marte (43 %): agrega luces LED para crecer más rápido.');
+  if (input.lightPct < 15) note('lowLight', 'Muy poca luz: las plantas no pueden hacer fotosíntesis.');
+  else if (input.lightPct <= 50) note('naturalLight', 'Luz natural de Marte (43 %): agrega luces LED para crecer más rápido.');
 
-  if (input.waterPct < 20) notes.push('Sin agua no hay papa. En Marte el agua se obtiene derritiendo hielo del subsuelo.');
-  else if (input.waterPct > 90) notes.push('Demasiada agua: el tubérculo se puede pudrir.');
+  if (input.waterPct < 20) note('noWater', 'Sin agua no hay papa. En Marte el agua se obtiene derritiendo hielo del subsuelo.');
+  else if (input.waterPct > 90) note('tooMuchWater', 'Demasiada agua: el tubérculo se puede pudrir.');
 
   const viable = gddPerSol > 0.5;
   const sols = viable ? Math.ceil(v.gddToHarvest / gddPerSol) : null;
-  if (viable && sols !== null && sols > 400) notes.push('Crecería, pero muy lento. Mejora la luz o la temperatura.');
+  if (viable && sols !== null && sols > 400) note('slow', 'Crecería, pero muy lento. Mejora la luz o la temperatura.');
 
   return {
     viable,
@@ -101,6 +108,7 @@ export function simulateMars(input: MarsInput): MarsResult {
     waterFactor: Math.round(wf * 100) / 100,
     tempFactor: Math.round(tf * 100) / 100,
     notes,
+    noteCodes,
   };
 }
 
