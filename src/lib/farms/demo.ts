@@ -28,14 +28,12 @@ export interface Farm {
   season?: { sow: Localized; harvest: Localized }
   /** Ventana de cosecha estimada (para el perfil de venta) */
   harvestWindow: Localized
-  
-  // Información adicional (NEW)
-  /** Productos que produce */
-  products?: Array<{ name: string; unit: string; estimatedYield?: number }>
-  /** Ganado: cantidad de vacunos */
+  /** Productos y producción estimada por campaña (EJEMPLO) */
+  products?: Array<{ name: Localized; unit: 't' | 'kg'; estimatedYield?: number }>
+  /** Ganado: cantidad de vacunos (EJEMPLO) */
   cattle?: number
-  /** Personal a cargo */
-  staff?: Array<{ name: string; role: string }>
+  /** Equipo de trabajo (nombres ficticios) */
+  staff?: Array<{ name: string; role: Localized }>
 }
 
 /** Agricultora ficticia (perfil de ejemplo). El correo usa example.com, un dominio reservado para ejemplos. */
@@ -62,15 +60,15 @@ export const DEMO_FARMS: Farm[] = [
     calendar: 'nasa',
     harvestWindow: { en: 'April–May 2027', es: 'abril–mayo 2027' },
     products: [
-      { name: 'Papa Yungay', unit: 'toneladas', estimatedYield: 12.5 },
-      { name: 'Habas', unit: 'kg', estimatedYield: 800 },
-      { name: 'Maíz', unit: 'kg', estimatedYield: 1200 },
+      { name: { en: 'Yungay potato', es: 'Papa Yungay' }, unit: 't', estimatedYield: 25 },
+      { name: { en: 'Broad beans', es: 'Habas' }, unit: 'kg', estimatedYield: 800 },
+      { name: { en: 'Maize', es: 'Maíz' }, unit: 'kg', estimatedYield: 1200 },
     ],
     cattle: 8,
     staff: [
-      { name: 'Sisa Ccori', role: 'Propietaria' },
-      { name: 'Juan Quispe', role: 'Jornalero principal' },
-      { name: 'María Cutipa', role: 'Asistente' },
+      { name: 'Sisa Ccori', role: { en: 'Owner', es: 'Propietaria' } },
+      { name: 'Juan Quispe', role: { en: 'Farm worker', es: 'Jornalero' } },
+      { name: 'María Cutipa', role: { en: 'Assistant', es: 'Asistente' } },
     ],
   },
   {
@@ -91,13 +89,13 @@ export const DEMO_FARMS: Farm[] = [
     calendar: 'nasa',
     harvestWindow: { en: 'February–March 2027', es: 'febrero–marzo 2027' },
     products: [
-      { name: 'Papa Canchan', unit: 'toneladas', estimatedYield: 18 },
-      { name: 'Papa Nativa', unit: 'toneladas', estimatedYield: 8 },
+      { name: { en: 'Canchán potato', es: 'Papa Canchán' }, unit: 't', estimatedYield: 60 },
+      { name: { en: 'Native potatoes', es: 'Papas nativas' }, unit: 't', estimatedYield: 15 },
     ],
     cattle: 12,
     staff: [
-      { name: 'Carlos Millalonco', role: 'Administrador' },
-      { name: 'Rosa Antilef', role: 'Supervisora' },
+      { name: 'Carlos Millalonco', role: { en: 'Manager', es: 'Administrador' } },
+      { name: 'Rosa Antilef', role: { en: 'Supervisor', es: 'Supervisora' } },
     ],
   },
   {
@@ -115,15 +113,13 @@ export const DEMO_FARMS: Farm[] = [
     calendar: 'local',
     season: { sow: { en: 'April–May', es: 'abril–mayo' }, harvest: { en: 'September–October', es: 'septiembre–octubre' } },
     harvestWindow: { en: 'September–October 2027', es: 'septiembre–octubre 2027' },
-    products: [
-      { name: 'Russet Potato', unit: 'toneladas', estimatedYield: 85 },
-    ],
+    products: [{ name: { en: 'Russet potato', es: 'Papa Russet' }, unit: 't', estimatedYield: 500 }],
     cattle: 45,
     staff: [
-      { name: 'Robert Johnson', role: 'Farm Manager' },
-      { name: 'Michael Chen', role: 'Operations Lead' },
-      { name: 'Sarah Davis', role: 'Irrigation Specialist' },
-      { name: 'Tom Martinez', role: 'Equipment Manager' },
+      { name: 'Robert Johnson', role: { en: 'Farm manager', es: 'Gerente' } },
+      { name: 'Michael Chen', role: { en: 'Operations lead', es: 'Jefe de operaciones' } },
+      { name: 'Sarah Davis', role: { en: 'Irrigation specialist', es: 'Especialista en riego' } },
+      { name: 'Tom Martinez', role: { en: 'Equipment manager', es: 'Encargado de maquinaria' } },
     ],
   },
 ]

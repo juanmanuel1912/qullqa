@@ -12,6 +12,14 @@ La UI completa ya está hecha (commit e9821ac). Antes de cambiar algo, lee el ar
 - Estilos: clases `.card`, `.btn-primary`, `.btn-dark`, `.btn-ghost`, `.chip`, `.stat` en `src/index.css`; colores `tierra`, `inti`, `noche`, `good`, `caution`, `risk`, `marte`.
 - En `useEffect` usa siempre llaves: `useEffect(() => { ... })`. Nunca devuelvas el resultado de una llamada (scrollTo devuelve una Promise y rompe React).
 - Antes de cada commit: `npx tsc -b && npx vitest run && npm run build`.
+- **Contenido agrícola (obligatorio):**
+  - NUNCA nombres de plaguicidas, fungicidas ni dosis. Escribe: "solo productos registrados en SENASA, recomendados por un agrónomo".
+  - NUNCA inventes nombres en quechua. Si no estás seguro, usa el nombre local en español (rancha, gusano blanco…).
+  - No afirmes resistencias de variedades ni datos técnicos sin fuente (CIP, INIA, SENASA, MIDAGRI, NASA, NOAA).
+- **Textos:** todo texto visible va en `src/i18n/en.ts` y `es.ts` (o como `{ en, es }` con `L()`). La app abre en inglés.
+- **Estilos:** solo colores del tema (`tierra`, `inti`, `noche`, `good`, `caution`, `risk`, `marte`) o los de Tailwind. No hay `rojo` ni `btn-secondary`. Las clases dinámicas tipo `border-${x}` no funcionan con Tailwind.
+- **Íconos del clima:** usa `weatherIcon(code)` de `services/weather/openMeteo`.
+- **Navegación:** la barra inferior es Inicio, Mis tierras, Clima, Calendario, Mi cultivo, Papas (Papas es el foco del proyecto). Alertas, El Niño, Marte, Telescopio y Cultivos se abren desde Inicio.
 
 ---
 

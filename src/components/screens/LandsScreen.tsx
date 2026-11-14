@@ -2,12 +2,13 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
 import { useI18n, type Key } from '@/i18n'
-import { fetchClimatology } from '@/services/nasa'
-import type { Climatology } from '@/services/nasa/types'
+import { fetchClimatology, fetchDaily } from '@/services/nasa'
+import type { Climatology, DailyRecord } from '@/services/nasa/types'
+import { addDaysIso, todayIso } from '@/utils/format'
 import { getCropStatus, projectDateForGdd, recommendSowing, VARIETIES } from '@/lib/agro'
 import { DEMO_FARMER, DEMO_FARMS, type Farm } from '@/lib/farms/demo'
 import { Attribution, IconArrow, Notice, ProgressRing, Skeleton } from '@/components/common'
-import { fetchForecast, type Forecast } from '@/services/weather/openMeteo'
+import { fetchForecast, weatherIcon, type Forecast } from '@/services/weather/openMeteo'
 
 const PointsMap = lazy(() => import('@/components/map/PointsMap'))
 
@@ -18,6 +19,7 @@ export default function LandsScreen() {
   const { t, L } = useI18n()
   const navigate = useNavigate()
   const [clims, setClims] = useState<Record<string, Climatology>>({})
+  const [dailies, setDailies] = useState<Record<string, DailyRecord[]>>({})
   const [forecasts, setForecasts] = useState<Record<string, Forecast>>({})
   const [selected, setSelected] = useState<string | null>(null)
 
@@ -29,6 +31,20 @@ export default function LandsScreen() {
         .then((c) => setClims((prev) => ({ ...prev, [f.id]: c })))
         .catch(() => undefined),
     )
+    return () => ctrl.abort()
+  }, [])
+
+  // Temperaturas diarias reales (NASA POWER) desde la siembra, como en Mi cultivo
+  useEffect(() => {
+    const ctrl = new AbortController()
+    const now = todayIso()
+    DEMO_FARMS.filter((f) => f.plantingDate).forEach((f) => {
+      const recent = addDaysIso(now, -35)
+      const start = f.plantingDate! < recent ? f.plantingDate! : recent
+      fetchDaily(f.lat, f.lon, new Date(`${start}T00:00:00Z`), new Date(`${now}T00:00:00Z`), ctrl.signal)
+        .then((d) => setDailies((prev) => ({ ...prev, [f.id]: d.days })))
+        .catch(() => undefined)
+    })
     return () => ctrl.abort()
   }, [])
 
@@ -102,6 +118,7 @@ export default function LandsScreen() {
             key={f.id}
             farm={f}
             clim={clims[f.id]}
+            daily={dailies[f.id]}
             forecast={forecasts[f.id]}
             today={today}
             active={Math.abs(profile.lat - f.lat) < 0.01 && Math.abs(profile.lon - f.lon) < 0.01}
@@ -130,6 +147,7 @@ export default function LandsScreen() {
 function FarmCard(props: {
   farm: Farm
   clim?: Climatology
+  daily?: DailyRecord[]
   forecast?: Forecast
   today: Date
   active: boolean
@@ -139,7 +157,7 @@ function FarmCard(props: {
   onViewDetail: (farmId: string) => void
 }) {
   const { farm: f, clim, forecast, today } = props
-  const { t, L, month, fmtLong } = useI18n()
+  const { t, L, month, fmtLong, fmtShort } = useI18n()
   const variety = VARIETIES[f.variety]
 
   let body: React.ReactNode = <Skeleton className="h-16" />
@@ -157,7 +175,7 @@ function FarmCard(props: {
           </>
         )
       } else {
-        const s = getCropStatus({ sowingDate: sow, variety: f.variety, climatology: clim, today })
+        const s = getCropStatus({ sowingDate: sow, variety: f.variety, climatology: clim, daily: props.daily, today })
         ring = s.progress
         body = (
           <>
@@ -217,22 +235,14 @@ function FarmCard(props: {
 
       {/* Clima de hoy, mañana, pasado mañana */}
       {next3Days.length > 0 && (
-        <div className="rounded-lg bg-gradient-to-r from-sky-50 to-blue-50 p-3">
-          <p className="text-xs font-bold text-sky-900 mb-2">🌦️ {t('wx.next7')}</p>
+        <div className="rounded-2xl bg-noche-50 p-3">
           <div className="grid grid-cols-3 gap-2">
             {next3Days.map((day, i) => {
-              const icon =
-                day.code === 0 || day.code === 1 ? '☀️' :
-                day.code === 2 || day.code === 3 ? '⛅' :
-                day.code === 45 || day.code === 48 ? '🌫️' :
-                day.code >= 50 && day.code < 70 ? '🌧️' :
-                day.code >= 70 && day.code < 90 ? '❄️' :
-                day.code >= 80 && day.code < 83 ? '🌧️' :
-                day.code >= 85 ? '⛈️' : '🌤️'
+              const icon = weatherIcon(day.code).emoji
               return (
                 <div key={i} className="rounded bg-white/70 p-2 text-center text-xs">
                   <p className="font-bold text-sky-900">
-                    {i === 0 ? t('wx.today') : i === 1 ? t('wx.tomorrow') : `+${i}d`}
+                    {i === 0 ? t('wx.today') : i === 1 ? t('wx.tomorrow') : fmtShort(day.date)}
                   </p>
                   <p className="text-xl mt-1">{icon}</p>
                   <p className="text-xs font-semibold text-sky-800 mt-1">
@@ -248,19 +258,30 @@ function FarmCard(props: {
         </div>
       )}
 
-      {props.active ? (
-        <span className="inline-block rounded-full bg-inti-100 px-3 py-1 text-xs font-bold text-inti-900">⭐ {t('lands.active')}</span>
-      ) : (
+      <div className="grid grid-cols-2 gap-2">
         <button
           onClick={(e) => {
             e.stopPropagation()
             props.onViewDetail(f.id)
           }}
-          className="btn-dark min-h-[40px] w-full text-sm"
+          className="btn-ghost min-h-[40px] text-sm"
+        >
+          {t('lands.detail')}
+        </button>
+      {props.active ? (
+        <span className="flex items-center justify-center rounded-2xl bg-inti-100 px-3 text-xs font-bold text-inti-900">⭐ {t('lands.active')}</span>
+      ) : (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            props.onOpen()
+          }}
+          className="btn-dark min-h-[40px] text-sm"
         >
           {t('lands.open')} <IconArrow size={16} />
         </button>
       )}
+      </div>
     </li>
   )
 }

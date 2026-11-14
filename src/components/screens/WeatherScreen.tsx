@@ -159,6 +159,16 @@ export default function WeatherScreen() {
           </span>
           <IconArrow size={18} className="text-tierra-400" />
         </Link>
+        <Link to="/alertas" className="card flex items-center gap-3 p-4">
+          <span className="text-2xl" aria-hidden="true">
+            🪲
+          </span>
+          <span className="flex-1">
+            <span className="block font-extrabold">{t('home.alertsTitle')}</span>
+            <span className="text-sm text-tierra-700">{t('home.alertsText')}</span>
+          </span>
+          <IconArrow size={18} className="text-tierra-400" />
+        </Link>
         {[
           ['https://earthobservatory.nasa.gov/', '🛰️', t('wx.newsNasa'), t('wx.newsNasaSub')],
           ['https://www.senamhi.gob.pe/', '⚠️', t('wx.newsSenamhi'), t('wx.newsSenamhiSub')],

@@ -1,93 +1,97 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
-import { useI18n } from '@/i18n'
-import { PESTS, PEST_ORDER } from '@/data/pests'
-import { IconArrow, Notice, Attribution } from '@/components/common'
+import { useI18n, type Key } from '@/i18n'
+import { PESTS, PEST_ORDER, type PestId } from '@/data/pests'
+import { pestRisks } from '@/lib/alerts/pestRisk'
+import { Attribution, IconArrow, Notice } from '@/components/common'
 import PestGuideModal from '@/components/alerts/PestGuideModal'
 import RiskCalculator from '@/components/alerts/RiskCalculator'
 import DisasterResponse from '@/components/alerts/DisasterResponse'
 
-export default function AlertsScreen() {
-  const { profile, climatology } = useQullqa()
-  const { t } = useI18n()
-  const [selectedPest, setSelectedPest] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'pests' | 'niño' | 'disasters' | 'quiz'>('pests')
+type Tab = 'pests' | 'disasters'
 
-  const altitude = climatology?.elevation ?? 0
+export default function AlertsScreen() {
+  const { profile, climatology, forecast, today } = useQullqa()
+  const { t, L } = useI18n()
+  const [selectedPest, setSelectedPest] = useState<PestId | null>(null)
+  const [tab, setTab] = useState<Tab>('pests')
+
+  // Altitud exacta del punto (Open-Meteo); si no, la de la celda NASA
+  const elevation = Math.round(forecast?.elevation ?? climatology?.elevation ?? 0)
+  const risksNow = climatology ? pestRisks(climatology, elevation, today.getUTCMonth()) : []
 
   return (
     <div className="space-y-4">
       <header className="pt-2">
-        <p className="eyebrow text-inti-700">{t('alerts.step')}</p>
+        <p className="eyebrow text-inti-700">{profile.placeName}</p>
         <h1 className="mt-1 font-display text-3xl text-noche-800">{t('alerts.title')}</h1>
         <p className="mt-1 text-[15px] text-tierra-700">{t('alerts.subtitle')}</p>
       </header>
 
-      {/* Tabs */}
-      <div className="sticky top-0 z-10 flex gap-1 overflow-x-auto bg-white pb-4 scrollbar-none">
-        {[
-          { id: 'pests' as const, label: t('alerts.tab.pests'), emoji: '🪲' },
-          { id: 'niño' as const, label: t('alerts.tab.nino'), emoji: '🌊' },
-          { id: 'disasters' as const, label: t('alerts.tab.disasters'), emoji: '❄️' },
-          { id: 'quiz' as const, label: t('alerts.tab.quiz'), emoji: '📋' },
-        ].map((tab) => (
+      {/* El Niño: la pantalla dedicada tiene los datos de NOAA y la guía completa */}
+      <Link to="/nino" className="card flex items-center gap-3 p-4 ring-2 ring-marte-400">
+        <span className="text-2xl" aria-hidden="true">
+          🌊
+        </span>
+        <span className="flex-1">
+          <span className="block font-extrabold">{t('wx.ninoLink')}</span>
+          <span className="text-sm text-tierra-700">{t('wx.ninoLinkSub')}</span>
+        </span>
+        <IconArrow size={18} className="shrink-0 text-tierra-400" />
+      </Link>
+
+      <div className="flex gap-2" role="tablist">
+        {(['pests', 'disasters'] as const).map((k) => (
           <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`chip shrink-0 transition ${
-              activeTab === tab.id
-                ? 'border-noche-800 bg-noche-800 text-white'
-                : 'border-tierra-200 bg-white text-tierra-800 hover:border-tierra-300'
-            }`}
+            key={k}
+            role="tab"
+            aria-selected={tab === k}
+            onClick={() => setTab(k)}
+            className={`chip ${tab === k ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'}`}
           >
-            {tab.emoji} {tab.label}
+            {k === 'pests' ? '🪲' : '❄️'} {t(`alerts.tab.${k}` as Key)}
           </button>
         ))}
       </div>
 
-      {/* Tab: Pests */}
-      {activeTab === 'pests' && (
-        <div className="space-y-4">
+      {tab === 'pests' && (
+        <div className="space-y-3">
           <Notice tone="info" title={t('alerts.pestAlert')}>
-            {t('alerts.pestAlertText', { alt: Math.round(altitude) })}
+            {t('alerts.pestAlertText', { alt: elevation.toLocaleString() })}
           </Notice>
 
-          <div className="space-y-2">
-            {PEST_ORDER.map((pestId) => {
-              const pest = PESTS[pestId]
-              const inRange =
-                altitude >= pest.altRange[0] && altitude <= pest.altRange[1]
+          <RiskCalculator
+            climatology={climatology}
+            elevation={elevation}
+            initialMonth={today.getUTCMonth()}
+            onOpenPest={(id) => setSelectedPest(id as PestId)}
+          />
 
+          <div className="space-y-2">
+            {PEST_ORDER.map((id) => {
+              const pest = PESTS[id]
+              const inZone = risksNow.find((r) => r.pest === id)?.inZone ?? false
               return (
                 <button
-                  key={pest.id}
-                  onClick={() => setSelectedPest(pest.id)}
-                  className={`card space-y-2 text-left transition hover:bg-inti-50 ${
-                    inRange ? 'border-2 border-rojo' : ''
-                  }`}
+                  key={id}
+                  onClick={() => setSelectedPest(id)}
+                  className={`card w-full space-y-1 text-left ${inZone ? 'ring-2 ring-risk/50' : ''}`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-2xl font-bold">{pest.emoji}</p>
-                      <h3 className="mt-1 font-extrabold text-noche-800">
-                        {pest.nameEs}
-                      </h3>
-                      <p className="mt-0.5 text-xs text-tierra-600">
-                        {pest.nameQu} • {pest.altRange[0]}-{pest.altRange[1]} msnm
-                      </p>
-                    </div>
-                    {inRange && (
-                      <span className="rounded-full bg-rojo px-2 py-1 text-xs font-bold text-white">
-                        {t('alerts.atRisk')}
-                      </span>
-                    )}
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-3xl" aria-hidden="true">
+                      {pest.emoji}
+                    </span>
+                    {inZone && <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-bold text-red-800">{t('alerts.atRisk')}</span>}
                   </div>
-                  <p className="line-clamp-2 text-sm text-tierra-700">
-                    {pest.description}
+                  <p className="font-extrabold text-noche-800">{L(pest.name)}</p>
+                  <p className="text-xs text-tierra-600">
+                    “{pest.localName}” · {pest.altRange[0].toLocaleString()}–{pest.altRange[1].toLocaleString()} m
                   </p>
-                  <div className="flex items-center justify-end text-xs font-bold text-inti-600">
-                    {t('alerts.learnMore')} <IconArrow size={16} className="ml-1" />
-                  </div>
+                  <p className="line-clamp-2 text-sm text-tierra-800">{L(pest.description)}</p>
+                  <p className="flex items-center justify-end gap-1 text-xs font-bold text-noche-600">
+                    {t('alerts.learnMore')} <IconArrow size={14} />
+                  </p>
                 </button>
               )
             })}
@@ -95,76 +99,12 @@ export default function AlertsScreen() {
         </div>
       )}
 
-      {/* Tab: Niño Impact */}
-      {activeTab === 'niño' && (
-        <div className="space-y-4">
-          <Notice tone="warning" title={t('alerts.ninoTitle')}>
-            {t('alerts.ninoDesc')}
-          </Notice>
+      {tab === 'disasters' && <DisasterResponse />}
 
-          <div className="card space-y-3">
-            <h3 className="font-extrabold text-noche-800">{t('alerts.ninoImpacts')}</h3>
-            <ul className="space-y-2 text-sm text-tierra-700">
-              <li className="flex gap-2">
-                <span className="shrink-0">🌡️</span>
-                <span>{t('alerts.ninoTemp')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">💧</span>
-                <span>{t('alerts.ninoRain')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">🌪️</span>
-                <span>{t('alerts.ninoWind')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">🪲</span>
-                <span>{t('alerts.ninoPests')}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="card space-y-3">
-            <h3 className="font-extrabold text-noche-800">
-              {t('alerts.ninoPrep')}
-            </h3>
-            <ul className="space-y-2 text-sm text-tierra-700">
-              <li className="flex gap-2">
-                <span className="shrink-0">✓</span>
-                <span>{t('alerts.ninoPrep1')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">✓</span>
-                <span>{t('alerts.ninoPrep2')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">✓</span>
-                <span>{t('alerts.ninoPrep3')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">✓</span>
-                <span>{t('alerts.ninoPrep4')}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Disaster Response */}
-      {activeTab === 'disasters' && <DisasterResponse />}
-
-      {/* Tab: Risk Quiz */}
-      {activeTab === 'quiz' && <RiskCalculator altitude={altitude} variety={profile.variety} />}
-
+      <p className="text-center text-xs text-tierra-500">{t('alerts.sources')}</p>
       <Attribution />
 
-      {/* Pest Modal */}
-      {selectedPest && (
-        <PestGuideModal
-          pest={PESTS[selectedPest as keyof typeof PESTS]}
-          onClose={() => setSelectedPest(null)}
-        />
-      )}
+      {selectedPest && <PestGuideModal pest={PESTS[selectedPest]} onClose={() => setSelectedPest(null)} />}
     </div>
   )
 }
