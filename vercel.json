@@ -1,7 +1,13 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "env": {
+    "VITE_NASA_API_KEY": "@vite_nasa_api_key",
+    "VITE_CUSCO_LAT": "-13.5319",
+    "VITE_CUSCO_LON": "-71.9754",
+    "VITE_APP_VERSION": "1.0.0",
+    "VITE_APP_NAME": "Qullqa"
+  }
 }
