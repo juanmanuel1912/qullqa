@@ -1,62 +1,129 @@
-# Guion del video — Qullqa
+# Guion del video y guía de producción — Qullqa
 
-> **Regla de Space Apps:** demo de **máximo 30 segundos** (o 7 diapositivas), con **subtítulos en inglés**,
-> subido a YouTube / Google Drive con enlace público. Debe mostrar cómo se usaron los datos abiertos de la NASA.
-> Revisa la guía oficial 2026 en spaceappschallenge.org antes de enviar.
+> **Reglas oficiales Space Apps 2026** (Project Submission Guide, revisada el 14-nov-2026):
+> - Demo = **video de 30 s o menos** *o* **máximo 7 diapositivas** (en inglés). Si te pasas, **quedas fuera del juzgamiento global**.
+> - Puedes hablar en español, pero el video **DEBE tener subtítulos en inglés**.
+> - Subirlo a YouTube / Google Drive con **enlace público** (sin login ni permisos). Probarlo en ventana de incógnito.
+> - **Sin imágenes, voz ni rostro de menores de 18 años.**
+> - **Sin logos de la NASA**, banderas ni insignias de misiones (no dar a entender que la NASA nos respalda).
+> - Lo generado con IA (SI): **imágenes/videos con marca de agua visible** ("AI-generated"); **audio/código** declarado en el texto de la descripción.
+> - Cierre de envío: **domingo 15 de noviembre, 11:59 p. m.** (hora de tu evento local). Puedes reenviar cuantas veces quieras antes.
+> - Estructura sugerida por Space Apps: 0:00 quién eres · 0:02 el reto · 0:05 nombre del proyecto · 0:10 cómo funciona + datos NASA · 0:20–0:30 el futuro.
 
 ---
 
-## A. Video oficial — 30 segundos
+## A. Video oficial — 30 segundos (voz en español, subtítulos en inglés)
 
-Voz en español, subtítulos en inglés. Ritmo: ~2.5 palabras por segundo, así que cada bloque es corto.
+Meta: **28 s** (deja 2 s de margen). Unas 65–70 palabras en total: frases cortas.
 
-| Tiempo | Imagen | Voz (español) | Subtítulo (inglés) |
+| Tiempo | Qué se ve | Voz (español) | Subtítulo (inglés) |
 |---|---|---|---|
-| 0–5 s | Cielo nocturno andino → zoom a las Pléyades. Texto: **QULLQA** | "Hace 500 años, los incas miraban las Pléyades para saber cuándo sembrar papa." | "500 years ago, the Incas read the Pleiades to know when to plant potatoes." |
-| 5–10 s | Agricultor mirando el cielo → celular con la app (pantalla Inicio) | "Hoy, Qullqa lee el cielo con los satélites de la NASA." | "Today, Qullqa reads the sky with NASA satellites." |
-| 10–17 s | Calendario circular girando; tocar noviembre (verde) | "Con datos de lluvia, temperatura y humedad del suelo de NASA POWER, te dice cuándo sembrar y evitar heladas." | "Using NASA POWER rain, temperature and soil moisture data, it tells you when to plant and avoid frost." |
-| 17–23 s | Pantalla Mi cultivo: barra de progreso + "Días para cosecha" + alerta de riego | "Sigue tu chacra día a día y te avisa cuándo cosechar." | "It tracks your field daily and predicts your harvest." |
-| 23–28 s | Pantalla Marte: mover el slider de luz, aparece el domo | "Y mañana, el mismo modelo podría cultivar papa en Marte." | "And tomorrow, the same model could grow potatoes on Mars." |
-| 28–30 s | Logo + "Datos: NASA POWER · GIBS · APOD" + link | "Qullqa. Sabiduría inca, datos de la NASA." | "Qullqa. Inca wisdom, NASA data." |
+| 0–3 s | Tú hablando a cámara (o tu nombre en texto sobre el cielo nocturno) | "Soy [Nombre], del equipo [Equipo]." | "I'm [Name], team [Team]." |
+| 3–6 s | Texto grande: **Field Shift: Adapting Farms with NASA Data** sobre foto de chacra andina | "Nuestro reto: adaptar las chacras con datos de la NASA." | "Our challenge: adapting farms with NASA data." |
+| 6–10 s | Foto NASA de las Pléyades → zoom → aparece **QULLQA** + lámina inca de la app (pantalla *Cielo*) | "Los incas miraban las Pléyades, *Qullqa*, para saber cuándo sembrar papa." | "The Incas read the Pleiades — *Qullqa* — to know when to plant potatoes." |
+| 10–15 s | App: **Calendario** → rueda inca, tocar noviembre (verde) | "Qullqa usa 25 años de datos NASA POWER: te dice cuándo sembrar y evitar heladas." | "Qullqa uses 25 years of NASA POWER data to tell you when to plant and avoid frost." |
+| 15–20 s | App: **El Niño** (alerta en vivo, muy fuerte) → **Rotación** (3 estrategias con puntaje) | "Te alerta de El Niño y compara rotaciones para cuidar suelo y agua." | "It warns you about El Niño and compares crop rotations to protect soil and water." |
+| 20–25 s | App: **Mi cultivo** (anillo de progreso + días para cosecha) → **Asistente** respondiendo | "Sigue tu cultivo día a día y te dice cuándo cosechar." | "It tracks your crop day by day and tells you when to harvest." |
+| 25–30 s | App: **Marte** (mover el slider, aparece el domo) → cierre: **QULLQA** + link `qullqa-five.vercel.app` + "Data: NASA POWER · GIBS · APOD" | "Mañana, papa en Marte. Qullqa: sabiduría inca, datos de la NASA." | "Tomorrow, potatoes on Mars. Qullqa: Inca wisdom, NASA data." |
+
+**Consejos de ritmo**
+- Graba la voz primero y mide con cronómetro. Si pasa de 28 s, recorta palabras, no aceleres la voz.
+- Cada toma de la app dura 2–3 s: muévete rápido, sin buscar botones (ensaya la ruta antes).
+- Subtítulos: máximo 2 líneas, letra grande, fondo semitransparente, abajo al centro.
 
 ---
 
-## B. Presentación ante el jurado — 2 minutos
+## B. Alternativa: 7 diapositivas (todo en inglés)
 
-Para el pitch en vivo o un video más largo en redes. Muestra la app en vivo desde el celular.
+Úsala solo si no llegas con el video (también se puede enviar ambas: el video como demo y las diapositivas como material extra en el link del proyecto).
 
-**1. El problema (0:00–0:20)**
-> "Solo en el Perú, más de 700 mil familias viven de la papa. Pero el clima ya no es el de sus abuelos: las lluvias llegan tarde, las heladas aparecen fuera de temporada, y una mala decisión de siembra puede costar la cosecha de todo un año."
-
-**2. La inspiración (0:20–0:40)**
-> "Los incas resolvieron esto mirando el cielo. Cada junio observaban las Pléyades, que en quechua se llaman *Qullqa*: si brillaban claras, vendrían buenas lluvias. En el año 2000, científicos publicaron en la revista *Nature* que tenían razón: el brillo de las Pléyades depende de nubes altas ligadas a El Niño. Nosotros tomamos esa idea y le dimos los ojos más poderosos que existen: los satélites de la NASA."
-
-**3. La demo (0:40–1:25)**
-- *Inicio:* "La app abre con una imagen del espacio de la NASA, para recordarle al agricultor que mira el mismo cielo que sus ancestros."
-- *Mi chacra:* "Toma la ubicación del GPS y la variedad de papa: Yungay, Canchán o Huayro."
-- *Calendario inca:* "Con 25 años de datos de NASA POWER para ese punto exacto, arma el calendario agrícola inca con un semáforo. Para Cusco recomienda sembrar en noviembre y cosechar en abril, justo lo que hacen los agricultores con experiencia. Y lo calcula para cualquier lugar del planeta."
-- *Mi cultivo:* "Después de sembrar, suma los grados-día reales que mide la NASA, muestra en qué etapa está la papa, cuántos días faltan para la cosecha, y avisa si hubo helada o si hace falta regar."
-
-**4. El futuro: Marte (1:25–1:45)**
-> "Los Andes son uno de los mejores laboratorios de la Tierra para Marte: frío extremo, radiación y aire delgado. En 2016, el Centro Internacional de la Papa y la NASA lograron hacer brotar papa en condiciones marcianas. Qullqa usa el mismo modelo para simular un invernadero en Marte: con la luz natural de Marte, una papa Yungay tardaría unos 125 días; con luces LED, unos 75."
-
-**5. Cierre (1:45–2:00)**
-> "Qullqa no reemplaza la sabiduría del agricultor: la confirma con datos. Es gratis, funciona en cualquier celular y sin conexión. Sabiduría inca, datos de la NASA. *Sulpayki.*"
+1. **Title** — QULLQA · Inca wisdom, NASA data. Team name, member names, challenge "Field Shift: Adapting Farms with NASA Data". Foto de las Pléyades.
+2. **The problem** — Andean potato farmers face late rains, out-of-season frost and El Niño; one wrong sowing date can cost a year's harvest.
+3. **The inspiration** — Incas watched the Pleiades (Qullqa) in June to forecast rain; science confirmed the link to El Niño (Orlove, Chiang & Cane, *Nature*, 2000). Captura de *Cielo*.
+4. **How it works** — NASA POWER (25 y climate + daily), GIBS MODIS NDVI, APOD, Image Library + Open-Meteo forecast + NOAA ENSO → crop model (growing degree days) → simple traffic-light advice. Diagrama de flujo simple.
+5. **User experience** — 3–4 capturas del celular: Calendar · El Niño alert · Rotation planner · My crop. Una línea de texto por captura.
+6. **Impact** — Free, mobile-first, English/Spanish/Quechua, works offline with cached NASA data; demo farms in Peru, Chile and USA; rotation planner for soil and water.
+7. **The future** — Farmer marketplace, expert-validated variety map, optional AI assistant, and the same model for Mars greenhouses. Link: qullqa-five.vercel.app · GitHub.
 
 ---
 
-## Cifras para el video (calculadas con datos reales de NASA POWER, Cusco 2001-2025)
+## C. Paso a paso para producirlo (gratis, 2–3 horas)
 
-- Mejor siembra: **noviembre** (puntaje 100/100), cosecha Yungay **~9 de abril** (~159 días)
-- Canchán ~135 días · Yungay ~159 días · Huayro ~183 días
-- Lluvia: enero ~129 mm/mes vs. julio ~11 mm/mes
-- Heladas: de mayo a octubre, hasta **−4.5 °C** en julio
-- Marte (Yungay, 16 °C, 75 % agua): **125 días** con luz natural (43 %), **75 días** con LED
+### Paso 1 — Preparar la app para grabar (15 min)
+1. Abre **https://qullqa-five.vercel.app** en Chrome, en ventana normal (no incógnito, para que cargue la caché).
+2. Pulsa **F12** → icono de celular (**Toggle device toolbar**, Ctrl+Shift+M) → elige **iPhone 12 Pro** o **Pixel 7**. Zoom 100 %.
+3. Idioma **English** en la app (el jurado lee inglés; la voz va en español).
+4. En *Mi chacra* deja **Cusco** y variedad **Yungay**, con fecha de siembra en noviembre para que *Mi cultivo* muestre progreso.
+5. Recorre una vez todas las pantallas del guion para que se carguen los datos (NASA POWER, El Niño, imágenes) y la grabación no muestre "cargando".
+6. Cierra otras pestañas y activa *No molestar* en Windows (Win+N → No molestar).
 
-## Cómo grabarlo en 1-2 horas (gratis)
+### Paso 2 — Grabar la pantalla (20 min)
+- **Opción rápida:** **Win + Alt + R** (Xbox Game Bar) graba la ventana de Chrome. Los videos quedan en *Videos → Capturas*.
+- **Opción con más control:** **OBS Studio** (gratis, obsproject.com) → fuente *Captura de ventana* → recorta solo el área del celular → grabar en 1080p, 30 fps.
+- Graba **cada pantalla como clip separado** (calendario, El Niño, rotación, mi cultivo, asistente, Marte). Es más fácil editar.
+- Mueve el mouse despacio; los toques deben verse claros.
 
-1. **Grabar la app:** abre el link en Chrome → F12 → icono de celular (vista móvil) → graba la pantalla con **Win + Alt + R** (Xbox Game Bar) o con OBS.
-2. **Imágenes del cielo:** usa fotos de dominio público de NASA en images.nasa.gov (busca "Pleiades", "Mars greenhouse", "Andes").
-3. **Editar:** **Clipchamp** (viene en Windows 11) → arrastra los clips, graba la voz y usa *Subtítulos automáticos*; luego tradúcelos a inglés.
-4. **Música:** biblioteca de audio de YouTube (sin derechos), algo andino suave con quena.
-5. **Subir:** YouTube como *No listado* → copiar el link al formulario de Space Apps y al README.
+### Paso 3 — Imágenes (20 min)
+| Necesidad | De dónde sacarla | Nota legal |
+|---|---|---|
+| Pléyades, cielo, Marte | **images.nasa.gov** (busca "Pleiades", "Mars surface") — ya tienes 5 en `public/sky/` | Dominio público, pero **sin logo de la NASA** y sin dar a entender respaldo |
+| Chacra andina, papas | **Unsplash** o **Pexels** (gratis) o fotos propias de tu celular | Que no aparezcan menores de 18 |
+| Láminas incas | Las 3 ilustraciones que ya tiene la app (pantallas *Cielo* y *El Niño*): captura de pantalla | Son ilustraciones hechas con código asistido por IA → decláralo en la descripción |
+| Imagen generada con IA (opcional) | Copilot Designer / Bing Image Creator / Canva Magic Media | **Obligatorio:** marca de agua visible "AI-generated" en la imagen |
+| Miniatura de YouTube y textos | **Canva** (gratis), plantilla 1280×720 | Sin logo NASA |
+
+### Paso 4 — Grabar la voz (15 min)
+- Usa tu propia voz (recomendado): grabadora del celular o *Grabadora de sonido* de Windows, en un cuarto silencioso, a 15 cm del micrófono.
+- Lee el guion de la tabla A tres veces y quédate con la mejor toma de **≤ 28 s**.
+- Si usas voz de IA (texto a voz de Clipchamp, por ejemplo), debes **declararlo** en la descripción del video y del proyecto.
+
+### Paso 5 — Editar (60 min) — **Clipchamp** (viene en Windows 11) o **CapCut** (gratis)
+1. Nuevo proyecto **16:9, 1080p** (YouTube y jurado lo ven mejor en horizontal; el celular va al centro y los textos a los lados).
+2. Arrastra la voz a la pista de audio; coloca los clips encima siguiendo los tiempos de la tabla A.
+3. Fondo: color azul noche `#1a1a2e` (el de la app) o la foto de las Pléyades difuminada.
+4. Textos: título *QULLQA* en la fuente **Fraunces** (la de la app) o similar con serifa; textos de apoyo en **Nunito**.
+5. **Subtítulos:** Clipchamp → *Subtítulos* → *Transcripción automática* en español → reemplaza cada línea por el texto en inglés de la tabla A (revisa ortografía). En CapCut: *Texto → Subtítulos automáticos* y luego editas.
+6. **Música:** Biblioteca de audio de YouTube (studio.youtube.com → *Biblioteca de audio*, filtra "Sin atribución") o la música de stock de Clipchamp. Algo andino suave; volumen al 15–20 % bajo la voz.
+7. Transiciones simples (corte o fundido corto). Nada de efectos llamativos.
+8. Revisa la duración final: **≤ 30 s exactos** (la línea de tiempo lo indica).
+9. Exporta **1080p MP4**.
+
+### Paso 6 — Subir y compartir (15 min)
+1. YouTube → *Crear → Subir video*. Título: **Qullqa — Inca wisdom, NASA data | NASA Space Apps 2026**.
+2. Visibilidad: **Público** o **No listado** (ambos funcionan sin login). No uses *Privado*.
+3. Sube también los subtítulos en inglés como pista (*Subtítulos → Inglés*), además de los quemados en el video.
+4. Descripción (en inglés): qué es la app, link `https://qullqa-five.vercel.app`, repo GitHub, datos usados (NASA POWER, GIBS, APOD, NASA Image Library; Open-Meteo; NOAA CPC) y la **declaración de IA** (ver abajo).
+5. Abre el link en **ventana de incógnito** para confirmar que se ve sin iniciar sesión.
+
+### Paso 7 — Formulario de Space Apps (30 min)
+En spaceappschallenge.org → tu perfil → **My Team → Project → Edit**:
+- **Project Name:** Qullqa
+- **High-Level Summary:** 3–4 frases en inglés (tómalas del README).
+- **Link to Project Demo:** link de YouTube.
+- **Link to Final Project:** `https://qullqa-five.vercel.app` (y el repo GitHub en la descripción).
+- **Detailed Description / NASA Data / Other References:** copia y adapta las secciones del README.
+- **Use of SI:** declara cómo usaste IA (texto sugerido abajo).
+- Guarda con **Save Progress** a menudo → marca *Terms and Conditions* y *Confirm All Work is Original* → **Submit for Judging** antes del domingo 15, 11:59 p. m.
+- Opcional (recomendado): pedir la clasificación del sitio en **FortiGuard Web Filter** (categoría *Web-based application*, Company Name "N/A") para que el jurado no tenga bloqueos.
+
+**Texto sugerido para declarar IA (inglés):**
+> AI tools were used as development assistants: Claude (Anthropic) and Kiro helped write and review code, tests, illustrations drawn as SVG code, translations and documentation. The idea, the Inca-astronomy concept, design decisions and testing were done by the team. The app's in-app assistant is a local rule-based helper (no AI API calls in production). [If used: The voice-over / image X was AI-generated and is watermarked.]
+
+---
+
+## D. Cifras verificadas para usar en el video (datos reales)
+
+- Cusco (NASA POWER 2001–2025): mejor siembra **noviembre**; cosecha Yungay **~abril** (~159 días). Canchán ~135 días · Huayro ~183 días.
+- Lluvia: enero ~129 mm/mes vs. julio ~11 mm/mes. Heladas de mayo a octubre, hasta **−4.5 °C** en julio.
+- El Niño (NOAA CPC, en vivo en la app): ONI **+2.46** (ago–oct 2026), Niño 1+2 **+5.25 °C** (oct 2026) → **El Niño muy fuerte**. Verifica el valor el día que grabes: la app lo actualiza sola.
+- Marte (Yungay, 16 °C, 75 % agua): ~125 días con luz natural, ~75 días con LED.
+
+---
+
+## E. Checklist final
+
+- [ ] Video ≤ 30 s, subtítulos en inglés legibles
+- [ ] Sin logos NASA, sin menores de 18, IA marcada/declarada
+- [ ] Link público probado en incógnito
+- [ ] README con link del video y nombres del equipo
+- [ ] Formulario completo y **Submit for Judging** enviado antes del domingo 15, 11:59 p. m.
