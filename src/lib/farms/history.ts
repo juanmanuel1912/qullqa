@@ -143,8 +143,12 @@ export function useHistory() {
     setRecords(next)
   }, [])
 
-  const add = (...items: FieldRecordInput[]) =>
-    persist((prev) => [...prev, ...items.map((r, i) => ({ ...r, id: `r-${Date.now().toString(36)}-${i}` }))])
+  /** Devuelve el id del primer registro agregado */
+  const add = (...items: FieldRecordInput[]): string => {
+    const stamp = Date.now().toString(36)
+    persist((prev) => [...prev, ...items.map((r, i) => ({ ...r, id: `r-${stamp}-${i}` }))])
+    return `r-${stamp}-0`
+  }
   const update = (id: string, patch: Partial<FieldRecordInput>) => persist((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)))
   const remove = (id: string) => persist((prev) => prev.filter((r) => r.id !== id))
 

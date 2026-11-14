@@ -35,6 +35,12 @@ describe('planificar con el historial', () => {
     expect(new Set(plan.sequence.map((c) => c.crop)).size).toBe(3)
   })
 
+  it('respeta la siembra que elige el agricultor y recalcula las siguientes', () => {
+    const p = planFromHistory(recs, clim, opts, today, 'tarwi')
+    expect(p.sequence[0].crop).toBe('tarwi')
+    expect(p.sequence[1].crop).not.toBe('tarwi')
+  })
+
   it('sin historial: parte de tierra en descanso', () => {
     const p = planFromHistory([], clim, opts, today)
     expect(p.prev).toBe('descanso')

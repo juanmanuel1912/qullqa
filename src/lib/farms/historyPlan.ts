@@ -94,6 +94,8 @@ export function planFromHistory(
   clim: Climatology,
   opts: { irrigation: boolean; elevation: number; soil: SoilType },
   today: string,
+  /** El agricultor eligió la próxima siembra (si no, la mejor) */
+  firstCrop?: NextCropId,
 ): HistoryPlanResult {
   const timeline = [...records].sort((a, b) => a.sowDate.localeCompare(b.sowDate))
   const current = [...timeline].reverse().find((r) => !r.harvestDate) ?? null
@@ -112,7 +114,8 @@ export function planFromHistory(
   for (let i = 0; i < 3; i++) {
     const ok = evaluate(recs, p, free, opts, clim).filter((o) => !NEXT_CROPS[o.crop].perennial && o.verdict !== 'bad')
     // Variar: no repetir un cultivo que ya está en el plan
-    const pick = ok.find((o) => !sequence.some((c) => c.crop === o.crop)) ?? ok[0]
+    const chosen = i === 0 && firstCrop ? options.find((o) => o.crop === firstCrop) : undefined
+    const pick = chosen ?? ok.find((o) => !sequence.some((c) => c.crop === o.crop)) ?? ok[0]
     if (!pick) break
     const sowDate = `${pick.sowYear}-${pad(pick.sowMonth + 1)}-15`
     const harvestDate = addDays(sowDate, cycleDays(pick.crop))

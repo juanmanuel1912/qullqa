@@ -7,6 +7,7 @@ import { VARIETIES } from '@/lib/agro'
 import { weatherIcon } from '@/services/weather/openMeteo'
 import { useEnso } from '@/hooks/useEnso'
 import { useLocateFarm } from '@/hooks/useLocateFarm'
+import { NextPlanCard } from '@/components/plans/NextPlanCard'
 
 export function HomeScreen() {
   const { profile } = useQullqa()
@@ -37,6 +38,7 @@ export function HomeScreen() {
       <EnsoBanner />
       <WeatherCard />
       <StatusCard />
+      <NextPlanCard />
       <Link to="/rotacion" className="card flex items-center gap-4 py-4 ring-2 ring-good/40">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-2xl" aria-hidden="true">
           🔄

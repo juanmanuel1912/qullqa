@@ -160,6 +160,15 @@ export default function HistoryScreen() {
         )
       })}
 
+      <Link to="/planes" className="card flex items-center gap-3 p-4">
+        <span className="text-2xl" aria-hidden="true">
+          📋
+        </span>
+        <span className="flex-1">
+          <span className="block font-extrabold">{t('plans.title')}</span>
+          <span className="text-sm text-tierra-700">{t('plans.linkText')}</span>
+        </span>
+      </Link>
       {mine.length > 0 && (
         <Link to="/rotacion" className="btn-ghost w-full text-sm">
           🔄 {t('hist.toRotation')}

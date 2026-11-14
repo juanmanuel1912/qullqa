@@ -25,6 +25,7 @@ const FarmFormScreen = lazy(() => import('@/components/screens/FarmFormScreen'))
 const FarmPlanScreen = lazy(() => import('@/components/screens/FarmPlanScreen'))
 const PeruMapScreen = lazy(() => import('@/components/screens/PeruMapScreen'))
 const HistoryScreen = lazy(() => import('@/components/screens/HistoryScreen'))
+const PlansScreen = lazy(() => import('@/components/screens/PlansScreen'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -84,6 +85,7 @@ function Shell() {
               <Route path="/mis-chacras/:id" element={<FarmPlanScreen />} />
               <Route path="/mapa-peru" element={<PeruMapScreen />} />
               <Route path="/historial" element={<HistoryScreen />} />
+              <Route path="/planes" element={<PlansScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
