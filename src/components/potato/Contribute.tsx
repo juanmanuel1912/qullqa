@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useI18n, type Key } from '@/i18n'
 import { resizePhoto, useContributions, type ContribStatus, type ContributionInput } from '@/lib/potato/contributions'
 import { Notice } from '@/components/common'
+import { POTATOES } from '@/lib/potato/catalog'
 
 const EMPTY: ContributionInput = {
   name: '',
@@ -23,7 +24,8 @@ const STATUS_STYLE: Record<ContribStatus, string> = {
 
 export function Contribute() {
   const { t } = useI18n()
-  const { items, add, setStatus } = useContributions()
+  const { items, add, setStatus, approved } = useContributions()
+  const documented = POTATOES.length + approved.length
   const [form, setForm] = useState<ContributionInput>(EMPTY)
   const [sent, setSent] = useState(false)
   const [reviewer, setReviewer] = useState(false)
@@ -47,6 +49,43 @@ export function Contribute() {
         <p className="font-display text-xl">{t('contrib.title')}</p>
         <p className="mt-1 text-sm text-noche-100">{t('contrib.intro')}</p>
       </div>
+      {/* Cómo funcionará (ejemplo) */}
+      <div className="card space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-display text-lg">{t('cflow.title')}</h3>
+          <span className="shrink-0 rounded-full bg-inti-100 px-2.5 py-1 text-xs font-bold text-inti-900">{t('cflow.soon')}</span>
+        </div>
+        <ol className="space-y-3">
+          {(['🧑‍🌾', '🔎', '✅'] as const).map((icon, i) => (
+            <li key={icon} className="flex gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-tierra-100 text-xl" aria-hidden="true">
+                {icon}
+              </span>
+              <div>
+                <p className="font-extrabold">
+                  {i + 1}. {t(`cflow.${i + 1}.title` as Key)}
+                </p>
+                <p className="text-sm text-tierra-800">{t(`cflow.${i + 1}.text` as Key)}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div className="flex items-center gap-3 rounded-2xl border-2 border-dashed border-tierra-200 p-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-good font-extrabold text-white">AR</span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-tierra-500">{t('cflow.approver')}</p>
+            <p className="font-extrabold">Ing. Amaru Rojas</p>
+            <p className="text-xs text-tierra-700">{t('cflow.approverRole')}</p>
+          </div>
+        </div>
+        <div>
+          <div className="h-3 overflow-hidden rounded-full bg-tierra-100">
+            <div className="h-full rounded-full bg-good" style={{ width: `${Math.max(1, (documented / 3000) * 100)}%` }} />
+          </div>
+          <p className="mt-1 text-xs font-bold text-tierra-700">{t('cflow.goal', { n: documented })}</p>
+        </div>
+      </div>
+
       <Notice tone="info">{t('contrib.demoNote')}</Notice>
 
       {sent && <Notice tone="success">{t('contrib.sent')}</Notice>}

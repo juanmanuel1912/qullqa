@@ -56,10 +56,10 @@ export default function LandsScreen() {
           <h1 className="font-display text-3xl text-noche-800">{t('lands.title')}</h1>
           <p className="mt-1 text-[15px] text-tierra-700">{t('lands.subtitle')}</p>
         </div>
-        <div className="flex shrink-0 flex-col items-center gap-1">
+        <Link to="/perfil" className="flex shrink-0 flex-col items-center gap-1" aria-label={t('profile.view')}>
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-noche-800 font-extrabold text-inti-300">{DEMO_FARMER.initials}</span>
-          <span className="text-[10px] font-bold text-tierra-500">{t('lands.farmer')}</span>
-        </div>
+          <span className="text-[10px] font-bold text-tierra-500">{DEMO_FARMER.name.split(' ')[0]}</span>
+        </Link>
       </header>
 
       <Notice tone="info">{t('lands.demo')}</Notice>
@@ -100,6 +100,9 @@ export default function LandsScreen() {
 
       <p className="rounded-2xl bg-tierra-100 p-4 text-sm text-tierra-900">{t('lands.hemisphere')}</p>
 
+      <Link to="/perfil" className="btn-primary w-full">
+        {t('profile.view')} <IconArrow size={18} />
+      </Link>
       <Link to="/chacra" className="btn-ghost w-full">
         {t('lands.edit')}
       </Link>

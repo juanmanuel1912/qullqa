@@ -204,3 +204,17 @@ describe('mi cultivo', () => {
     expect(motivationFor('growth', d)).toBe(motivationFor('growth', d));
   });
 });
+
+import { buildTimeline } from './timeline'
+describe('línea de tiempo del cultivo', () => {
+  it('Yungay sembrada en noviembre en Cusco: ~5 meses, tareas en orden', () => {
+    const tl = buildTimeline(clim, 'yungay', new Date('2026-11-14'))!
+    expect(tl.totalDays).toBeGreaterThan(140)
+    expect(tl.totalDays).toBeLessThan(185)
+    expect(tl.months).toBeGreaterThan(4.5)
+    const days = tl.tasks.map((t) => t.day)
+    expect([...days].sort((a, b) => a - b)).toEqual(days)
+    expect(tl.tasks[1].day).toBeGreaterThan(20) // primer aporque
+    expect(tl.tasks[1].day).toBeLessThan(70)
+  })
+})

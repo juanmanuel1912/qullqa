@@ -98,4 +98,6 @@ export const qu: Partial<Record<Key, string>> = {
   'wx.action.noIrrigate': "Para",
   'lands.title': "Allpaykuna",
   'contrib.sent': "Sulpayki!",
+  'tl.title': 'Tarpuymanta allaykama',
+  'task.harvest.title': 'Allay',
 }

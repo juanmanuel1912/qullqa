@@ -26,9 +26,17 @@ export interface Farm {
    */
   calendar: 'nasa' | 'local'
   season?: { sow: Localized; harvest: Localized }
+  /** Ventana de cosecha estimada (para el perfil de venta) */
+  harvestWindow: Localized
 }
 
-export const DEMO_FARMER = { name: 'Demo farmer', initials: 'DF' }
+/** Agricultora ficticia (perfil de ejemplo). El correo usa example.com, un dominio reservado para ejemplos. */
+export const DEMO_FARMER = {
+  name: 'Sisa Ccori',
+  initials: 'SC',
+  email: 'sisa.ccori@example.com',
+  place: 'Cusco, Perú',
+}
 
 export const DEMO_FARMS: Farm[] = [
   {
@@ -44,6 +52,7 @@ export const DEMO_FARMS: Farm[] = [
     plantingDate: '2026-10-25',
     note: { en: 'Andean highlands, 3,400 m. Rain-fed.', es: 'Sierra andina, 3 400 m. Secano (con lluvia).' },
     calendar: 'nasa',
+    harvestWindow: { en: 'April–May 2027', es: 'abril–mayo 2027' },
   },
   {
     id: 'chiloe',
@@ -61,6 +70,7 @@ export const DEMO_FARMS: Farm[] = [
       es: 'Chiloé es el segundo gran centro de diversidad de la papa y el origen de la mayoría de las papas que hoy se cultivan en el mundo.',
     },
     calendar: 'nasa',
+    harvestWindow: { en: 'February–March 2027', es: 'febrero–marzo 2027' },
   },
   {
     id: 'idaho',
@@ -76,5 +86,6 @@ export const DEMO_FARMS: Farm[] = [
     note: { en: 'Irrigated valley, northern hemisphere: planted in spring, harvested in autumn.', es: 'Valle con riego, hemisferio norte: se siembra en primavera y se cosecha en otoño.' },
     calendar: 'local',
     season: { sow: { en: 'April–May', es: 'abril–mayo' }, harvest: { en: 'September–October', es: 'septiembre–octubre' } },
+    harvestWindow: { en: 'September–October 2027', es: 'septiembre–octubre 2027' },
   },
 ]
