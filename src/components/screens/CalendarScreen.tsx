@@ -5,6 +5,7 @@ import { useI18n, type Key } from '@/i18n'
 import { INCA_MONTHS, VARIETIES, type Reason } from '@/lib/agro'
 import { IncaWheel, LIGHT_COLOR } from '@/components/calendar'
 import { CropTimeline } from '@/components/calendar/CropTimeline'
+import { PlantChecker, WhatToPlant } from '@/components/crops/Suitability'
 import { Attribution, IconDrop, IconSnow, IconThermo, Pleiades, Skeleton, SourceNotice } from '@/components/common'
 
 export default function CalendarScreen() {
@@ -185,6 +186,10 @@ export default function CalendarScreen() {
           </div>
         </div>
       </section>
+
+      <WhatToPlant month={selected} />
+
+      <PlantChecker initialMonth={selected} />
 
       <CropTimeline />
 

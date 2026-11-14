@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { I18nProvider, useI18n } from '@/i18n'
 import { QullqaProvider } from '@/context/QullqaContext'
 import { ErrorBoundary, Spinner } from '@/components/common'
@@ -17,6 +17,7 @@ const LandsScreen = lazy(() => import('@/components/screens/LandsScreen'))
 const ProfileScreen = lazy(() => import('@/components/screens/ProfileScreen'))
 const CropsScreen = lazy(() => import('@/components/screens/CropsScreen'))
 const ElNinoScreen = lazy(() => import('@/components/screens/ElNinoScreen'))
+const ChatScreen = lazy(() => import('@/components/screens/ChatScreen'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -25,6 +26,24 @@ function ScrollToTop() {
     window.scrollTo(0, 0)
   }, [pathname])
   return null
+}
+
+/** Botón flotante del asistente (en todas las pantallas menos el chat). */
+function AskButton() {
+  const { t } = useI18n()
+  const { pathname } = useLocation()
+  if (pathname === '/asistente') return null
+  return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-[84px] z-40 mx-auto flex max-w-md justify-end px-4">
+      <Link
+        to="/asistente"
+        className="pointer-events-auto flex items-center gap-2 rounded-full bg-noche-800 px-4 py-3 font-bold text-white shadow-lg shadow-black/30 ring-2 ring-inti"
+        aria-label={t('chat.title')}
+      >
+        <span aria-hidden="true">✨</span> {t('chat.fab')}
+      </Link>
+    </div>
+  )
 }
 
 function Shell() {
@@ -49,10 +68,12 @@ function Shell() {
               <Route path="/perfil" element={<ProfileScreen />} />
               <Route path="/cultivos" element={<CropsScreen />} />
               <Route path="/nino" element={<ElNinoScreen />} />
+              <Route path="/asistente" element={<ChatScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
         </main>
+        <AskButton />
         <BottomNav />
       </div>
     </div>

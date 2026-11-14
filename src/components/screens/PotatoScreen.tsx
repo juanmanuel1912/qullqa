@@ -23,6 +23,17 @@ export default function PotatoScreen() {
         <p className="mt-1 text-[15px] text-tierra-700">{t('pot.subtitle')}</p>
       </header>
 
+      <Link to="/cultivos" className="flex items-center gap-3 rounded-2xl border-2 border-good/40 bg-green-50 px-4 py-3">
+        <span className="text-2xl" aria-hidden="true">
+          🌽🥑🌶️
+        </span>
+        <span className="flex-1">
+          <span className="block font-extrabold text-noche-800">{t('pot.otherCrops')}</span>
+          <span className="text-xs text-tierra-700">{t('pot.otherCropsSub')}</span>
+        </span>
+        <IconArrow size={18} className="shrink-0 text-tierra-500" />
+      </Link>
+
       {/* Cifras */}
       <section className="grid grid-cols-3 gap-2">
         {[
@@ -60,9 +71,6 @@ export default function PotatoScreen() {
       {tab === 'kitchen' && <Kitchen />}
       {tab === 'chuno' && <Chuno />}
 
-      <Link to="/cultivos" className="btn-ghost w-full">
-        🌽🥑🌶️ {t('pot.otherCrops')} <IconArrow size={16} />
-      </Link>
       <p className="text-center text-xs text-tierra-500">{t('pot.sources')}</p>
       <Attribution />
     </div>

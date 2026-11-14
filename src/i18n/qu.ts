@@ -100,4 +100,6 @@ export const qu: Partial<Record<Key, string>> = {
   'contrib.sent': "Sulpayki!",
   'tl.title': 'Tarpuymanta allaykama',
   'task.harvest.title': 'Allay',
+  'chat.fab': 'Tapuy',
+  'suit.good': 'Allin',
 }

@@ -5,7 +5,7 @@
  */
 import type { Localized } from '@/i18n'
 
-export type CropId = 'papa' | 'maiz' | 'palta' | 'aji' | 'quinua'
+export type CropId = 'papa' | 'maiz' | 'palta' | 'aji' | 'quinua' | 'mango'
 
 export interface CropInfo {
   id: CropId
@@ -23,6 +23,18 @@ export interface CropInfo {
   cycle: Localized
   uses: Localized
   note: Localized
+  /** Requisitos aproximados para el motor de recomendación */
+  req: {
+    /** Rango de altitud habitual (m) */
+    altitude: [number, number]
+    /** Temperatura media mínima para crecer bien (°C) */
+    minMeanTemp: number
+    /** Se daña con heladas */
+    frostSensitive: boolean
+    /** Meses de siembra a cosecha (anuales) o años a la primera cosecha (perennes) */
+    cycleMonths: number
+    perennial: boolean
+  }
 }
 
 export const CROPS: CropInfo[] = [
@@ -41,6 +53,7 @@ export const CROPS: CropInfo[] = [
     cycle: { en: '4.5 – 6 months', es: '4,5 – 6 meses' },
     uses: { en: 'Causa, papa rellena, pastel de papa, chuño', es: 'Causa, papa rellena, pastel de papa, chuño' },
     note: { en: 'Fully working today with NASA data.', es: 'Funciona completo hoy con datos de la NASA.' },
+    req: { altitude: [2000, 4200], minMeanTemp: 6, frostSensitive: false, cycleMonths: 5, perennial: false },
   },
   {
     id: 'maiz',
@@ -60,6 +73,7 @@ export const CROPS: CropInfo[] = [
       en: 'The giant white corn of Cusco has a Peruvian protected designation of origin.',
       es: 'El maíz blanco gigante del Cusco tiene denominación de origen peruana.',
     },
+    req: { altitude: [0, 3500], minMeanTemp: 10, frostSensitive: true, cycleMonths: 6, perennial: false },
   },
   {
     id: 'palta',
@@ -76,6 +90,7 @@ export const CROPS: CropInfo[] = [
     cycle: { en: 'Perennial tree: first harvest 3–4 years after planting', es: 'Árbol perenne: primera cosecha 3–4 años después de plantar' },
     uses: { en: 'Palta rellena, causa, salads', es: 'Palta rellena, causa, ensaladas' },
     note: { en: 'Peru is one of the world’s leading exporters of Hass avocado.', es: 'El Perú es uno de los principales exportadores de palta Hass del mundo.' },
+    req: { altitude: [0, 2500], minMeanTemp: 14, frostSensitive: true, cycleMonths: 36, perennial: true },
   },
   {
     id: 'aji',
@@ -92,6 +107,7 @@ export const CROPS: CropInfo[] = [
     cycle: { en: 'Seedbed ~2 months, then first harvest 4–5 months after transplanting', es: 'Almácigo ~2 meses; primera cosecha 4–5 meses después del trasplante' },
     uses: { en: 'Papa a la huancaína, ají de gallina, rocoto relleno, ceviche', es: 'Papa a la huancaína, ají de gallina, rocoto relleno, ceviche' },
     note: { en: 'The base of Peruvian cooking: almost every dish starts with an ají.', es: 'La base de la cocina peruana: casi todo plato empieza con un ají.' },
+    req: { altitude: [0, 2900], minMeanTemp: 14, frostSensitive: true, cycleMonths: 6, perennial: false },
   },
   {
     id: 'quinua',
@@ -108,6 +124,24 @@ export const CROPS: CropInfo[] = [
     cycle: { en: '5 – 7 months', es: '5 – 7 meses' },
     uses: { en: 'Soups, quinotto, breakfast drinks, flour', es: 'Sopas, quinotto, desayunos, harina' },
     note: { en: 'An Andean grain that tolerates frost and drought, like the bitter potatoes.', es: 'Grano andino que resiste heladas y sequías, como las papas amargas.' },
+    req: { altitude: [2500, 4000], minMeanTemp: 5, frostSensitive: false, cycleMonths: 6, perennial: false },
+  },
+  {
+    id: 'mango',
+    emoji: '🥭',
+    name: { en: 'Mango', es: 'Mango' },
+    scientific: 'Mangifera indica',
+    status: 'soon',
+    color: '#f2b705',
+    varieties: 'Kent, Edward, Haden',
+    regions: { en: 'Warm northern coast and valleys (Piura, Lambayeque, Áncash)', es: 'Costa y valles cálidos del norte (Piura, Lambayeque, Áncash)' },
+    altitude: '0 – 1 000 m',
+    sowMonths: [],
+    harvestMonths: [10, 11, 0, 1, 2],
+    cycle: { en: 'Perennial tree: first fruit 3–4 years after planting grafted trees', es: 'Árbol perenne: primeros frutos 3–4 años después de plantar injertos' },
+    uses: { en: 'Fresh fruit, juices, desserts, ceviche de mango', es: 'Fruta fresca, jugos, postres, ceviche de mango' },
+    note: { en: 'Piura is the main mango region of Peru, and Kent mango is a major export.', es: 'Piura es la principal región mangera del Perú, y el mango Kent es un gran producto de exportación.' },
+    req: { altitude: [0, 1000], minMeanTemp: 20, frostSensitive: true, cycleMonths: 42, perennial: true },
   },
 ]
 

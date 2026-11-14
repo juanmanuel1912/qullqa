@@ -31,6 +31,8 @@ For centuries, Andean farmers have watched the **Pleiades** (in Quechua, **_Qull
 | **Potatoes** | A guide to Peru's potatoes: a curated catalog of improved, native and bitter varieties with their altitude, regions and best uses; the Andean altitude zones; how to plant in 7 steps; which potato for which dish (causa, papa rellena, pastel de papa…); and how chuño, tunta, papa seca and potato starch are made. It also includes a map of where each variety grows and a **community contribution form** (photo, region, dishes, disease resistance) with an expert review queue. That form is the path toward documenting all 3,000+ varieties. *(Demo: contributions are stored on the device.)* |
 | **Crops of Peru** *(preview)* | Maize/choclo, avocado, Peruvian chili peppers and quinoa as static previews (varieties, regions, altitude, seasons, cooking). The goal is to bring the same NASA calendar, variety catalog with expert approval, field maps and producer profiles to every crop |
 | **Farmer profile** *(demo)* | Public profile of a sample farmer with location, contact and what they grow and when, plus a **My products** form where farmers list what they sell (stored on the device). It's the base for a future direct-sale marketplace |
+| **Assistant** | Farming chat: ask things like *"If I plant mango in April, is it a good idea and how long would it take?"* It answers with the farm's NASA climate normals, this week's forecast and the El Niño status. It uses Claude (Anthropic API) through a Vercel function, and falls back to a built-in local assistant when no API key is configured |
+| **Should I plant it?** | In the Calendar: what can be planted in the chosen month at your field, and a checker for your products, field and month (potato uses the NASA crop model; other crops use altitude, temperature, frost and season rules — example estimates) |
 | **Qullqa telescope** | A live planetarium aimed at the Pleiades from the farmer's location, both now and at dawn on the Inti Raymi (June 20) as the Incas saw them. It computes tonight's viewing window, shows real NASA images of the Pleiades (Spitzer, WISE, Cassini, and from the surface of Mars), and tells the Inca story in three illustrated steps |
 | **Qullqa on Mars** | A Martian greenhouse simulator with temperature, light and water sliders. It runs the same crop model and compares the result with Earth |
 
@@ -58,6 +60,10 @@ All data is fetched directly from public APIs in the browser, so there is no bac
 - **Best planting month:** the model simulates the whole crop cycle for each of the 12 months. Each month is scored on rain at planting, root-zone soil moisture, frost at emergence, frost months during the cycle, and rain during early growth
 - **Harvest date:** GDD from real NASA daily data up to today, plus projected GDD from NASA climatology after today
 - **Validation:** with NASA POWER data for Cusco, the model recommends planting in **November** and harvesting in **April**, which matches traditional Andean practice
+
+## AI assistant setup (optional)
+
+The chat calls `POST /api/chat` (`api/chat.ts`, a Vercel function using the Anthropic SDK and Claude Opus 5.5 at low effort, with server-side refusal fallbacks). To turn it on, add `ANTHROPIC_API_KEY` in Vercel → Settings → Environment Variables and redeploy. The key stays on the server. Without it, the app answers with its local assistant.
 
 ## Run locally
 

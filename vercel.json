@@ -5,8 +5,17 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "rewrites": [
-    { "source": "/api/enso/oni", "destination": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt" },
-    { "source": "/api/enso/nino12", "destination": "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/enso/oni",
+      "destination": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
+    },
+    {
+      "source": "/api/enso/nino12",
+      "destination": "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
