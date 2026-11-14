@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QullqaProvider } from '@/context/QullqaContext'
 import { ErrorBoundary } from '@/components/common'
 import { Header, SafeArea, BottomNav } from '@/components/layout'
+import { HomeScreen, MyFarmScreen } from '@/components/screens'
 
 function AppContent() {
   return (
@@ -9,12 +10,8 @@ function AppContent() {
       <Header />
       <SafeArea className="flex-1">
         <Routes>
-          <Route path="/" element={<div className="flex items-center justify-center">
-            <p className="text-center text-tierra-700">Pantalla de inicio...</p>
-          </div>} />
-          <Route path="/my-farm" element={<div className="flex items-center justify-center">
-            <p className="text-center text-tierra-700">Pantalla Mi chacra...</p>
-          </div>} />
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/my-farm" element={<MyFarmScreen />} />
           <Route path="/calendar" element={<div className="flex items-center justify-center">
             <p className="text-center text-tierra-700">Calendario inca...</p>
           </div>} />
