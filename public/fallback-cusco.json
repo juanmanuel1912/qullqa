@@ -1,0 +1,116 @@
+{
+  "lat": -13.5319,
+  "lon": -71.9754,
+  "location": "Cusco, Perú",
+  "note": "Datos de respaldo - climatología histórica de Cusco",
+  "climatic_data": [
+    {
+      "month": 1,
+      "T2M": 13.2,
+      "T2M_MIN": 5.1,
+      "T2M_MAX": 21.3,
+      "PRECTOTCORR": 150,
+      "ALLSKY_SFC_SW_DWN": 5.2,
+      "GWETROOT": 0.75
+    },
+    {
+      "month": 2,
+      "T2M": 13.1,
+      "T2M_MIN": 5.0,
+      "T2M_MAX": 21.2,
+      "PRECTOTCORR": 145,
+      "ALLSKY_SFC_SW_DWN": 5.1,
+      "GWETROOT": 0.74
+    },
+    {
+      "month": 3,
+      "T2M": 12.9,
+      "T2M_MIN": 4.8,
+      "T2M_MAX": 21.0,
+      "PRECTOTCORR": 140,
+      "ALLSKY_SFC_SW_DWN": 5.0,
+      "GWETROOT": 0.72
+    },
+    {
+      "month": 4,
+      "T2M": 12.5,
+      "T2M_MIN": 3.5,
+      "T2M_MAX": 20.5,
+      "PRECTOTCORR": 65,
+      "ALLSKY_SFC_SW_DWN": 5.3,
+      "GWETROOT": 0.55
+    },
+    {
+      "month": 5,
+      "T2M": 11.8,
+      "T2M_MIN": 1.2,
+      "T2M_MAX": 19.8,
+      "PRECTOTCORR": 20,
+      "ALLSKY_SFC_SW_DWN": 5.5,
+      "GWETROOT": 0.35
+    },
+    {
+      "month": 6,
+      "T2M": 11.2,
+      "T2M_MIN": -0.5,
+      "T2M_MAX": 19.0,
+      "PRECTOTCORR": 10,
+      "ALLSKY_SFC_SW_DWN": 5.4,
+      "GWETROOT": 0.25
+    },
+    {
+      "month": 7,
+      "T2M": 11.1,
+      "T2M_MIN": -0.8,
+      "T2M_MAX": 18.8,
+      "PRECTOTCORR": 5,
+      "ALLSKY_SFC_SW_DWN": 5.6,
+      "GWETROOT": 0.22
+    },
+    {
+      "month": 8,
+      "T2M": 11.8,
+      "T2M_MIN": 0.5,
+      "T2M_MAX": 19.5,
+      "PRECTOTCORR": 15,
+      "ALLSKY_SFC_SW_DWN": 5.7,
+      "GWETROOT": 0.28
+    },
+    {
+      "month": 9,
+      "T2M": 12.5,
+      "T2M_MIN": 2.0,
+      "T2M_MAX": 20.5,
+      "PRECTOTCORR": 45,
+      "ALLSKY_SFC_SW_DWN": 5.6,
+      "GWETROOT": 0.42
+    },
+    {
+      "month": 10,
+      "T2M": 13.2,
+      "T2M_MIN": 4.0,
+      "T2M_MAX": 21.5,
+      "PRECTOTCORR": 85,
+      "ALLSKY_SFC_SW_DWN": 5.4,
+      "GWETROOT": 0.62
+    },
+    {
+      "month": 11,
+      "T2M": 13.5,
+      "T2M_MIN": 5.0,
+      "T2M_MAX": 21.8,
+      "PRECTOTCORR": 110,
+      "ALLSKY_SFC_SW_DWN": 5.2,
+      "GWETROOT": 0.68
+    },
+    {
+      "month": 12,
+      "T2M": 13.4,
+      "T2M_MIN": 5.2,
+      "T2M_MAX": 21.6,
+      "PRECTOTCORR": 135,
+      "ALLSKY_SFC_SW_DWN": 5.0,
+      "GWETROOT": 0.73
+    }
+  ]
+}
