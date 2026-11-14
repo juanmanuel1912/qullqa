@@ -1,179 +1,174 @@
 /**
- * QullqaContext - Estado global de la app
- * Gestiona: ubicación, variedad, datos NASA, estado de carga
+ * Estado global de Qullqa: perfil de la chacra (guardado en el teléfono),
+ * datos de la NASA y todo lo que se calcula con ellos.
  */
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { CUSCO, fetchApod, fetchClimatology, fetchDaily } from '@/services/nasa'
+import type { ApodData, Climatology, DailyRecord } from '@/services/nasa/types'
+import {
+  buildCalendar,
+  getCropStatus,
+  recommendSowing,
+  weeklySeries,
+  type CalendarMonth,
+  type CropStatus,
+  type SowingRecommendation,
+  type VarietyId,
+  type WeekPoint,
+} from '@/lib/agro'
+import { addDaysIso, todayIso, todayUtc } from '@/utils/format'
 
-import { createContext, useContext, useState, useCallback, useEffect } from 'react'
-import { PotatoVariety } from '@/types'
-import { fetchClimatology, fetchDaily, fetchApod } from '@/services/nasa'
-import type { MonthlyClimate, DailyRecord, ApodData } from '@/services/nasa/types'
-
-// Crear contexto
-const QullqaContext = createContext<any>(undefined)
-
-// Keys para localStorage
-const LOCATION_LAT_KEY = 'qullqa_location_lat'
-const LOCATION_LON_KEY = 'qullqa_location_lon'
-const VARIETY_KEY = 'qullqa_variety'
-const PLANTING_DATE_KEY = 'qullqa_planting_date'
-
-// Provider
-export function QullqaProvider({ children }: { children: React.ReactNode }) {
-  // Estado
-  const [location, setLocationState] = useState<{ lat: number; lon: number } | null>(null)
-  const [variety, setVarietyState] = useState<PotatoVariety | null>(null)
-  const [plantingDate, setPlantingDateState] = useState<string | null>(null)
-  const [climatology, setClimatology] = useState<MonthlyClimate[] | null>(null)
-  const [dailyData, setDailyData] = useState<DailyRecord[] | null>(null)
-  const [apod, setApod] = useState<ApodData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  // Cargar datos guardados al iniciar
-  useEffect(() => {
-    try {
-      const savedLat = localStorage.getItem(LOCATION_LAT_KEY)
-      const savedLon = localStorage.getItem(LOCATION_LON_KEY)
-      const savedVariety = localStorage.getItem(VARIETY_KEY) as PotatoVariety | null
-      const savedPlantingDate = localStorage.getItem(PLANTING_DATE_KEY)
-
-      if (savedLat && savedLon) {
-        setLocationState({
-          lat: parseFloat(savedLat),
-          lon: parseFloat(savedLon),
-        })
-      }
-
-      if (savedVariety) {
-        setVarietyState(savedVariety)
-      }
-
-      if (savedPlantingDate) {
-        setPlantingDateState(savedPlantingDate)
-      }
-    } catch (err) {
-      console.warn('Error loading from localStorage:', err)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  // Cargar APOD al iniciar
-  useEffect(() => {
-    fetchApod()
-      .then(setApod)
-      .catch(err => console.warn('Error fetching APOD:', err))
-  }, [])
-
-  // Obtener datos de clima
-  const fetchClimateData = useCallback(async () => {
-    if (!location) {
-      setError('Ubicación no disponible')
-      return
-    }
-
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Fetch climatología - devuelve objeto Climatology
-      const climResult = await fetchClimatology(location.lat, location.lon)
-      setClimatology(climResult.months)
-
-      // Mostrar aviso si es fallback
-      if (climResult.source === 'fallback') {
-        setError('Sin conexión: datos de Cusco')
-      }
-
-      // Fetch datos diarios (últimos 30 días)
-      const now = new Date()
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-
-      try {
-        // fetchDaily devuelve objeto DailySeries
-        const dailyResult = await fetchDaily(
-          location.lat,
-          location.lon,
-          thirtyDaysAgo,
-          now
-        )
-        setDailyData(dailyResult.days)
-      } catch (dailyErr) {
-        // Es OK si falla fetchDaily - seguimos con climatología
-        console.warn('Daily data not available:', dailyErr)
-        setDailyData(null)
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error fetching climate data'
-      setError(message)
-      console.error('Error fetching climate data:', err)
-    } finally {
-      setLoading(false)
-    }
-  }, [location])
-
-  // Refetch
-  const refetch = useCallback(async () => {
-    await fetchClimateData()
-  }, [fetchClimateData])
-
-  // Setters que persisten en localStorage
-  const setLocation = useCallback((lat: number, lon: number) => {
-    setLocationState({ lat, lon })
-    try {
-      localStorage.setItem(LOCATION_LAT_KEY, lat.toString())
-      localStorage.setItem(LOCATION_LON_KEY, lon.toString())
-    } catch (err) {
-      console.warn('Error saving location:', err)
-    }
-  }, [])
-
-  const setVariety = useCallback((v: PotatoVariety) => {
-    setVarietyState(v)
-    try {
-      localStorage.setItem(VARIETY_KEY, v)
-    } catch (err) {
-      console.warn('Error saving variety:', err)
-    }
-  }, [])
-
-  const setPlantingDate = useCallback((date: string) => {
-    setPlantingDateState(date)
-    try {
-      localStorage.setItem(PLANTING_DATE_KEY, date)
-    } catch (err) {
-      console.warn('Error saving planting date:', err)
-    }
-  }, [])
-
-  const value = {
-    location,
-    setLocation,
-    variety,
-    setVariety,
-    plantingDate,
-    setPlantingDate,
-    climatology,
-    dailyData,
-    apod,
-    loading,
-    error,
-    fetchClimateData,
-    refetch,
-  }
-
-  return (
-    <QullqaContext.Provider value={value}>
-      {children}
-    </QullqaContext.Provider>
-  )
+export interface FarmProfile {
+  lat: number
+  lon: number
+  placeName: string
+  variety: VarietyId
+  /** 'YYYY-MM-DD' o null si aún no sembró */
+  plantingDate: string | null
+  /** Ya completó "Mi chacra" al menos una vez */
+  onboarded: boolean
 }
 
-// Hook para usar contexto
-export function useQullqa() {
-  const context = useContext(QullqaContext)
-  if (!context) {
-    throw new Error('useQullqa debe usarse dentro de QullqaProvider')
+export const DEFAULT_PROFILE: FarmProfile = {
+  lat: CUSCO.lat,
+  lon: CUSCO.lon,
+  placeName: 'Cusco',
+  variety: 'yungay',
+  plantingDate: null,
+  onboarded: false,
+}
+
+const PROFILE_KEY = 'qullqa:v1:profile'
+
+function loadProfile(): FarmProfile {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY)
+    if (raw) return { ...DEFAULT_PROFILE, ...(JSON.parse(raw) as Partial<FarmProfile>) }
+  } catch {
+    /* sin almacenamiento: perfil por defecto */
   }
-  return context
+  return DEFAULT_PROFILE
+}
+
+function saveProfile(p: FarmProfile) {
+  try {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(p))
+  } catch {
+    /* ignorar */
+  }
+}
+
+interface QullqaState {
+  profile: FarmProfile
+  updateProfile: (patch: Partial<FarmProfile>) => void
+  today: Date
+  climatology: Climatology | null
+  climateLoading: boolean
+  daily: DailyRecord[]
+  dailyLoading: boolean
+  apod: ApodData | null
+  calendar: CalendarMonth[] | null
+  sowing: SowingRecommendation | null
+  crop: CropStatus | null
+  weekly: WeekPoint[] | null
+}
+
+const QullqaContext = createContext<QullqaState | null>(null)
+
+export function QullqaProvider({ children }: { children: ReactNode }) {
+  const [profile, setProfile] = useState<FarmProfile>(loadProfile)
+  const [today] = useState(todayUtc)
+  const [climatology, setClimatology] = useState<Climatology | null>(null)
+  const [climateLoading, setClimateLoading] = useState(true)
+  const [daily, setDaily] = useState<DailyRecord[]>([])
+  const [dailyLoading, setDailyLoading] = useState(false)
+  const [apod, setApod] = useState<ApodData | null>(null)
+
+  const updateProfile = useCallback((patch: Partial<FarmProfile>) => {
+    setProfile((prev) => {
+      const next = { ...prev, ...patch }
+      saveProfile(next)
+      return next
+    })
+  }, [])
+
+  // Foto del día
+  useEffect(() => {
+    const ctrl = new AbortController()
+    fetchApod(ctrl.signal).then(setApod)
+    return () => ctrl.abort()
+  }, [])
+
+  // Climatología: cada vez que cambia la ubicación
+  useEffect(() => {
+    const ctrl = new AbortController()
+    setClimateLoading(true)
+    fetchClimatology(profile.lat, profile.lon, ctrl.signal)
+      .then((c) => {
+        setClimatology(c)
+        setClimateLoading(false)
+      })
+      .catch(() => {
+        if (!ctrl.signal.aborted) setClimateLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [profile.lat, profile.lon])
+
+  // Datos diarios: desde la siembra (o las últimas 5 semanas) hasta hoy
+  useEffect(() => {
+    const ctrl = new AbortController()
+    const now = todayIso()
+    const recent = addDaysIso(now, -35)
+    const oldest = addDaysIso(now, -400)
+    let start = profile.plantingDate && profile.plantingDate < recent ? profile.plantingDate : recent
+    if (start < oldest) start = oldest
+    setDailyLoading(true)
+    fetchDaily(profile.lat, profile.lon, new Date(`${start}T00:00:00Z`), new Date(`${now}T00:00:00Z`), ctrl.signal)
+      .then((s) => setDaily(s.days))
+      .catch(() => {
+        if (!ctrl.signal.aborted) setDaily([])
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setDailyLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [profile.lat, profile.lon, profile.plantingDate])
+
+  const derived = useMemo(() => {
+    if (!climatology) return { calendar: null, sowing: null, crop: null, weekly: null }
+    return {
+      calendar: buildCalendar(climatology, profile.variety, today.getUTCFullYear()),
+      sowing: recommendSowing(climatology, profile.variety, today),
+      crop: profile.plantingDate
+        ? getCropStatus({
+            sowingDate: new Date(`${profile.plantingDate}T00:00:00Z`),
+            variety: profile.variety,
+            climatology,
+            daily,
+            today,
+          })
+        : null,
+      weekly: weeklySeries(climatology, daily, today),
+    }
+  }, [climatology, daily, profile.variety, profile.plantingDate, today])
+
+  const value: QullqaState = {
+    profile,
+    updateProfile,
+    today,
+    climatology,
+    climateLoading,
+    daily,
+    dailyLoading,
+    apod,
+    ...derived,
+  }
+
+  return <QullqaContext.Provider value={value}>{children}</QullqaContext.Provider>
+}
+
+export function useQullqa(): QullqaState {
+  const ctx = useContext(QullqaContext)
+  if (!ctx) throw new Error('useQullqa debe usarse dentro de QullqaProvider')
+  return ctx
 }

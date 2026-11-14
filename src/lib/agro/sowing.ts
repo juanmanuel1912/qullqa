@@ -36,9 +36,16 @@ function monthsInCycle(from: Date, to: Date): number[] {
  *   +40 ciclo sin heladas (−15 por cada mes con helada, −25 si es fuerte),
  *   −20 si la papa pasa sus primeros 3 meses con poca lluvia.
  */
-export function evaluateSowingMonth(clim: Climatology, variety: VarietyId, month: number, year: number): SowingEvaluation {
+export function evaluateSowingMonth(
+  clim: Climatology,
+  variety: VarietyId,
+  month: number,
+  year: number,
+  /** Día de siembra (1 por defecto; para el mes en curso se usa hoy) */
+  day = 1,
+): SowingEvaluation {
   const v = getVariety(variety);
-  const sowDate = new Date(Date.UTC(year, month, 1));
+  const sowDate = new Date(Date.UTC(year, month, day));
   const harvestDate = projectDateForGdd(sowDate, 0, v.gddToHarvest, clim);
   const m = clim.months[month];
   const prev = clim.months[(month + 11) % 12];
@@ -131,7 +138,8 @@ export function recommendSowing(clim: Climatology, variety: VarietyId, today = n
   const all = Array.from({ length: 12 }, (_, k) => {
     const month = (m0 + k) % 12;
     const year = y + Math.floor((m0 + k) / 12);
-    return evaluateSowingMonth(clim, variety, month, year);
+    // Mes en curso: sembrar hoy (no el día 1, que ya pasó).
+    return evaluateSowingMonth(clim, variety, month, year, k === 0 ? today.getUTCDate() : 1);
   });
   // Mejor puntaje; en empate gana el más cercano.
   const bestIdx = all.reduce((bi, e, i) => (e.score > all[bi].score ? i : bi), 0);

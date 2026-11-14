@@ -38,3 +38,8 @@ coverage
 # E2E tests
 test-results
 playwright-report
+
+# Restos de tsc -b
+vite.config.js
+vite.config.d.ts
+*.tsbuildinfo

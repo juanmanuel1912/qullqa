@@ -1,179 +1,190 @@
-/**
- * Pantalla Mi Cultivo
- * - Progreso GDD
- * - Días para cosecha
- * - Gráficos de lluvia y temperatura
- */
-
-import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
-import { Card, Badge, Attribution } from '@/components/common'
-import type { MonthlyClimate } from '@/services/nasa/types'
+import { motivationFor, STAGES, VARIETIES } from '@/lib/agro'
+import { WeeklyChart } from '@/components/charts/WeeklyChart'
+import { Attribution, IconArrow, Notice, ProgressRing, Skeleton, SourceNotice } from '@/components/common'
+import { addDaysIso, fmtLong, todayIso } from '@/utils/format'
 
-export function MyCropScreen() {
-  const { plantingDate, variety, climatology } = useQullqa()
-  const [cropInfo, setCropInfo] = useState<any>(null)
+export default function MyCropScreen() {
+  const { profile, updateProfile, crop, weekly, sowing, climatology, dailyLoading, today } = useQullqa()
+  const variety = VARIETIES[profile.variety]
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
-  useEffect(() => {
-    if (!plantingDate || !variety || !climatology) return
-
-    // Calcular progreso
-    const today = new Date()
-    const planting = new Date(plantingDate)
-    const daysSincePlanting = Math.floor(
-      (today.getTime() - planting.getTime()) / (1000 * 60 * 60 * 24)
-    )
-
-    // Metas GDD (simplificado)
-    const targets: Record<string, number> = {
-      'Yungay': 1050,
-      'Canchán': 900,
-      'Huayro': 1200,
-    }
-
-    const estCycleDays = targets[variety] || 150
-    const harvestDate = new Date(planting.getTime() + estCycleDays * 24 * 60 * 60 * 1000)
-    const daysUntilHarvest = Math.max(0, Math.floor(
-      (harvestDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-    ))
-
-    const stages = [
-      { name: 'Plantación', range: [0, 10] },
-      { name: 'Germinación', range: [10, 30] },
-      { name: 'Crecimiento Vegetativo', range: [30, 90] },
-      { name: 'Floración', range: [90, 110] },
-      { name: 'Tubérización', range: [110, 140] },
-      { name: 'Maduración', range: [140, 160] },
-    ]
-
-    const currentStage = stages.find(
-      s => daysSincePlanting >= s.range[0] && daysSincePlanting <= s.range[1]
-    ) || stages[stages.length - 1]
-
-    setCropInfo({
-      daysSincePlanting,
-      daysUntilHarvest,
-      harvestDate,
-      currentStage,
-      progressPercent: Math.min(100, Math.round((daysSincePlanting / estCycleDays) * 100)),
-    })
-  }, [plantingDate, variety, climatology])
-
-  if (!plantingDate) {
+  // Aún no sembró
+  if (!profile.plantingDate) {
     return (
-      <div className="space-y-6 pb-8 max-w-2xl mx-auto px-4">
-        <Card variant="default" className="space-y-4">
-          <h2 className="text-2xl font-bold text-tierra">🌱 Mi Cultivo</h2>
-          <p className="text-sm text-tierra-600">
-            Aún no has plantado. Ve a "Mi chacra" para comenzar.
-          </p>
-        </Card>
+      <div className="space-y-4">
+        <header className="pt-2">
+          <h1 className="font-display text-3xl text-noche-800">Mi cultivo</h1>
+          <p className="mt-1 text-[15px] text-tierra-700">Registra tu siembra y te acompañamos hasta la cosecha.</p>
+        </header>
+        <section className="card space-y-4 text-center">
+          <p className="text-5xl" aria-hidden="true">🌱</p>
+          <p className="font-display text-xl">¿Cuándo sembraste tu {variety.name}?</p>
+          <label className="block text-left">
+            <span className="text-sm font-semibold text-tierra-700">Fecha de siembra</span>
+            <input
+              type="date"
+              max={todayIso()}
+              onChange={(e) => e.target.value && updateProfile({ plantingDate: e.target.value, onboarded: true })}
+              className="mt-1 block min-h-[48px] w-full rounded-2xl border-2 border-tierra-200 bg-white px-4 text-base font-bold"
+            />
+          </label>
+          <button onClick={() => updateProfile({ plantingDate: todayIso(), onboarded: true })} className="btn-primary w-full">
+            Sembré hoy
+          </button>
+          <button
+            onClick={() => updateProfile({ plantingDate: addDaysIso(todayIso(), -75), onboarded: true })}
+            className="btn-ghost w-full"
+          >
+            Ver un ejemplo (sembrado hace 75 días)
+          </button>
+          {sowing && (
+            <p className="text-sm text-tierra-700">
+              ¿Todavía no? La NASA recomienda sembrar desde el <strong>{fmtLong(sowing.best.sowDate)}</strong>.{' '}
+              <Link to="/calendario" className="font-bold text-noche-600 underline">Ver calendario</Link>
+            </p>
+          )}
+        </section>
         <Attribution />
       </div>
     )
   }
 
-  if (!cropInfo) {
-    return <div />
+  if (!crop || !weekly) {
+    return (
+      <div className="space-y-4 pt-2">
+        <Skeleton className="h-80" />
+        <Skeleton className="h-40" />
+      </div>
+    )
   }
 
+  const stageIdx = STAGES.findIndex((s) => s.id === crop.stage.id)
+  const notYet = crop.daysSinceSowing === 0 && crop.progress === 0
+
   return (
-    <div className="space-y-6 pb-8 max-w-2xl mx-auto px-4">
-      {/* Header */}
-      <Card variant="default" className="space-y-3">
-        <h2 className="text-2xl font-bold text-tierra">🌱 Mi Cultivo</h2>
-        <div className="flex gap-2">
-          <Badge variant="info">{variety}</Badge>
-          <Badge variant="default">
-            Plantado: {new Date(plantingDate).toLocaleDateString('es-PE')}
-          </Badge>
-        </div>
-      </Card>
-
-      {/* Countdown Card */}
-      <Card variant="elevated" className="bg-gradient-to-br from-inti-50 to-tierra-50 border-2 border-inti space-y-4">
-        <div className="text-center space-y-2">
-          <p className="text-sm font-medium text-tierra-600">Días para cosecha</p>
-          <p className="text-5xl font-bold text-inti">{cropInfo.daysUntilHarvest}</p>
-          <p className="text-sm text-tierra-700">
-            Cosecha estimada: {cropInfo.harvestDate.toLocaleDateString('es-PE', { month: 'long', day: 'numeric' })}
+    <div className="space-y-4">
+      <header className="flex items-end justify-between pt-2">
+        <div>
+          <p className="eyebrow text-inti-700">
+            {variety.name} · {profile.placeName}
           </p>
+          <h1 className="mt-1 font-display text-3xl text-noche-800">Mi cultivo</h1>
         </div>
+        <Link to="/chacra" className="text-sm font-bold text-noche-600 underline">
+          Cambiar
+        </Link>
+      </header>
 
-        {/* Progress bar */}
-        <div className="space-y-2">
-          <div className="w-full bg-tierra-200 rounded-full h-3 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-inti to-tierra h-full transition-all duration-500"
-              style={{ width: `${cropInfo.progressPercent}%` }}
-            />
-          </div>
-          <p className="text-xs text-tierra-600 text-center">
-            {cropInfo.progressPercent}% completado
+      <SourceNotice source={climatology?.source} />
+
+      {/* Cuenta regresiva */}
+      <section className="card flex flex-col items-center text-center">
+        <ProgressRing value={crop.progress} size={210} stroke={16}>
+          {crop.daysToHarvest === 0 ? (
+            <>
+              <span className="text-5xl" aria-hidden="true">🥔</span>
+              <span className="mt-1 font-display text-xl">¡A cosechar!</span>
+            </>
+          ) : (
+            <>
+              <span className="text-xs font-extrabold uppercase tracking-wider text-tierra-500">Faltan</span>
+              <span className="font-display text-6xl leading-none text-noche-800">{crop.daysToHarvest ?? '—'}</span>
+              <span className="text-sm font-bold text-tierra-700">días para cosechar</span>
+            </>
+          )}
+        </ProgressRing>
+        <p className="mt-4 text-[15px] text-tierra-800">
+          {notYet ? 'Siembra registrada para hoy.' : `Día ${crop.daysSinceSowing} desde la siembra · ${Math.round(crop.progress * 100)}% del camino.`}
+        </p>
+        {crop.harvestDate && (
+          <p className="mt-1 text-lg font-extrabold">Cosecha estimada: {fmtLong(crop.harvestDate)}</p>
+        )}
+        <p className="mt-3 rounded-2xl bg-inti-50 px-4 py-3 text-[15px] font-semibold text-inti-900">
+          {motivationFor(crop.stage.id, today)}
+        </p>
+      </section>
+
+      {/* Etapas */}
+      <section className="card space-y-4">
+        <h2 className="text-lg font-extrabold">Etapa: {crop.stage.name}</h2>
+        <ol className="flex items-start justify-between" aria-label="Etapas del cultivo">
+          {STAGES.map((s, i) => {
+            const done = i < stageIdx
+            const current = i === stageIdx
+            return (
+              <li key={s.id} className="flex flex-1 flex-col items-center gap-1 text-center">
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-extrabold ${
+                    current ? 'bg-inti text-noche-800 ring-4 ring-inti-200' : done ? 'bg-good text-white' : 'bg-tierra-100 text-tierra-400'
+                  }`}
+                  aria-current={current ? 'step' : undefined}
+                >
+                  {done ? '✓' : i + 1}
+                </span>
+                <span className={`text-[10px] font-bold leading-tight ${current ? 'text-noche-800' : 'text-tierra-500'}`}>
+                  {s.quechua}
+                </span>
+              </li>
+            )
+          })}
+        </ol>
+        <div className="rounded-2xl bg-tierra-50 p-4">
+          <p className="text-xs font-extrabold uppercase tracking-wider text-tierra-600">
+            {crop.stage.quechua} · consejo
           </p>
+          <p className="mt-1 text-[15px] text-tierra-900">{crop.stage.tip}</p>
         </div>
-      </Card>
+      </section>
 
-      {/* Current Stage */}
-      <Card variant="default" className="space-y-3">
-        <h3 className="font-semibold text-tierra">Etapa actual</h3>
-        <div className="space-y-2">
-          <p className="text-lg font-bold text-tierra">{cropInfo.currentStage.name}</p>
-          <p className="text-sm text-tierra-600">
-            Día {cropInfo.daysSincePlanting} desde la plantación
-          </p>
-        </div>
-      </Card>
-
-      {/* Climate Summary */}
-      {climatology && (
-        <Card variant="outlined" className="space-y-4">
-          <h3 className="font-semibold text-tierra">📊 Clima Promedio</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-tierra-50 p-3 rounded">
-              <p className="text-xs text-tierra-600">Temperatura Media</p>
-              <p className="text-lg font-bold text-tierra">
-                {(climatology.reduce((sum: number, m: MonthlyClimate) => sum + m.t2m, 0) / 12).toFixed(1)}°C
-              </p>
-            </div>
-            <div className="bg-tierra-50 p-3 rounded">
-              <p className="text-xs text-tierra-600">Lluvia Anual</p>
-              <p className="text-lg font-bold text-tierra">
-                {climatology.reduce((sum: number, m: MonthlyClimate) => sum + m.precipMmMonth, 0).toFixed(0)}mm
-              </p>
-            </div>
-          </div>
-        </Card>
+      {/* Alertas */}
+      {crop.alerts.length > 0 && (
+        <section className="space-y-2" aria-label="Alertas">
+          {crop.alerts.map((a) => (
+            <Notice key={a.title} tone={a.level === 'danger' ? 'danger' : a.level === 'warning' ? 'warning' : 'success'} title={a.title}>
+              {a.message}
+            </Notice>
+          ))}
+        </section>
       )}
 
-      {/* Tips */}
-      <Card variant="outlined" className="bg-inti-50 border-inti-200 space-y-3">
-        <h3 className="font-semibold text-inti-700">💡 Recomendaciones</h3>
-        {cropInfo.currentStage.name === 'Germinación' && (
-          <p className="text-sm text-tierra-700">
-            En germinación, mantén el suelo húmedo y protege de heladas nocturnas.
+      {/* Clima semanal */}
+      <section className="card space-y-2">
+        <h2 className="text-lg font-extrabold">Clima en tu chacra</h2>
+        <p className="text-sm text-tierra-700">Últimas 4 semanas medidas por la NASA y las 2 próximas esperadas.</p>
+        <WeeklyChart data={weekly} />
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-bold text-tierra-700">
+          <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-noche-500" /> Lluvia medida</span>
+          <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-dashed border-noche-400 bg-noche-200" /> Lluvia esperada</span>
+          <span className="flex items-center gap-1.5"><span className="h-1 w-4 rounded bg-inti" /> Temperatura</span>
+        </div>
+      </section>
+
+      {/* Cómo se calcula */}
+      <details className="card group">
+        <summary className="flex cursor-pointer list-none items-center justify-between text-[15px] font-extrabold">
+          ¿Cómo lo calcula Qullqa?
+          <IconArrow size={18} className="transition group-open:rotate-90" />
+        </summary>
+        <div className="mt-3 space-y-2 text-sm text-tierra-800">
+          <p>
+            La papa crece según el calor que acumula cada día (<strong>grados-día</strong>). Tu {variety.name} necesita{' '}
+            {crop.gddTarget} grados-día y ya lleva <strong>{crop.gddAccumulated}</strong>.
           </p>
-        )}
-        {cropInfo.currentStage.name === 'Tubérización' && (
-          <p className="text-sm text-tierra-700">
-            Durante la tubérización, aumenta el riego. La papa necesita humedad para formar tubérculos.
+          <p>
+            Usamos la temperatura diaria real de NASA POWER para tu chacra
+            {crop.observedDays > 0 ? ` (${crop.observedDays} días medidos)` : ''}
+            {dailyLoading ? ', cargando…' : ''} y, para los días que faltan, el clima promedio de 25 años.
           </p>
-        )}
-        {cropInfo.currentStage.name === 'Maduración' && (
-          <p className="text-sm text-tierra-700">
-            En maduración, reduce el riego para mejorar la calidad de los tubérculos.
-          </p>
-        )}
-        {!['Germinación', 'Tubérización', 'Maduración'].includes(cropInfo.currentStage.name) && (
-          <p className="text-sm text-tierra-700">
-            Mantén observación continua del cultivo. Revisa regularmente el estado de las plantas.
-          </p>
-        )}
-      </Card>
+        </div>
+      </details>
+
+      <button
+        onClick={() => updateProfile({ plantingDate: null })}
+        className="w-full py-2 text-sm font-bold text-tierra-500 underline"
+      >
+        Borrar siembra y empezar otra
+      </button>
 
       <Attribution />
     </div>

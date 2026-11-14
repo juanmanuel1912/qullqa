@@ -1,2 +1,1 @@
-export { CircularCalendar } from './CircularCalendar'
-export { MonthDetail } from './MonthDetail'
+export { IncaWheel, LIGHT_COLOR } from './IncaWheel'

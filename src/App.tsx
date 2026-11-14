@@ -12,7 +12,10 @@ const MarsScreen = lazy(() => import('@/components/screens/MarsScreen'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
+  // Con llaves: en Chrome reciente scrollTo() devuelve una Promise, y React la tomaría como "cleanup".
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
   return null
 }
 

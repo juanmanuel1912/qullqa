@@ -1,236 +1,197 @@
-/**
- * Pantalla Mi Chacra
- * - Ubicación (GPS + manual)
- * - Variedad de papa
- * - Botón para continuar (dispara fetchClimateData)
- */
-
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
-import { useGeolocation } from '@/hooks/useGeolocation'
-import { Button, Card, Loading, Badge, Attribution } from '@/components/common'
-import type { PotatoVariety } from '@/types'
+import { VARIETY_LIST } from '@/lib/agro'
+import { IconArrow, IconGps, IconPin, Notice, Skeleton, Attribution } from '@/components/common'
+import { fmtLong, todayIso } from '@/utils/format'
 
-const VARIETIES: { id: PotatoVariety; name: string; daysToHarvest: number; temp: string }[] = [
-  {
-    id: 'Yungay',
-    name: 'Yungay',
-    daysToHarvest: 160,
-    temp: 'Climas fríos, 2000-3800 msnm',
-  },
-  {
-    id: 'Canchán',
-    name: 'Canchán',
-    daysToHarvest: 135,
-    temp: 'Climas templados, 2200-3600 msnm',
-  },
-  {
-    id: 'Huayro',
-    name: 'Huayro',
-    daysToHarvest: 185,
-    temp: 'Climas altos, 2500-3900 msnm',
-  },
+const FarmMap = lazy(() => import('@/components/map/FarmMap'))
+
+/** Zonas paperas andinas para elegir rápido (o para la demo). */
+const PLACES = [
+  { name: 'Cusco', lat: -13.5319, lon: -71.9754 },
+  { name: 'Puno', lat: -15.8402, lon: -70.0219 },
+  { name: 'Huancayo', lat: -12.0651, lon: -75.2049 },
+  { name: 'Ayacucho', lat: -13.1588, lon: -74.2239 },
+  { name: 'Cajamarca', lat: -7.1638, lon: -78.5003 },
+  { name: 'Huaraz', lat: -9.5278, lon: -77.5278 },
+  { name: 'La Paz', lat: -16.4897, lon: -68.1193 },
+  { name: 'Quito', lat: -0.1807, lon: -78.4678 },
 ]
 
-export function MyFarmScreen() {
+export default function MyFarmScreen() {
   const navigate = useNavigate()
-  const { location, setLocation, variety, setVariety, fetchClimateData, loading, error } = useQullqa()
-  const geoLocation = useGeolocation()
+  const { profile, updateProfile, climatology, sowing } = useQullqa()
+  const [gps, setGps] = useState<'idle' | 'locating' | 'error'>('idle')
+  const [planted, setPlanted] = useState(profile.plantingDate !== null)
 
-  const [selectedVariety, setSelectedVariety] = useState<PotatoVariety | null>(variety)
-  const [manualLat, setManualLat] = useState(location?.lat.toString() || '')
-  const [manualLon, setManualLon] = useState(location?.lon.toString() || '')
-  const [useManual, setUseManual] = useState(!!location)
+  const pick = (lat: number, lon: number, placeName: string) =>
+    updateProfile({ lat: Math.round(lat * 1e4) / 1e4, lon: Math.round(lon * 1e4) / 1e4, placeName })
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
-  // Si GPS está listo y no hay ubicación manual
-  useEffect(() => {
-    if (!useManual && geoLocation.lat && geoLocation.lon && !location) {
-      setLocation(geoLocation.lat, geoLocation.lon)
-    }
-  }, [geoLocation.lat, geoLocation.lon, useManual, location, setLocation])
-
-  const currentLocation = useManual
-    ? { lat: parseFloat(manualLat) || 0, lon: parseFloat(manualLon) || 0 }
-    : location
-
-  const canContinue =
-    currentLocation &&
-    selectedVariety &&
-    !Number.isNaN(currentLocation.lat) &&
-    !Number.isNaN(currentLocation.lon)
-
-  const handleContinue = async () => {
-    if (!currentLocation || !selectedVariety) return
-
-    // Guardar ubicación y variedad
-    setLocation(currentLocation.lat, currentLocation.lon)
-    setVariety(selectedVariety)
-
-    // Fetch datos de clima y navegar
-    await fetchClimateData()
-    navigate('/calendar')
+  const useGps = () => {
+    if (!navigator.geolocation) return setGps('error')
+    setGps('locating')
+    navigator.geolocation.getCurrentPosition(
+      (p) => {
+        pick(p.coords.latitude, p.coords.longitude, 'Mi chacra (GPS)')
+        setGps('idle')
+      },
+      () => setGps('error'),
+      { timeout: 10_000, maximumAge: 600_000 },
+    )
   }
 
   return (
-    <div className="space-y-6 pb-8 max-w-2xl mx-auto px-4">
-      <Card variant="default" className="space-y-4">
-        <h2 className="text-2xl font-bold text-tierra">Mi chacra</h2>
-        <p className="text-sm text-tierra-600">
-          Cuéntame dónde está tu chacra y qué variedad de papa siembras.
-        </p>
-      </Card>
+    <div className="space-y-4">
+      <header className="pt-2">
+        <p className="eyebrow text-inti-700">Paso 1 de 2</p>
+        <h1 className="mt-1 font-display text-3xl text-noche-800">Mi chacra</h1>
+        <p className="mt-1 text-[15px] text-tierra-700">Dinos dónde siembras y qué papa. La NASA hará el resto.</p>
+      </header>
 
       {/* Ubicación */}
-      <Card variant="elevated" className="space-y-4">
-        <h3 className="text-lg font-semibold text-tierra">📍 Ubicación</h3>
-
-        {/* Selector GPS vs Manual */}
-        <div className="flex gap-2">
-          <Button
-            variant={!useManual ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => setUseManual(false)}
-            className="flex-1"
-          >
-            {geoLocation.loading ? '⏳ GPS...' : '📡 GPS'}
-          </Button>
-          <Button
-            variant={useManual ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => setUseManual(true)}
-            className="flex-1"
-          >
-            ✏️ Manual
-          </Button>
+      <section className="card space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-extrabold">
+            <IconPin size={20} className="text-inti-600" /> ¿Dónde está tu chacra?
+          </h2>
         </div>
 
-        {/* GPS Status */}
-        {!useManual && (
-          <div className="space-y-2">
-            {geoLocation.loading && <Loading message="Obteniendo ubicación..." />}
-            {geoLocation.error && (
-              <p className="text-sm text-red-600">{geoLocation.error}</p>
-            )}
-            {geoLocation.lat && geoLocation.lon && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3 space-y-1">
-                <p className="text-sm font-medium text-green-700">✓ Ubicación obtenida</p>
-                <p className="text-xs text-green-600">
-                  {geoLocation.lat.toFixed(4)}°, {geoLocation.lon.toFixed(4)}°
-                </p>
-              </div>
-            )}
+        <button onClick={useGps} className="btn-dark w-full" disabled={gps === 'locating'}>
+          <IconGps size={20} />
+          {gps === 'locating' ? 'Buscando tu ubicación…' : 'Usar mi ubicación (GPS)'}
+        </button>
+        {gps === 'error' && (
+          <Notice tone="warning">No pudimos usar el GPS. Elige un lugar o toca el mapa.</Notice>
+        )}
+
+        <div className="-mx-1 flex flex-wrap gap-2">
+          {PLACES.map((p) => {
+            const active = profile.placeName === p.name
+            return (
+              <button
+                key={p.name}
+                onClick={() => pick(p.lat, p.lon, p.name)}
+                className={`chip ${active ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'}`}
+              >
+                {p.name}
+              </button>
+            )
+          })}
+        </div>
+
+        <Suspense fallback={<Skeleton className="h-56" />}>
+          <FarmMap lat={profile.lat} lon={profile.lon} onPick={(lat, lon) => pick(lat, lon, 'Punto en el mapa')} />
+        </Suspense>
+        <div className="flex items-center justify-between text-xs text-tierra-600">
+          <span>
+            Toca el mapa para mover tu chacra. <span className="font-bold text-good">Verde</span> = cultivos sanos (NASA NDVI)
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="stat">
+            <p className="stat-label">Coordenadas</p>
+            <p className="mt-0.5 text-sm font-extrabold">
+              {profile.lat.toFixed(3)}, {profile.lon.toFixed(3)}
+            </p>
           </div>
-        )}
-
-        {/* Manual Input */}
-        {useManual && (
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-tierra-700 mb-1">
-                Latitud
-              </label>
-              <input
-                type="number"
-                value={manualLat}
-                onChange={(e) => setManualLat(e.target.value)}
-                placeholder="-13.5319"
-                step="0.0001"
-                className="w-full px-3 py-2 border border-tierra-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-inti"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-tierra-700 mb-1">
-                Longitud
-              </label>
-              <input
-                type="number"
-                value={manualLon}
-                onChange={(e) => setManualLon(e.target.value)}
-                placeholder="-71.9754"
-                step="0.0001"
-                className="w-full px-3 py-2 border border-tierra-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-inti"
-              />
-            </div>
+          <div className="stat">
+            <p className="stat-label">Altitud (NASA)</p>
+            <p className="mt-0.5 text-sm font-extrabold">
+              {climatology?.elevation ? `${Math.round(climatology.elevation).toLocaleString('es-PE')} m` : '—'}
+            </p>
           </div>
-        )}
+        </div>
+      </section>
 
-        {currentLocation && (
-          <Badge variant="info">
-            📍 {currentLocation.lat.toFixed(4)}°, {currentLocation.lon.toFixed(4)}°
-          </Badge>
-        )}
-      </Card>
-
-      {/* Variedad de Papa */}
-      <Card variant="elevated" className="space-y-4">
-        <h3 className="text-lg font-semibold text-tierra">🥔 Variedad de papa</h3>
-        <p className="text-xs text-tierra-600">
-          Elige la variedad que siembras en tu chacra.
-        </p>
-
-        <div className="space-y-2">
-          {VARIETIES.map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setSelectedVariety(v.id)}
-              className={`
-                w-full p-3 rounded-lg border-2 transition-all text-left
-                ${
-                  selectedVariety === v.id
-                    ? 'border-inti bg-inti-50'
-                    : 'border-tierra-200 bg-white hover:border-tierra-300'
-                }
-              `}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold text-tierra">{v.name}</p>
-                  <p className="text-xs text-tierra-600 mt-1">{v.temp}</p>
-                </div>
-                <Badge
-                  variant={selectedVariety === v.id ? 'info' : 'default'}
-                  size="sm"
+      {/* Variedad */}
+      <section className="card space-y-3">
+        <h2 className="text-lg font-extrabold">🥔 ¿Qué papa siembras?</h2>
+        <div className="space-y-2" role="radiogroup" aria-label="Variedad de papa">
+          {VARIETY_LIST.map((v) => {
+            const active = profile.variety === v.id
+            return (
+              <button
+                key={v.id}
+                role="radio"
+                aria-checked={active}
+                onClick={() => updateProfile({ variety: v.id })}
+                className={`flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition ${
+                  active ? 'border-inti bg-inti-50' : 'border-tierra-100 bg-white hover:border-tierra-200'
+                }`}
+              >
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
+                    active ? 'border-inti-600 bg-inti' : 'border-tierra-300'
+                  }`}
                 >
-                  ~{v.daysToHarvest}d
-                </Badge>
-              </div>
-            </button>
-          ))}
+                  {active && <span className="h-2 w-2 rounded-full bg-noche-800" />}
+                </span>
+                <span className="flex-1">
+                  <span className="block font-extrabold">{v.name}</span>
+                  <span className="block text-sm text-tierra-700">{v.description}</span>
+                </span>
+                <span className="shrink-0 rounded-full bg-tierra-100 px-2.5 py-1 text-xs font-bold text-tierra-800">
+                  {v.typicalDays[0]}–{v.typicalDays[1]} d
+                </span>
+              </button>
+            )
+          })}
         </div>
-      </Card>
+      </section>
 
-      {/* Error Display */}
-      {error && !error.includes('Sin conexión') && (
-        <Card variant="outlined" className="border-red-200 bg-red-50">
-          <p className="text-sm text-red-700">{error}</p>
-        </Card>
-      )}
+      {/* Fecha de siembra */}
+      <section className="card space-y-3">
+        <h2 className="text-lg font-extrabold">🌱 ¿Ya sembraste?</h2>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => {
+              setPlanted(false)
+              updateProfile({ plantingDate: null })
+            }}
+            className={`chip justify-center ${!planted ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white'}`}
+          >
+            Todavía no
+          </button>
+          <button
+            onClick={() => {
+              setPlanted(true)
+              if (!profile.plantingDate) updateProfile({ plantingDate: todayIso() })
+            }}
+            className={`chip justify-center ${planted ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white'}`}
+          >
+            Sí, ya sembré
+          </button>
+        </div>
+        {planted ? (
+          <label className="block">
+            <span className="text-sm font-semibold text-tierra-700">Fecha de siembra</span>
+            <input
+              type="date"
+              max={todayIso()}
+              value={profile.plantingDate ?? ''}
+              onChange={(e) => updateProfile({ plantingDate: e.target.value || null })}
+              className="mt-1 block min-h-[48px] w-full rounded-2xl border-2 border-tierra-200 bg-white px-4 text-base font-bold"
+            />
+          </label>
+        ) : (
+          sowing && (
+            <p className="text-sm text-tierra-700">
+              Te diremos el mejor momento. Hoy la NASA recomienda sembrar desde el <strong>{fmtLong(sowing.best.sowDate)}</strong>.
+            </p>
+          )
+        )}
+      </section>
 
-      {/* CTA */}
-      <Button
-        onClick={handleContinue}
-        variant="primary"
-        size="lg"
-        disabled={!canContinue || loading}
-        loading={loading}
-        className="w-full"
+      <button
+        onClick={() => {
+          updateProfile({ onboarded: true })
+          navigate(profile.plantingDate ? '/cultivo' : '/calendario')
+        }}
+        className="btn-primary w-full text-lg"
       >
-        {loading ? 'Cargando datos de clima...' : 'Ver calendario 📅'}
-      </Button>
-
-      {/* Ayuda */}
-      <Card variant="outlined" className="space-y-2">
-        <p className="text-xs font-semibold text-tierra-700">💡 Consejo</p>
-        <p className="text-xs text-tierra-600">
-          Si no tienes GPS, puedes entrar las coordenadas manualmente. 
-          Ejemplo: Cusco es -13.5319, -71.9754.
-        </p>
-      </Card>
+        {profile.plantingDate ? 'Ver mi cultivo' : 'Ver mi calendario'} <IconArrow size={20} />
+      </button>
 
       <Attribution />
     </div>

@@ -1,263 +1,235 @@
-/**
- * Pantalla Qullqa en Marte
- * - Simulador interactivo
- * - Sliders: temperatura, luz, agua
- * - Comparación con Tierra
- */
-
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useQullqa } from '@/context/QullqaContext'
-import { simulateMars, MARS } from '@/lib/mars/model'
-import { Card, Badge, Attribution } from '@/components/common'
-import type { PotatoVariety } from '@/types'
+import { VARIETY_LIST, type VarietyId } from '@/lib/agro'
+import { MARS, MARS_FACTS, MARS_PRESETS, simulateMars, type MarsInput } from '@/lib/mars'
+import { Attribution, Starfield } from '@/components/common'
 
-interface MarsEnvironment {
-  tempC: number
-  lightPct: number
-  waterPct: number
-}
+type Env = Omit<MarsInput, 'variety'>
 
-const DEFAULT_ENV: MarsEnvironment = {
-  tempC: MARS.avgSurfaceTempC,
-  lightPct: 43,
-  waterPct: 50,
-}
-
-export function MarsScreen() {
-  const { variety } = useQullqa()
-  const [environment, setEnvironment] = useState<MarsEnvironment>(DEFAULT_ENV)
-  const [result, setResult] = useState<any>(null)
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
-  // Simular cuando cambian parámetros
-  useEffect(() => {
-    if (!variety) return
-    try {
-      const sim = simulateMars({
-        tempC: environment.tempC,
-        lightPct: environment.lightPct,
-        waterPct: environment.waterPct,
-        variety: variety as any,
-      })
-      setResult(sim)
-    } catch (err) {
-      console.warn('Mars simulation error:', err)
-    }
-  }, [environment, variety])
-
-  const handleSliderChange = (key: keyof MarsEnvironment, value: number) => {
-    setEnvironment(prev => ({ ...prev, [key]: value }))
-  }
-
-  const presets = [
-    {
-      name: 'Al aire libre',
-      desc: 'Condiciones reales de Marte',
-      env: DEFAULT_ENV,
-    },
-    {
-      name: 'Invernadero',
-      desc: 'Invernadero básico con calefacción',
-      env: { tempC: -20, lightPct: 60, waterPct: 70 },
-    },
-    {
-      name: 'Invernadero + LED',
-      desc: 'Con luces LED y riego automático',
-      env: { tempC: 10, lightPct: 95, waterPct: 85 },
-    },
-  ]
+export default function MarsScreen() {
+  const { profile, sowing } = useQullqa()
+  const [variety, setVariety] = useState<VarietyId>(profile.variety)
+  const [env, setEnv] = useState<Env>(MARS_PRESETS[1].input)
+  const result = useMemo(() => simulateMars({ ...env, variety }), [env, variety])
+  const earthDays = sowing?.best.cycleDays ?? null
+  const presetId = MARS_PRESETS.find(
+    (p) => p.input.tempC === env.tempC && p.input.lightPct === env.lightPct && p.input.waterPct === env.waterPct,
+  )?.id
 
   return (
-    <div className="space-y-6 pb-8 max-w-2xl mx-auto px-4">
-      {/* Header */}
-      <Card variant="default" className="space-y-3">
-        <h2 className="text-2xl font-bold text-tierra">🔴 Qullqa en Marte</h2>
-        <p className="text-sm text-tierra-600">
-          ¿Qué pasaría si sembráramos {variety || 'papa'} en Marte?
+    <div className="relative -mx-4 -mb-28 -mt-4 min-h-[calc(100vh-3.5rem)] space-y-4 overflow-hidden bg-noche-800 px-4 pb-28 pt-6 text-white">
+      <Starfield className="opacity-70" />
+
+      <header className="relative">
+        <p className="eyebrow text-marte-400">El futuro de la papa</p>
+        <h1 className="mt-1 font-display text-3xl">Qullqa en Marte</h1>
+        <p className="mt-1 text-[15px] text-noche-100">
+          El mismo modelo que cuida tu chacra en los Andes, en un invernadero marciano.
         </p>
-      </Card>
+      </header>
 
-      {/* Presets */}
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-tierra">Escenarios:</p>
-        <div className="grid grid-cols-1 gap-2">
-          {presets.map((preset, i) => (
-            <button
-              key={i}
-              onClick={() => setEnvironment(preset.env)}
-              className={`
-                text-left p-3 rounded-lg border-2 transition-all
-                ${
-                  JSON.stringify(environment) === JSON.stringify(preset.env)
-                    ? 'border-inti bg-inti-50'
-                    : 'border-tierra-200 bg-white hover:border-tierra-300'
-                }
-              `}
-            >
-              <p className="font-semibold text-tierra">{preset.name}</p>
-              <p className="text-xs text-tierra-600">{preset.desc}</p>
-            </button>
-          ))}
+      <Greenhouse env={env} viable={result.viable} speed={result.gddPerSol} />
+
+      {/* Resultado */}
+      <section className="relative rounded-3xl bg-noche-700/90 p-5 ring-1 ring-noche-500" aria-live="polite">
+        {result.viable && result.sols !== null ? (
+          <>
+            <p className="eyebrow text-good">¡La papa crece!</p>
+            <div className="mt-2 flex items-end gap-4">
+              <div>
+                <p className="font-display text-5xl leading-none">{result.sols}</p>
+                <p className="text-sm font-bold text-noche-200">soles hasta cosechar</p>
+              </div>
+              <div className="pb-1 text-noche-200">
+                <p className="text-xl font-extrabold text-white">{result.earthDays} días</p>
+                <p className="text-xs font-bold">terrestres</p>
+              </div>
+            </div>
+            {earthDays && result.earthDays !== null && (
+              <p className="mt-3 rounded-2xl bg-noche-600 px-4 py-3 text-sm">
+                En {profile.placeName}: <strong>{earthDays} días</strong>.{' '}
+                {result.earthDays < earthDays
+                  ? `En Marte, ${earthDays - result.earthDays} días más rápido gracias al invernadero.`
+                  : result.earthDays === earthDays
+                    ? 'Igual que en tu chacra.'
+                    : `En Marte tardaría ${result.earthDays - earthDays} días más.`}
+              </p>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="eyebrow text-marte-400">No crece</p>
+            <p className="mt-2 font-display text-2xl">La papa no sobrevive así</p>
+          </>
+        )}
+        {result.notes.length > 0 && (
+          <ul className="mt-3 space-y-1.5 text-sm text-noche-100">
+            {result.notes.map((n) => (
+              <li key={n} className="flex gap-2">
+                <span aria-hidden="true">›</span>
+                {n}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Escenarios */}
+      <section className="relative grid grid-cols-3 gap-2">
+        {MARS_PRESETS.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => setEnv(p.input)}
+            className={`rounded-2xl border-2 p-3 text-left text-xs transition ${
+              presetId === p.id ? 'border-inti bg-inti/15' : 'border-noche-500 bg-noche-700/80'
+            }`}
+          >
+            <span className="block text-sm font-extrabold">{p.name}</span>
+            <span className="mt-1 block text-noche-200">{p.description}</span>
+          </button>
+        ))}
+      </section>
+
+      {/* Controles */}
+      <section className="relative space-y-5 rounded-3xl bg-noche-700/90 p-5 ring-1 ring-noche-500">
+        <Slider
+          label="🌡️ Temperatura en el domo"
+          value={env.tempC}
+          min={-80}
+          max={35}
+          unit="°C"
+          hint={`Marte afuera: ${MARS.avgSurfaceTempC} °C · ideal para papa: 14–20 °C`}
+          onChange={(tempC) => setEnv({ ...env, tempC })}
+        />
+        <Slider
+          label="☀️ Luz para las plantas"
+          value={env.lightPct}
+          min={0}
+          max={100}
+          unit="%"
+          hint="Sol de Marte = 43 % del de la Tierra. Más de 43 % = luces LED"
+          onChange={(lightPct) => setEnv({ ...env, lightPct })}
+        />
+        <Slider
+          label="💧 Agua en el suelo"
+          value={env.waterPct}
+          min={0}
+          max={100}
+          unit="%"
+          hint="Del hielo marciano derretido. Ideal: 60–90 %"
+          onChange={(waterPct) => setEnv({ ...env, waterPct })}
+        />
+        <div>
+          <p className="mb-2 text-sm font-bold">Variedad</p>
+          <div className="flex gap-2">
+            {VARIETY_LIST.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setVariety(v.id)}
+                className={`chip flex-1 justify-center ${variety === v.id ? 'border-inti bg-inti text-noche-800' : 'border-noche-500 text-white'}`}
+              >
+                {v.name}
+              </button>
+            ))}
+          </div>
         </div>
+      </section>
+
+      {/* Datos curiosos */}
+      <section className="relative space-y-2">
+        <h2 className="text-lg font-extrabold">¿Sabías que…?</h2>
+        {MARS_FACTS.map((f) => (
+          <p key={f} className="rounded-2xl bg-noche-700/80 p-4 text-sm text-noche-100 ring-1 ring-noche-600">
+            {f}
+          </p>
+        ))}
+      </section>
+
+      <div className="relative">
+        <Attribution dark />
+        <p className="-mt-3 text-center text-[11px] text-noche-300">Datos de Marte: NASA Mars Fact Sheet</p>
       </div>
-
-      {/* Sliders */}
-      <Card variant="elevated" className="space-y-6">
-        <h3 className="font-semibold text-tierra">Ajusta el ambiente</h3>
-
-        {/* Temperature */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="text-sm font-medium text-tierra">🌡️ Temperatura</label>
-            <span className="text-lg font-bold text-inti">{environment.tempC}°C</span>
-          </div>
-          <input
-            type="range"
-            min="-80"
-            max="35"
-            value={environment.tempC}
-            onChange={(e) => handleSliderChange('tempC', parseInt(e.target.value))}
-            className="w-full cursor-pointer"
-          />
-          <p className="text-xs text-tierra-600">
-            Marte: -63°C media | Tierra: ~13°C media
-          </p>
-        </div>
-
-        {/* Light */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="text-sm font-medium text-tierra">💡 Luz</label>
-            <span className="text-lg font-bold text-inti">{environment.lightPct}%</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={environment.lightPct}
-            onChange={(e) => handleSliderChange('lightPct', parseInt(e.target.value))}
-            className="w-full cursor-pointer"
-          />
-          <p className="text-xs text-tierra-600">
-            Marte: ~43% luz terrestre | Tierra: 100%
-          </p>
-        </div>
-
-        {/* Water */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="text-sm font-medium text-tierra">💧 Agua</label>
-            <span className="text-lg font-bold text-inti">{environment.water}%</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={environment.water}
-            onChange={(e) => handleSliderChange('water', parseInt(e.target.value))}
-            className="w-full cursor-pointer"
-          />
-          <p className="text-xs text-tierra-600">
-            Disponibilidad de agua en el invernadero
-          </p>
-        </div>
-      </Card>
-
-      {/* Results */}
-      {result && (
-        <Card variant="elevated" className="space-y-4 bg-gradient-to-br from-noche-50 to-inti-50">
-          <h3 className="font-semibold text-tierra">Resultados de la simulación</h3>
-
-          {/* Viability */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-tierra-700">Viabilidad:</span>
-            <Badge
-              variant={
-                result.viable
-                  ? result.earthDays && result.earthDays < 200
-                    ? 'success'
-                    : 'warning'
-                  : 'danger'
-              }
-            >
-              {result.viable
-                ? result.earthDays && result.earthDays < 200
-                  ? '✓ Buena'
-                  : '⚠️ Posible pero lento'
-                : '✗ No viable'}
-            </Badge>
-          </div>
-
-          {/* Days to harvest */}
-          <div className="space-y-2">
-            <p className="text-sm text-tierra-600">Cosecha en Marte:</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-3 rounded">
-                <p className="text-xs text-tierra-600">Soles (días marcianos)</p>
-                <p className="text-2xl font-bold text-noche">
-                  {result.sols ? Math.round(result.sols) : '—'}
-                </p>
-              </div>
-              <div className="bg-white p-3 rounded">
-                <p className="text-xs text-tierra-600">Días terrestres</p>
-                <p className="text-2xl font-bold text-noche">
-                  {result.earthDays ? Math.round(result.earthDays) : '—'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Comparison */}
-          <Card variant="outlined" className="space-y-2">
-            <p className="text-sm font-semibold text-tierra">Comparación con Tierra</p>
-            <p className="text-xs text-tierra-700">
-              En Tierra (condiciones ideales): ~160 días para {variety}
-            </p>
-            <p className="text-xs text-tierra-700 font-semibold">
-              {result.earthDays && result.earthDays > 160 ? '🔴 Más lento en Marte' : result.earthDays ? '🟢 Similar o más rápido' : '—'}
-            </p>
-          </Card>
-
-          {/* Notes */}
-          {result.notes && result.notes.length > 0 && (
-            <div className="space-y-2 p-3 bg-white rounded">
-              <p className="text-xs font-semibold text-tierra">Notas:</p>
-              <ul className="text-xs text-tierra-600 space-y-1">
-                {result.notes.map((note: string, i: number) => (
-                  <li key={i}>• {note}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </Card>
-      )}
-
-      {/* Curiosidades */}
-      <Card variant="outlined" className="bg-noche-50 border-noche-200 space-y-3">
-        <h3 className="font-semibold text-noche">🚀 Datos de Marte</h3>
-        <ul className="text-xs text-tierra-700 space-y-2">
-          <li>
-            <strong>Día marciano (Sol):</strong> 24h 37m — casi igual a Tierra
-          </li>
-          <li>
-            <strong>Luz solar:</strong> ~43% de la Tierra a causa de la distancia
-          </li>
-          <li>
-            <strong>Atmósfera:</strong> 95% CO₂, presión 1% de Tierra
-          </li>
-          <li>
-            <strong>Temperatura media:</strong> -63°C (hasta -140°C en polos)
-          </li>
-          <li>
-            <strong>Agua:</strong> Hielo en casquetes y subsuelo
-          </li>
-        </ul>
-      </Card>
-
-      <Attribution />
     </div>
+  )
+}
+
+function Slider(props: { label: string; value: number; min: number; max: number; unit: string; hint: string; onChange: (v: number) => void }) {
+  const id = `s-${props.label}`
+  return (
+    <div>
+      <div className="mb-2 flex items-baseline justify-between">
+        <label htmlFor={id} className="text-sm font-bold">
+          {props.label}
+        </label>
+        <span className="text-xl font-extrabold text-inti">
+          {props.value}
+          {props.unit}
+        </span>
+      </div>
+      <input
+        id={id}
+        type="range"
+        className="slider"
+        min={props.min}
+        max={props.max}
+        value={props.value}
+        onChange={(e) => props.onChange(Number(e.target.value))}
+      />
+      <p className="mt-1.5 text-xs text-noche-200">{props.hint}</p>
+    </div>
+  )
+}
+
+/** Domo marciano: las plantas crecen más cuanto mejor es el ambiente. */
+function Greenhouse({ env, viable, speed }: { env: Env; viable: boolean; speed: number }) {
+  const growth = viable ? Math.min(1, speed / 14) : 0
+  const frozen = env.tempC <= 2
+  const glow = Math.min(1, env.lightPct / 100)
+  const plants = [70, 110, 150, 190, 230]
+  return (
+    <svg viewBox="0 0 300 170" className="relative mx-auto block w-full max-w-sm" role="img" aria-label={viable ? 'Invernadero con papas creciendo' : 'Invernadero sin cultivo'}>
+      <defs>
+        <radialGradient id="dome-light" cx="50%" cy="30%">
+          <stop offset="0%" stopColor="#faefc5" stopOpacity={0.15 + glow * 0.45} />
+          <stop offset="100%" stopColor="#faefc5" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {/* Sol lejano */}
+      <circle cx="262" cy="26" r="9" fill="#ecc955" opacity="0.8" />
+      {/* Suelo marciano */}
+      <path d="M0 150 Q60 138 120 146 T240 142 T300 148 V170 H0 Z" fill="#c1440e" />
+      <path d="M0 160 Q80 152 160 158 T300 156 V170 H0 Z" fill="#7a2a0a" />
+      {/* Domo */}
+      <path d="M40 148 A110 104 0 0 1 260 148 Z" fill={frozen ? '#8790bd33' : 'url(#dome-light)'} stroke="#d9ddee" strokeOpacity="0.7" strokeWidth="2" />
+      <path d="M40 148 A110 104 0 0 1 260 148" fill="none" stroke="#fff" strokeOpacity="0.15" strokeWidth="10" />
+      {[90, 150, 210].map((x) => (
+        <line key={x} x1={x} y1={148} x2={x} y2={x === 150 ? 44 : 64} stroke="#d9ddee" strokeOpacity="0.25" strokeWidth="1.5" />
+      ))}
+      {/* Tierra del invernadero */}
+      <rect x="56" y="140" width="188" height="9" rx="3" fill={env.waterPct >= 20 ? '#54402a' : '#9c7a4f'} />
+      {/* Plantas */}
+      {plants.map((x, i) => {
+        const h = 6 + growth * (34 + (i % 2) * 8)
+        return (
+          <g key={x} style={{ transition: 'all 0.5s ease' }}>
+            {viable ? (
+              <>
+                <line x1={x} y1={140} x2={x} y2={140 - h} stroke="#2f9e44" strokeWidth="3" strokeLinecap="round" />
+                <ellipse cx={x - 6} cy={140 - h * 0.6} rx={4 + growth * 5} ry={2.5 + growth * 2.5} fill="#40c057" />
+                <ellipse cx={x + 6} cy={140 - h * 0.8} rx={4 + growth * 5} ry={2.5 + growth * 2.5} fill="#2f9e44" />
+                {growth > 0.6 && <circle cx={x} cy={140 - h - 3} r="3" fill="#f8f0fc" />}
+              </>
+            ) : (
+              <circle cx={x} cy={138} r="3" fill={frozen ? '#b3b9d9' : '#6e5537'} />
+            )}
+          </g>
+        )
+      })}
+      {frozen && (
+        <text x="150" y="104" textAnchor="middle" fontSize="28" aria-hidden="true">
+          ❄️
+        </text>
+      )}
+    </svg>
   )
 }
