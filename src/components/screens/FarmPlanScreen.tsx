@@ -5,6 +5,7 @@ import { useI18n, type Key } from '@/i18n'
 import { fetchClimatology } from '@/services/nasa'
 import type { Climatology } from '@/services/nasa/types'
 import { useMyFarms } from '@/lib/farms/myFarms'
+import { recordProgress, sortRecords, useHistory, isoDate } from '@/lib/farms/history'
 import { adjustToElevation, farmIndicators, zoneInfo } from '@/lib/farms/indicators'
 import { planFarm, type CropPlan } from '@/lib/farms/plan'
 import { NEXT_CROPS, prevEmoji, type PrevCropId } from '@/lib/rotation/nextCrop'
@@ -16,8 +17,9 @@ export default function FarmPlanScreen() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { updateProfile } = useQullqa()
-  const { t, month, list } = useI18n()
+  const { t, month, list, fmtShort } = useI18n()
   const { farms, remove } = useMyFarms()
+  const { records } = useHistory()
   const farm = farms.find((f) => f.id === id)
   const [clim, setClim] = useState<Climatology | null>(null)
 
@@ -149,6 +151,34 @@ export default function FarmPlanScreen() {
         </p>
         <Link to="/perfil" className="text-sm font-extrabold text-noche-700 underline">
           🛒 {t('myf.sell')}
+        </Link>
+      </section>
+
+      {/* Historial de esta chacra */}
+      <section className="card space-y-2">
+        <h2 className="text-lg font-extrabold">📒 {t('hist.farmTitle')}</h2>
+        {(() => {
+          const mine = sortRecords(records.filter((r) => r.farmId === farm.id)).slice(0, 3)
+          if (mine.length === 0) return <p className="text-sm text-tierra-600">{t('hist.farmEmpty')}</p>
+          const today = isoDate(new Date())
+          return (
+            <ul className="space-y-1">
+              {mine.map((r) => {
+                const p = recordProgress(r, today)
+                return (
+                  <li key={r.id} className="text-sm text-tierra-800">
+                    {NEXT_CROPS[r.crop].emoji} <strong>{t(`rotcrop.${r.crop}` as Key)}</strong> ·{' '}
+                    {p.status === 'harvested'
+                      ? t('hist.farmHarvested', { date: fmtShort(r.harvestDate!), kg: r.yieldKg?.toLocaleString() ?? '—' })
+                      : t('hist.farmGrowing', { n: p.days, pct: Math.round(p.progress * 100) })}
+                  </li>
+                )
+              })}
+            </ul>
+          )
+        })()}
+        <Link to={`/historial?chacra=${farm.id}`} className="text-sm font-extrabold text-noche-700 underline">
+          {t('hist.open')}
         </Link>
       </section>
 

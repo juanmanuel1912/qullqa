@@ -57,6 +57,16 @@ export function HomeScreen() {
         </div>
         <IconArrow className="shrink-0 text-tierra-500" />
       </Link>
+      <Link to="/historial" className="card flex items-center gap-4 py-4">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-tierra-100 text-2xl" aria-hidden="true">
+          📒
+        </span>
+        <div className="flex-1">
+          <p className="font-display text-lg leading-tight">{t('home.histTitle')}</p>
+          <p className="mt-0.5 text-sm text-tierra-700">{t('home.histText')}</p>
+        </div>
+        <IconArrow className="shrink-0 text-tierra-500" />
+      </Link>
       <Link to="/alertas" className="card flex items-center gap-4 py-4">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-2xl" aria-hidden="true">
           🪲

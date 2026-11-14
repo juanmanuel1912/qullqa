@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
 import { useI18n, type Key } from '@/i18n'
 import { VARIETIES } from '@/lib/agro'
+import { altitudeZone, zoneInfo } from '@/lib/farms/indicators'
 import { weatherIcon } from '@/services/weather/openMeteo'
 import { Attribution, IconArrow, Notice, Skeleton, Starfield } from '@/components/common'
 
@@ -14,7 +15,7 @@ const ACTION_STYLE: Record<string, string> = {
 }
 
 export default function WeatherScreen() {
-  const { profile, forecast, forecastLoading, weekPlan, sowing, crop } = useQullqa()
+  const { profile, forecast, forecastLoading, weekPlan, sowing, crop, climatology } = useQullqa()
   const { t, lang, month, fmtLong, list } = useI18n()
   const locale = lang === 'en' ? 'en-US' : 'es-PE'
 
@@ -66,6 +67,9 @@ export default function WeatherScreen() {
               ))}
             </div>
           </section>
+
+          {/* Altura y piso ecológico del lugar */}
+          <AltitudeCard elevation={forecast.elevation ?? climatology?.elevation ?? null} annualRain={climatology ? climatology.months.reduce((s, m) => s + m.precipMmMonth, 0) : 800} />
 
           {/* Qué hacer */}
           <section className="card space-y-2">
@@ -189,5 +193,40 @@ export default function WeatherScreen() {
       <p className="text-center text-xs text-tierra-500">{t('wx.sources')}</p>
       <Attribution />
     </div>
+  )
+}
+
+/** Altura del lugar y su región natural (piso ecológico): define qué se puede sembrar. */
+function AltitudeCard({ elevation, annualRain }: { elevation: number | null; annualRain: number }) {
+  const { t } = useI18n()
+  if (elevation == null) return null
+  const elev = Math.round(elevation)
+  const zone = altitudeZone(elev, annualRain)
+  const z = zoneInfo(zone)
+  return (
+    <section className="card space-y-2">
+      <div className="flex items-center gap-3">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl" style={{ background: `${z.color}33` }} aria-hidden="true">
+          {z.emoji}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-tierra-600">⛰️ {t('wx.altitude')}</p>
+          <p className="text-2xl font-extrabold leading-tight text-noche-800">{elev.toLocaleString()} m</p>
+          <p className="text-sm font-bold" style={{ color: z.color }}>
+            {t(`zone.${zone}.name` as Key)} · {z.range[0].toLocaleString()}–{z.range[1].toLocaleString()} m
+          </p>
+        </div>
+      </div>
+      <p className="rounded-2xl bg-noche-50 p-3 text-sm text-noche-800">💡 {t(`zone.${zone}.text` as Key)}</p>
+      <p className="text-xs text-tierra-700">{t('wx.altitudeWhy')}</p>
+      <div className="flex flex-wrap gap-3 text-sm font-extrabold text-noche-700">
+        <Link to="/rotacion" className="underline">
+          🔄 {t('wx.altitudeRot')}
+        </Link>
+        <Link to="/mapa-peru" className="underline">
+          🗺️ {t('wx.altitudeMap')}
+        </Link>
+      </div>
+    </section>
   )
 }
