@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
-import { INCA_MONTHS, motivationFor, QULLQA_STORY, VARIETIES } from '@/lib/agro'
+import { INCA_MONTHS, motivationFor, VARIETIES } from '@/lib/agro'
+import { IncaStory } from '@/components/incas/IncaStory'
 import { Attribution, IconArrow, IconPlanet, Mountains, Pleiades, ProgressRing, Skeleton, Starfield } from '@/components/common'
 import { capitalize, fmtLong } from '@/utils/format'
 
@@ -26,18 +27,15 @@ export function HomeScreen() {
           {profile.onboarded ? 'Ver mi calendario' : 'Empezar'}
           <IconArrow size={20} />
         </Link>
+        <Link to="/cielo" className="btn relative mt-2 w-full border-2 border-noche-400 text-white hover:bg-noche-700">
+          🔭 Mira el cielo como los incas
+        </Link>
         <Mountains className="absolute inset-x-0 bottom-0 h-12 w-full" />
       </section>
 
       <StatusCard />
+      <IncaStory />
       <ApodCard />
-
-      {/* Historia */}
-      <section className="card space-y-3">
-        <p className="eyebrow text-inti-700">Qullqa = las Pléyades</p>
-        <h2 className="font-display text-xl text-noche-800">Sabiduría que la ciencia confirmó</h2>
-        <p className="text-[15px] leading-relaxed text-tierra-800">{QULLQA_STORY}</p>
-      </section>
 
       {/* Marte */}
       <Link to="/marte" className="relative block overflow-hidden rounded-3xl bg-gradient-to-br from-marte-700 to-noche-800 p-5 text-white shadow-card">

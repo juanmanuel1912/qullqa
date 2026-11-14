@@ -26,6 +26,7 @@ For centuries, Andean farmers have watched the **Pleiades** (in Quechua, **_Qull
 | **My field** | GPS location (Cusco by default) and potato variety: Yungay, Canchán or Huayro |
 | **Inca calendar** | A circular calendar of the 12 Inca agricultural months, each colored green, yellow or red for rain and frost risk. It marks the best month to plant and the expected harvest month |
 | **My crop** | Growth progress from real NASA daily temperatures, current crop stage, a countdown to harvest, and frost and irrigation alerts |
+| **Qullqa telescope** | A live planetarium aimed at the Pleiades from the farmer's location, both now and at dawn on the Inti Raymi (June 20) as the Incas saw them. It computes tonight's viewing window, shows real NASA images of the Pleiades (Spitzer, WISE, Cassini, and from the surface of Mars), and tells the Inca story in three illustrated steps |
 | **Qullqa on Mars** | A Martian greenhouse simulator with temperature, light and water sliders. It runs the same crop model and compares the result with Earth |
 
 ## NASA data used
@@ -36,6 +37,7 @@ For centuries, Andean farmers have watched the **Pleiades** (in Quechua, **_Qull
 | NASA POWER – Daily API | Daily `T2M`, `T2M_MIN`, `PRECTOTCORR`, `GWETROOT` | Real growing degree-days since planting, frost and irrigation alerts |
 | [NASA GIBS](https://earthdata.nasa.gov/gibs) | `MODIS_Terra_NDVI_8Day` | Vegetation greenness map of the field |
 | [NASA APOD](https://api.nasa.gov) | Astronomy Picture of the Day | Home screen |
+| [NASA Image and Video Library](https://images.nasa.gov) | Pleiades images from Spitzer, WISE, Cassini and the Martian surface (PIA09262, PIA09263, PIA13121, PIA11482, PIA06339) | Telescope screen |
 | NASA Mars Fact Sheet | Sol length, sunlight (43% of Earth's), surface temperature | Mars greenhouse simulation |
 
 All data is fetched directly from NASA's public APIs in the browser, so there is no backend. The app caches responses and falls back to bundled NASA POWER data for Cusco, so it keeps working offline in remote areas.

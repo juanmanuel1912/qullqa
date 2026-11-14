@@ -9,6 +9,7 @@ const MyFarmScreen = lazy(() => import('@/components/screens/MyFarmScreen'))
 const CalendarScreen = lazy(() => import('@/components/screens/CalendarScreen'))
 const MyCropScreen = lazy(() => import('@/components/screens/MyCropScreen'))
 const MarsScreen = lazy(() => import('@/components/screens/MarsScreen'))
+const SkyScreen = lazy(() => import('@/components/screens/SkyScreen'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -33,6 +34,7 @@ function Shell() {
               <Route path="/calendario" element={<CalendarScreen />} />
               <Route path="/cultivo" element={<MyCropScreen />} />
               <Route path="/marte" element={<MarsScreen />} />
+              <Route path="/cielo" element={<SkyScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

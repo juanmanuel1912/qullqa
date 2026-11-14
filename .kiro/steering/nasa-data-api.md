@@ -5,7 +5,7 @@ inclusion: always
 # ESTADO ACTUAL (Claude es el desarrollador principal; Kiro solo hace retoques pequeños)
 
 La UI completa ya está hecha (commit e9821ac). Antes de cambiar algo, lee el archivo y haz cambios mínimos.
-- Rutas: `/` Inicio, `/chacra`, `/calendario`, `/cultivo`, `/marte` (`src/App.tsx`, pantallas con lazy loading)
+- Rutas: `/` Inicio, `/chacra`, `/calendario`, `/cultivo`, `/marte`, `/cielo` (telescopio) (`src/App.tsx`, pantallas con lazy loading)
 - Estado: `src/context/QullqaContext.tsx` → `useQullqa()` da `profile`, `updateProfile`, `climatology`, `daily`, `apod`, `calendar`, `sowing`, `crop`, `weekly`. Usa directamente `src/lib/agro` y `src/services/nasa` (los adaptadores de design.md no se usan en la UI).
 - Fechas: siempre formatear con `src/utils/format.ts` (UTC). Nunca `new Date(x).getMonth()`.
 - Estilos: clases `.card`, `.btn-primary`, `.btn-dark`, `.btn-ghost`, `.chip`, `.stat` en `src/index.css`; colores `tierra`, `inti`, `noche`, `good`, `caution`, `risk`, `marte`.
