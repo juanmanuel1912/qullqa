@@ -2,7 +2,35 @@
 inclusion: always
 ---
 
-# Módulos de datos y lógica (implementados por Claude — NO reescribir)
+# FASE 2 COMPLETA — archivos del design.md listos para usar
+
+Claude implementó T2.1–T2.6 con **exactamente las firmas del design.md** y los tipos de `src/types/index.ts`:
+
+| Tarea | Archivo | Funciones |
+|---|---|---|
+| T2.1 | `src/services/nasaPower.ts` | `getClimatology`, `getDaily`, `getCachedData`, `setCachedData`, `CUSCO` |
+| T2.2 | `src/services/apod.ts` | `getAPOD`, `getCachedAPOD`, `setCachedAPOD` |
+| T2.3 | `src/services/gibs.ts` | `getNDVILayerUrl`, `getAvailableLayers`, `GIBS_MAX_ZOOM` |
+| T2.4 | `src/lib/agro/potatoModel.ts` | `assessAllMonths`, `isGoodForSowing`, `hasFrostRisk`, `calculateGDD`, `calculateCropProgress`, `projectHarvestDate`, `assessIrrigationNeeds`, `getMonthNumberFromIncaName`, `INCA_MONTHS`, `GDD_TARGETS` |
+| T2.5 | `src/lib/agro/marsSimulator.ts` | `simulateMarsGrowth`, `calculateMarsGDD`, `DEFAULT_MARS_ENVIRONMENT`, `MARS_SLIDER_RANGES`, `MARS_PRESETS`, `MARS_FACTS` |
+| T2.6 | `src/types/index.ts` | (de Kiro; se añadieron campos opcionales `source`, `elevation`, `explanation`, `sols`, `notes`) |
+
+**Extras para la UI** en `potatoModel.ts`:
+- `getSowingAdvice(climatology, variety)` → tarjeta "¿Cuándo siembro?" (`bestMonthName`, `incaMonthName`, `sowNow`, `daysUntil`, `harvestDate`, `cycleDays`, `label`, `reasons`)
+- `getCropInsights(plantingDate, variety, dailyData, climatology)` → `stage.name`, `stage.quechua`, `stage.tip`, `alerts[]` (helada / riego)
+- `getWeeklyChartData(dailyData, climatology)` → 6 semanas para Recharts (`kind: 'observed' | 'expected'`)
+- `getCalendarDetails(climatology, variety)` → incluye `ancestral` (qué hacían los incas ese mes)
+- `VARIETY_INFO`, `POTATO_VARIETIES`, `CUSCO_CLIMATOLOGY`
+- Pasar siempre `climatology` (de `getClimatology`) a `calculateCropProgress`; si se omite, se usa Cusco.
+
+**Reglas:**
+- NO modificar `public/fallback-cusco.json` ni `src/data/fallback-cusco.json`: son la respuesta **real** de NASA POWER (formato GeoJSON crudo). No acceder a ellos directamente: usar `getClimatology()`, que ya hace el fallback.
+- NO borrar los `*.test.ts` (42 tests). `vitest` ya está en devDependencies. Correr `npx vitest run` antes de cada commit.
+- Mostrar aviso "Sin conexión: datos de Cusco" cuando `getClimatology(...).source === 'fallback'`.
+
+---
+
+# Módulos internos (implementados por Claude — NO reescribir)
 
 Los siguientes módulos ya están implementados y probados (32 tests de Vitest, TypeScript strict).
 La UI debe **importarlos y usarlos**, no duplicar su lógica. Si falta algo, pedirlo en vez de reimplementar.

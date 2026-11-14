@@ -21,6 +21,10 @@ export interface ClimatologyResponse {
   lon: number;
   climatic_data: ClimatologyMonth[];
   cacheTimestamp?: number;
+  /** 'fallback' = sin conexión, se muestran datos de Cusco */
+  source?: 'nasa' | 'cache' | 'fallback';
+  /** Altitud del punto NASA (m) */
+  elevation?: number | null;
 }
 
 // Datos diarios (NASA POWER)
@@ -48,6 +52,8 @@ export interface APODData {
   title: string;
   copyright?: string;
   cacheTimestamp?: number;
+  explanation?: string;
+  source?: 'nasa' | 'cache' | 'fallback';
 }
 
 // GIBS Layer
@@ -132,6 +138,10 @@ export interface MarsSimulationResult {
     accelerationFactor: number;
     message: string;
   };
+  /** Soles (días marcianos) hasta la cosecha */
+  sols?: number | null;
+  /** Explicaciones para el usuario */
+  notes?: string[];
 }
 
 // ============ CONTEXTO GLOBAL ============

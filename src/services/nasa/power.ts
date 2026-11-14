@@ -12,7 +12,7 @@ const MONTH_KEYS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP
 const DAYS_IN_MONTH = [31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 export const CLIMATE_PARAMS = ['T2M', 'T2M_MIN', 'T2M_MAX', 'PRECTOTCORR', 'GWETROOT', 'ALLSKY_SFC_SW_DWN'] as const;
-export const DAILY_PARAMS = ['T2M', 'T2M_MIN', 'T2M_MAX', 'PRECTOTCORR', 'GWETROOT'] as const;
+export const DAILY_PARAMS = ['T2M', 'T2M_MIN', 'T2M_MAX', 'PRECTOTCORR', 'GWETROOT', 'ALLSKY_SFC_SW_DWN'] as const;
 
 /** Cusco: ubicación por defecto si no hay GPS. */
 export const CUSCO = { lat: -13.5319, lon: -71.9754 } as const;
@@ -105,6 +105,7 @@ export function parseDaily(json: unknown, source: DailySeries['source']): DailyS
       t2mMax: clean(p.T2M_MAX?.[k]),
       precip: clean(p.PRECTOTCORR?.[k]),
       gwetRoot: clean(p.GWETROOT?.[k]),
+      solar: clean(p.ALLSKY_SFC_SW_DWN?.[k]),
     }));
 
   return { lat: lat ?? 0, lon: lon ?? 0, days, source, fetchedAt: new Date().toISOString() };

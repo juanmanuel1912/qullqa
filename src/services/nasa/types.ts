@@ -40,6 +40,8 @@ export interface DailyRecord {
   t2mMax: number | null;
   precip: number | null;
   gwetRoot: number | null;
+  /** Radiación solar (MJ/m²/día) */
+  solar: number | null;
 }
 
 export interface DailySeries {
