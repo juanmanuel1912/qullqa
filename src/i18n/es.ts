@@ -813,4 +813,8 @@ export const es: Record<Key, string> = {
   'share.more': "Más…",
   'share.profileText': "👩‍🌾 {name}, agricultora familiar en {place}. Papas y cultivos andinos sembrados con datos climáticos de la NASA. Mira lo que tengo y contáctame en Qullqa:",
   'share.productText': "🥔 {product} de {place}, cosecha {when}. Directo de la chacra, sembrado con datos climáticos de la NASA. Contacta a {name} en Qullqa:",
+  'products.title': "Productos",
+  'products.subtitle': "Qullqa empieza con la papa. Maíz, palta, ajíes, quinua y mango llegarán con las mismas herramientas de la NASA.",
+  'products.soonTag': "Pronto",
+  'products.allCrops': "Ver todos los cultivos",
 }

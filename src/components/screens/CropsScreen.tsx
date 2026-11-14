@@ -36,8 +36,59 @@ export function SeasonBar({ crop }: { crop: CropInfo }) {
   )
 }
 
-export default function CropsScreen() {
+/** Ficha de un cultivo (vista previa). `showOpen`: botón a la sección completa si está disponible. */
+export function CropCard({ crop: c, showOpen = true }: { crop: CropInfo; showOpen?: boolean }) {
   const { t, L } = useI18n()
+  return (
+    <article className={`card space-y-3 ${c.status === 'available' ? 'ring-2 ring-good/50' : ''}`}>
+      <div className="flex items-start gap-3">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl" style={{ background: `${c.color}33` }} aria-hidden="true">
+          {c.emoji}
+        </span>
+        <div className="flex-1">
+          <p className="text-lg font-extrabold leading-tight">{L(c.name)}</p>
+          <p className="text-xs italic text-tierra-500">{c.scientific}</p>
+          <span
+            className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${
+              c.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-inti-100 text-inti-900'
+            }`}
+          >
+            {c.status === 'available' ? `✓ ${t('crops.available')}` : t('crops.soon')}
+          </span>
+        </div>
+      </div>
+
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
+        <dt className="font-bold text-tierra-600">{t('crops.varieties')}</dt>
+        <dd>{c.varieties}</dd>
+        <dt className="font-bold text-tierra-600">{t('crops.regions')}</dt>
+        <dd>
+          {L(c.regions)} · {c.altitude}
+        </dd>
+        <dt className="font-bold text-tierra-600">{t('crops.cycle')}</dt>
+        <dd>{L(c.cycle)}</dd>
+        <dt className="font-bold text-tierra-600">{t('crops.uses')}</dt>
+        <dd>{L(c.uses)}</dd>
+      </dl>
+
+      <div>
+        <p className="mb-1 text-xs font-extrabold uppercase tracking-wider text-tierra-600">{t('crops.season')}</p>
+        <SeasonBar crop={c} />
+      </div>
+
+      <p className="text-sm text-tierra-800">{L(c.note)}</p>
+
+      {showOpen && c.status === 'available' && (
+        <Link to="/papas" className="btn-primary min-h-[44px] w-full text-sm">
+          {t('crops.open')} <IconArrow size={16} />
+        </Link>
+      )}
+    </article>
+  )
+}
+
+export default function CropsScreen() {
+  const { t } = useI18n()
   return (
     <div className="space-y-4">
       <header className="pt-2">
@@ -62,49 +113,8 @@ export default function CropsScreen() {
 
       <ul className="space-y-3">
         {CROPS.map((c) => (
-          <li key={c.id} className={`card space-y-3 ${c.status === 'available' ? 'ring-2 ring-good/50' : ''}`}>
-            <div className="flex items-start gap-3">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl" style={{ background: `${c.color}33` }} aria-hidden="true">
-                {c.emoji}
-              </span>
-              <div className="flex-1">
-                <p className="text-lg font-extrabold leading-tight">{L(c.name)}</p>
-                <p className="text-xs italic text-tierra-500">{c.scientific}</p>
-                <span
-                  className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                    c.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-inti-100 text-inti-900'
-                  }`}
-                >
-                  {c.status === 'available' ? `✓ ${t('crops.available')}` : t('crops.soon')}
-                </span>
-              </div>
-            </div>
-
-            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
-              <dt className="font-bold text-tierra-600">{t('crops.varieties')}</dt>
-              <dd>{c.varieties}</dd>
-              <dt className="font-bold text-tierra-600">{t('crops.regions')}</dt>
-              <dd>
-                {L(c.regions)} · {c.altitude}
-              </dd>
-              <dt className="font-bold text-tierra-600">{t('crops.cycle')}</dt>
-              <dd>{L(c.cycle)}</dd>
-              <dt className="font-bold text-tierra-600">{t('crops.uses')}</dt>
-              <dd>{L(c.uses)}</dd>
-            </dl>
-
-            <div>
-              <p className="mb-1 text-xs font-extrabold uppercase tracking-wider text-tierra-600">{t('crops.season')}</p>
-              <SeasonBar crop={c} />
-            </div>
-
-            <p className="text-sm text-tierra-800">{L(c.note)}</p>
-
-            {c.status === 'available' && (
-              <Link to="/papas" className="btn-primary min-h-[44px] w-full text-sm">
-                {t('crops.open')} <IconArrow size={16} />
-              </Link>
-            )}
+          <li key={c.id}>
+            <CropCard crop={c} />
           </li>
         ))}
       </ul>

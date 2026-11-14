@@ -818,6 +818,10 @@ export const en = {
   'share.more': "More…",
   'share.profileText': "👩‍🌾 {name}, family farmer in {place}. Potatoes and Andean crops grown with NASA climate data. See what I have and contact me on Qullqa:",
   'share.productText': "🥔 {product} from {place}, harvest {when}. Fresh from the farm, grown with NASA climate data. Contact {name} on Qullqa:",
+  'products.title': "Products",
+  'products.subtitle': "Qullqa starts with the potato. Maize, avocado, chili peppers, quinoa and mango are coming with the same NASA tools.",
+  'products.soonTag': "Soon",
+  'products.allCrops': "See all crops",
 } as const
 
 export type Key = keyof typeof en

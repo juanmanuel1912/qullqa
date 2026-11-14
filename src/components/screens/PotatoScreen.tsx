@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n, type Key } from '@/i18n'
 import { DISHES, PLANTING_STEPS, POTATOES, PROCESSES, ZONES, type PotatoInfo, type PotatoKind } from '@/lib/potato/catalog'
-import { Attribution, IconArrow } from '@/components/common'
+import { Attribution, IconArrow, Notice } from '@/components/common'
+import { CROPS, type CropId } from '@/lib/crops/catalog'
+import { CropCard } from '@/components/screens/CropsScreen'
 import { PotatoMap } from '@/components/potato/PotatoMap'
 import { Contribute } from '@/components/potato/Contribute'
 import { useContributions } from '@/lib/potato/contributions'
@@ -11,28 +13,57 @@ type Tab = 'varieties' | 'map' | 'zones' | 'planting' | 'kitchen' | 'chuno' | 'c
 const TABS: Tab[] = ['varieties', 'map', 'zones', 'planting', 'kitchen', 'chuno', 'contribute']
 
 export default function PotatoScreen() {
-  const { t, lang } = useI18n()
+  const { t, L, lang } = useI18n()
   const [tab, setTab] = useState<Tab>('varieties')
+  const [crop, setCrop] = useState<CropId>('papa')
+  const other = CROPS.find((c) => c.id === crop)!
   const num = (n: number) => n.toLocaleString(lang === 'en' ? 'en-US' : 'es-PE')
 
   return (
     <div className="space-y-4">
       <header className="pt-2">
-        <p className="eyebrow text-inti-700">{t('pot.kicker')}</p>
-        <h1 className="mt-1 font-display text-3xl text-noche-800">{t('pot.title')}</h1>
-        <p className="mt-1 text-[15px] text-tierra-700">{t('pot.subtitle')}</p>
+        <h1 className="font-display text-3xl text-noche-800">{t('products.title')}</h1>
+        <p className="mt-1 text-[15px] text-tierra-700">{t('products.subtitle')}</p>
       </header>
 
-      <Link to="/cultivos" className="flex items-center gap-3 rounded-2xl border-2 border-good/40 bg-green-50 px-4 py-3">
-        <span className="text-2xl" aria-hidden="true">
-          🌽🥑🌶️
-        </span>
-        <span className="flex-1">
-          <span className="block font-extrabold text-noche-800">{t('pot.otherCrops')}</span>
-          <span className="text-xs text-tierra-700">{t('pot.otherCropsSub')}</span>
-        </span>
-        <IconArrow size={18} className="shrink-0 text-tierra-500" />
-      </Link>
+      {/* Cultivos: la papa funciona completa; los demás son vista previa */}
+      <nav className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="tablist" aria-label={t('products.title')}>
+        {CROPS.map((c) => (
+          <button
+            key={c.id}
+            role="tab"
+            aria-selected={crop === c.id}
+            onClick={() => setCrop(c.id)}
+            className={`flex shrink-0 flex-col items-center rounded-2xl border-2 px-3 py-2 transition ${
+              crop === c.id ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'
+            }`}
+          >
+            <span className="text-2xl" aria-hidden="true">
+              {c.emoji}
+            </span>
+            <span className="text-xs font-extrabold">{L(c.name).split(' /')[0]}</span>
+            <span className={`text-[10px] font-bold ${c.status === 'available' ? (crop === c.id ? 'text-green-300' : 'text-good') : crop === c.id ? 'text-inti-300' : 'text-inti-700'}`}>
+              {c.status === 'available' ? '✓' : t('products.soonTag')}
+            </span>
+          </button>
+        ))}
+      </nav>
+
+      {crop !== 'papa' ? (
+        <div className="space-y-3">
+          <CropCard crop={other} showOpen={false} />
+          <Notice tone="info">{t('crops.demo')}</Notice>
+          <Link to="/cultivos" className="btn-ghost w-full">
+            {t('products.allCrops')} <IconArrow size={16} />
+          </Link>
+        </div>
+      ) : (
+      <>
+      <section className="space-y-1">
+        <p className="eyebrow text-inti-700">{t('pot.kicker')}</p>
+        <h2 className="font-display text-2xl text-noche-800">{t('pot.title')}</h2>
+        <p className="text-[15px] text-tierra-700">{t('pot.subtitle')}</p>
+      </section>
 
       {/* Cifras */}
       <section className="grid grid-cols-3 gap-2">
@@ -72,6 +103,8 @@ export default function PotatoScreen() {
       {tab === 'chuno' && <Chuno />}
 
       <p className="text-center text-xs text-tierra-500">{t('pot.sources')}</p>
+      </>
+      )}
       <Attribution />
     </div>
   )
