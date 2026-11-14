@@ -32,6 +32,22 @@ Meta: **28 s** (2 s de margen). Unas 70 palabras: frases cortas. 🎨 = imagen d
 - Cada toma de la app dura 2–4 s: ensaya la ruta antes para no buscar botones.
 - Subtítulos: máximo 2 líneas, letra grande, fondo semitransparente, abajo al centro.
 
+### A2. Variante: voz en inglés con IA (Clipchamp o ElevenLabs)
+
+Se permite, pero el audio con IA **se declara** en la descripción del video y en el formulario. Mantén los subtítulos en inglés igual (son obligatorios para el jurado y ayudan si el audio se escucha mal). ~72 palabras ≈ 28 s.
+
+| Tiempo | Texto para la voz (pégalo tal cual en la herramienta) |
+|---|---|
+| 0–3 s | I'm [Name], team [Team]: adapting farms with NASA data. |
+| 3–7 s | The Incas read the Pleiades, Kool-ka, to know when to plant. |
+| 7–12 s | Kool-ka uses NASA climate and your altitude to show what you can plant. |
+| 12–15 s | When to sow. Frost and El Niño alerts. |
+| 15–21 s | It reads your history: potato twice in a row? Let the soil rest. Plant beans. |
+| 21–25 s | Save your plan. Share it on WhatsApp. |
+| 25–30 s | Next: potatoes on Mars. Kool-ka: Inca wisdom, NASA data. |
+
+"Kool-ka" es la escritura fonética de **Qullqa** para que la IA lo pronuncie bien (en los subtítulos escribe *Qullqa*).
+
 ---
 
 ## B. Ideogram paso a paso (solo imágenes)
