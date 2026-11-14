@@ -1,56 +1,45 @@
-/**
- * Bottom Navigation - 5 tabs
- */
+import { NavLink } from 'react-router-dom'
+import { IconCalendar, IconPin, IconPlanet, IconSprout, IconStar } from '@/components/common'
 
-import { useLocation, useNavigate } from 'react-router-dom'
-
-interface NavItem {
-  label: string
-  path: string
-  icon: string
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Inicio', path: '/', icon: '🌟' },
-  { label: 'Mi chacra', path: '/my-farm', icon: '🌾' },
-  { label: 'Calendario', path: '/calendar', icon: '📅' },
-  { label: 'Mi cultivo', path: '/my-crop', icon: '🌱' },
-  { label: 'Marte', path: '/mars', icon: '🔴' },
+const ITEMS = [
+  { to: '/', label: 'Inicio', Icon: IconStar },
+  { to: '/chacra', label: 'Mi chacra', Icon: IconPin },
+  { to: '/calendario', label: 'Calendario', Icon: IconCalendar },
+  { to: '/cultivo', label: 'Mi cultivo', Icon: IconSprout },
+  { to: '/marte', label: 'Marte', Icon: IconPlanet },
 ]
 
 export function BottomNav() {
-  const location = useLocation()
-  const navigate = useNavigate()
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-tierra-200 shadow-2xl md:hidden">
-      <div className="flex justify-around">
-        {NAV_ITEMS.map((item) => {
-          const isActive = location.pathname === item.path
-          return (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={`
-                flex-1 flex flex-col items-center justify-center
-                min-h-[64px] py-2 px-1 gap-1
-                transition-colors duration-200
-                ${
-                  isActive
-                    ? 'text-inti border-t-2 border-inti bg-inti-50'
-                    : 'text-tierra-600 hover:bg-tierra-50'
-                }
-              `}
-              title={item.label}
-              aria-label={item.label}
-              aria-current={isActive ? 'page' : undefined}
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md border-t border-tierra-100 bg-white/95 backdrop-blur"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      aria-label="Navegación principal"
+    >
+      <ul className="flex">
+        {ITEMS.map(({ to, label, Icon }) => (
+          <li key={to} className="flex-1">
+            <NavLink
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) =>
+                `flex min-h-[64px] flex-col items-center justify-center gap-1 text-[11px] font-bold transition-colors ${
+                  isActive ? 'text-noche-800' : 'text-tierra-400 hover:text-tierra-600'
+                }`
+              }
             >
-              <span className="text-xl">{item.icon}</span>
-              <span className="text-xs font-medium">{item.label}</span>
-            </button>
-          )
-        })}
-      </div>
+              {({ isActive }) => (
+                <>
+                  <span className={`flex h-8 w-12 items-center justify-center rounded-full transition-colors ${isActive ? 'bg-inti-200' : ''}`}>
+                    <Icon size={22} />
+                  </span>
+                  {label}
+                </>
+              )}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
     </nav>
   )
 }

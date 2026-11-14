@@ -1,3 +1,5 @@
 export { HomeScreen } from './HomeScreen'
 export { MyFarmScreen } from './MyFarmScreen'
 export { CalendarScreen } from './CalendarScreen'
+export { MyCropScreen } from './MyCropScreen'
+export { MarsScreen } from './MarsScreen'

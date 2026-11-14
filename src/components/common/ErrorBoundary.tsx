@@ -1,57 +1,46 @@
-/**
- * Error Boundary para capturar errores React
- */
-
-import React, { ReactNode, Component } from 'react'
-import { Button } from './Button'
+import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
-  fallback?: ReactNode
 }
 
 interface State {
-  hasError: boolean
   error: Error | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false, error: null }
-  }
+  state: State = { error: null }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+    return { error }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught:', error, errorInfo)
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Qullqa error:', error, info)
   }
 
   render() {
-    if (this.state.hasError) {
-      return (
-        this.props.fallback || (
-          <div className="min-h-screen bg-tierra-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full text-center">
-              <div className="text-red-600 text-4xl mb-4">⚠️</div>
-              <h1 className="text-xl font-bold text-noche mb-2">Algo salió mal</h1>
-              <p className="text-tierra-600 mb-6">
-                {this.state.error?.message || 'Un error inesperado ocurrió.'}
-              </p>
-              <Button
-                onClick={() => window.location.reload()}
-                variant="primary"
-              >
-                Recargar página
-              </Button>
-            </div>
-          </div>
-        )
-      )
-    }
-
-    return this.props.children
+    if (!this.state.error) return this.props.children
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-noche-800 p-6 text-center text-white">
+        <div className="max-w-sm space-y-4">
+          <p className="font-display text-2xl">Algo salió mal</p>
+          <p className="text-noche-100">{this.state.error.message}</p>
+          <button
+            className="btn-primary w-full"
+            onClick={() => {
+              try {
+                localStorage.removeItem('qullqa:v1:profile')
+              } catch {
+                /* ignorar */
+              }
+              window.location.assign('/')
+            }}
+          >
+            Volver a empezar
+          </button>
+        </div>
+      </div>
+    )
   }
 }
