@@ -7,6 +7,7 @@ import type { Climatology } from '@/services/nasa/types'
 import { getCropStatus, projectDateForGdd, recommendSowing, VARIETIES } from '@/lib/agro'
 import { DEMO_FARMER, DEMO_FARMS, type Farm } from '@/lib/farms/demo'
 import { Attribution, IconArrow, Notice, ProgressRing, Skeleton } from '@/components/common'
+import { fetchForecast, type Forecast } from '@/services/weather/openMeteo'
 
 const PointsMap = lazy(() => import('@/components/map/PointsMap'))
 
@@ -17,6 +18,7 @@ export default function LandsScreen() {
   const { t, L } = useI18n()
   const navigate = useNavigate()
   const [clims, setClims] = useState<Record<string, Climatology>>({})
+  const [forecasts, setForecasts] = useState<Record<string, Forecast>>({})
   const [selected, setSelected] = useState<string | null>(null)
 
   // Climatología NASA de cada chacra (con caché)
@@ -25,6 +27,17 @@ export default function LandsScreen() {
     DEMO_FARMS.forEach((f) =>
       fetchClimatology(f.lat, f.lon, ctrl.signal)
         .then((c) => setClims((prev) => ({ ...prev, [f.id]: c })))
+        .catch(() => undefined),
+    )
+    return () => ctrl.abort()
+  }, [])
+
+  // Pronóstico de 7 días de cada chacra
+  useEffect(() => {
+    const ctrl = new AbortController()
+    DEMO_FARMS.forEach((f) =>
+      fetchForecast(f.lat, f.lon, ctrl.signal)
+        .then((forecast) => setForecasts((prev) => ({ ...prev, [f.id]: forecast })))
         .catch(() => undefined),
     )
     return () => ctrl.abort()
@@ -89,6 +102,7 @@ export default function LandsScreen() {
             key={f.id}
             farm={f}
             clim={clims[f.id]}
+            forecast={forecasts[f.id]}
             today={today}
             active={Math.abs(profile.lat - f.lat) < 0.01 && Math.abs(profile.lon - f.lon) < 0.01}
             highlighted={selected === f.id}
@@ -115,13 +129,14 @@ export default function LandsScreen() {
 function FarmCard(props: {
   farm: Farm
   clim?: Climatology
+  forecast?: Forecast
   today: Date
   active: boolean
   highlighted: boolean
   onSelect: () => void
   onOpen: () => void
 }) {
-  const { farm: f, clim, today } = props
+  const { farm: f, clim, forecast, today } = props
   const { t, L, month, fmtLong } = useI18n()
   const variety = VARIETIES[f.variety]
 
@@ -167,6 +182,9 @@ function FarmCard(props: {
     }
   }
 
+  // Clima de los próximos 3 días
+  const next3Days = forecast ? forecast.days.slice(0, 3) : []
+
   return (
     <li
       className={`card space-y-3 transition ${props.highlighted ? 'ring-2 ring-noche-800' : ''}`}
@@ -194,6 +212,40 @@ function FarmCard(props: {
       </div>
       <div className="space-y-0.5">{body}</div>
       <p className="text-xs text-tierra-600">{L(f.note)}</p>
+
+      {/* Clima de hoy, mañana, pasado mañana */}
+      {next3Days.length > 0 && (
+        <div className="rounded-lg bg-gradient-to-r from-sky-50 to-blue-50 p-3">
+          <p className="text-xs font-bold text-sky-900 mb-2">🌦️ {t('wx.next7')}</p>
+          <div className="grid grid-cols-3 gap-2">
+            {next3Days.map((day, i) => {
+              const icon =
+                day.code === 0 || day.code === 1 ? '☀️' :
+                day.code === 2 || day.code === 3 ? '⛅' :
+                day.code === 45 || day.code === 48 ? '🌫️' :
+                day.code >= 50 && day.code < 70 ? '🌧️' :
+                day.code >= 70 && day.code < 90 ? '❄️' :
+                day.code >= 80 && day.code < 83 ? '🌧️' :
+                day.code >= 85 ? '⛈️' : '🌤️'
+              return (
+                <div key={i} className="rounded bg-white/70 p-2 text-center text-xs">
+                  <p className="font-bold text-sky-900">
+                    {i === 0 ? t('wx.today') : i === 1 ? t('wx.tomorrow') : `+${i}d`}
+                  </p>
+                  <p className="text-xl mt-1">{icon}</p>
+                  <p className="text-xs font-semibold text-sky-800 mt-1">
+                    {Math.round(day.tMax)}° / {Math.round(day.tMin)}°
+                  </p>
+                  {day.rainMm > 0 && (
+                    <p className="text-xs text-blue-700 mt-0.5">💧 {day.rainMm.toFixed(1)}mm</p>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {props.active ? (
         <span className="inline-block rounded-full bg-inti-100 px-3 py-1 text-xs font-bold text-inti-900">⭐ {t('lands.active')}</span>
       ) : (
