@@ -6,6 +6,7 @@ import { Attribution, Notice, Skeleton } from '@/components/common'
 import { BareSoilArt, ChooseCropArt, GreenSoilArt } from '@/components/rotation/RotationArt'
 import { NextCropChecker } from '@/components/rotation/NextCropChecker'
 import { ClimateNowPanel } from '@/components/rotation/ClimateNowPanel'
+import { HistoryRotationPanel } from '@/components/rotation/HistoryRotationPanel'
 import { adjustToElevation } from '@/lib/farms/indicators'
 
 const PRIORITIES: Priority[] = ['balanced', 'soil', 'water', 'income']
@@ -43,6 +44,9 @@ export default function RotationScreen() {
 
       {/* Tu clima y altura ahora → qué sembrar esta semana */}
       <ClimateNowPanel climatology={clim} elevation={elevation} />
+
+      {/* Tu historial → tu próxima siembra */}
+      {clim ? <HistoryRotationPanel climatology={clim} elevation={elevation} /> : <Skeleton className="h-72" />}
 
       <section className="card space-y-1">
         <h2 className="font-extrabold">🔄 {t('rot.whatTitle')}</h2>

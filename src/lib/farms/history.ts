@@ -113,10 +113,11 @@ export function lastHarvested(rs: FieldRecord[], farmId: string): FieldRecord | 
 export function exampleRecords(today: string): FieldRecordInput[] {
   const d = (days: number) => addDays(today, -days)
   return [
+    { farmId: null, crop: 'cebada', sowDate: d(1100), areaHa: 0.5, harvestDate: d(960), yieldKg: 1100, quality: 'normal', notes: 'Ejemplo · Example' },
     { farmId: null, crop: 'papa', sowDate: d(740), areaHa: 0.5, harvestDate: d(590), yieldKg: 6500, quality: 'normal', notes: 'Ejemplo · Example' },
     { farmId: null, crop: 'habas', sowDate: d(560), areaHa: 0.5, harvestDate: d(390), yieldKg: 900, quality: 'good', notes: 'Ejemplo · Example' },
     { farmId: null, crop: 'papa', sowDate: d(375), areaHa: 0.5, harvestDate: d(225), yieldKg: 8200, quality: 'good', notes: 'Ejemplo · Example' },
-    { farmId: null, crop: 'quinua', sowDate: d(70), areaHa: 0.3, harvestDate: null, yieldKg: null, quality: null, notes: 'Ejemplo · Example' },
+    { farmId: null, crop: 'quinua', sowDate: d(115), areaHa: 0.5, harvestDate: null, yieldKg: null, quality: null, notes: 'Ejemplo · Example' },
   ]
 }
 
