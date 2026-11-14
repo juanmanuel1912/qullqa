@@ -102,4 +102,6 @@ export const qu: Partial<Record<Key, string>> = {
   'chat.fab': 'Tapuy',
   'suit.good': 'Allin',
   'rotcrop.descanso': 'Samay (laymi)',
+  'rotcrop.maiz': "Sara",
+  'rotcrop.aji': "Uchu",
 }

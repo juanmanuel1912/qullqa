@@ -3,9 +3,22 @@ import { useQullqa } from '@/context/QullqaContext'
 import { useI18n, type Key } from '@/i18n'
 import { compareStrategies, CRITERIA, farmSeason, ROT_CROPS, type Priority, type StrategyResult } from '@/lib/rotation/planner'
 import { Attribution, Notice, Skeleton } from '@/components/common'
+import { BareSoilArt, ChooseCropArt, GreenSoilArt } from '@/components/rotation/RotationArt'
+import { NextCropChecker } from '@/components/rotation/NextCropChecker'
 
 const PRIORITIES: Priority[] = ['balanced', 'soil', 'water', 'income']
 const PRIO_ICON: Record<Priority, string> = { balanced: '⚖️', soil: '🌱', water: '💧', income: '💰' }
+const STORY = [
+  { n: 1, Art: BareSoilArt, alt: 'rot.svg.bare' as Key },
+  { n: 2, Art: ChooseCropArt, alt: 'rot.svg.choose' as Key },
+  { n: 3, Art: GreenSoilArt, alt: 'rot.svg.green' as Key },
+]
+const RULES = [
+  { n: 1, icon: '🔁' },
+  { n: 2, icon: '🫘' },
+  { n: 3, icon: '🟫' },
+  { n: 4, icon: '🌿' },
+]
 
 export default function RotationScreen() {
   const { profile, climatology, forecast } = useQullqa()
@@ -28,6 +41,46 @@ export default function RotationScreen() {
         <h2 className="font-extrabold">🔄 {t('rot.whatTitle')}</h2>
         <p className="text-sm text-tierra-800">{t('rot.whatText')}</p>
       </section>
+
+      {/* La rotación en 3 dibujos */}
+      <section className="space-y-2">
+        <h2 className="text-lg font-extrabold">{t('rot.story.title')}</h2>
+        {STORY.map(({ n, Art, alt }) => (
+          <article key={n} className="card flex items-center gap-3 p-3">
+            <div className="h-24 w-[8.5rem] shrink-0">
+              <Art label={t(alt)} />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-sm font-extrabold leading-snug text-noche-800">{t(`rot.story.${n}.title` as Key)}</h3>
+              <p className="mt-0.5 text-xs text-tierra-800">{t(`rot.story.${n}.text` as Key)}</p>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      {/* ¿Qué siembro después? */}
+      {climatology ? <NextCropChecker climatology={climatology} elevation={elevation} /> : <Skeleton className="h-64" />}
+
+      {/* Reglas sencillas */}
+      <section className="card space-y-2">
+        <h2 className="font-extrabold">📏 {t('rot.rules.title')}</h2>
+        <ol className="space-y-1.5">
+          {RULES.map(({ n, icon }) => (
+            <li key={n} className="flex gap-2 text-sm text-tierra-900">
+              <span className="text-lg leading-none" aria-hidden="true">
+                {icon}
+              </span>
+              {t(`rot.rules.${n}` as Key)}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Comparar planes completos */}
+      <header className="pt-2">
+        <h2 className="font-display text-2xl text-noche-800">📊 {t('rot.compare.title')}</h2>
+        <p className="mt-1 text-sm text-tierra-700">{t('rot.compare.text')}</p>
+      </header>
 
       {/* Prioridad */}
       <section className="space-y-2">
