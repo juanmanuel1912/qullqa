@@ -47,6 +47,17 @@ export function HomeScreen() {
         <IconArrow className="shrink-0 text-tierra-500" />
       </Link>
 
+      <Link to="/cultivos" className="card flex items-center gap-4">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-2xl" aria-hidden="true">
+          🌽🥑
+        </span>
+        <div className="flex-1">
+          <p className="font-display text-lg leading-tight">{t('home.cropsTitle')}</p>
+          <p className="mt-0.5 text-sm text-tierra-700">{t('home.cropsText')}</p>
+        </div>
+        <IconArrow className="shrink-0 text-tierra-500" />
+      </Link>
+
       <ApodCard />
 
       {/* Marte */}

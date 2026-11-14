@@ -3,6 +3,7 @@ import { useI18n } from '@/i18n'
 import { VARIETIES } from '@/lib/agro'
 import { DEMO_FARMER, DEMO_FARMS } from '@/lib/farms/demo'
 import { Attribution, IconArrow, IconPin, Mountains, Notice, Starfield } from '@/components/common'
+import { MyProducts } from '@/components/profile/MyProducts'
 
 /** Perfil público de un agricultor (EJEMPLO estático: más adelante vendrá de una cuenta real). */
 export default function ProfileScreen() {
@@ -71,6 +72,8 @@ export default function ProfileScreen() {
           </div>
         </article>
       </section>
+
+      <MyProducts />
 
       <p className="rounded-2xl bg-tierra-100 p-4 text-sm text-tierra-900">{t('profile.buyers')}</p>
 

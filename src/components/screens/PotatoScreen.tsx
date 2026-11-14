@@ -60,6 +60,9 @@ export default function PotatoScreen() {
       {tab === 'kitchen' && <Kitchen />}
       {tab === 'chuno' && <Chuno />}
 
+      <Link to="/cultivos" className="btn-ghost w-full">
+        🌽🥑🌶️ {t('pot.otherCrops')} <IconArrow size={16} />
+      </Link>
       <p className="text-center text-xs text-tierra-500">{t('pot.sources')}</p>
       <Attribution />
     </div>
