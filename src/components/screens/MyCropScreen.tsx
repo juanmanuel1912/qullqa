@@ -5,6 +5,7 @@ import { STAGES, VARIETIES } from '@/lib/agro'
 import { WeeklyChart } from '@/components/charts/WeeklyChart'
 import { Attribution, IconArrow, Notice, ProgressRing, Skeleton, SourceNotice } from '@/components/common'
 import { addDaysIso, todayIso } from '@/utils/format'
+import { WhereToSowPanel } from '@/components/crops/WhereToSowPanel'
 
 export default function MyCropScreen() {
   const { profile, updateProfile, crop, weekly, sowing, climatology, dailyLoading, today } = useQullqa()
@@ -19,6 +20,7 @@ export default function MyCropScreen() {
           <h1 className="font-display text-3xl text-noche-800">{t('crop.title')}</h1>
           <p className="mt-1 text-[15px] text-tierra-700">{t('crop.intro')}</p>
         </header>
+        <WhereToSowPanel />
         <section className="card space-y-4 text-center">
           <p className="text-5xl" aria-hidden="true">
             🌱
@@ -81,6 +83,9 @@ export default function MyCropScreen() {
       </header>
 
       <SourceNotice source={climatology?.source} />
+
+      {/* Dónde voy a sembrar: mi altura y mi clima */}
+      <WhereToSowPanel />
 
       {/* Cuenta regresiva */}
       <section className="card flex flex-col items-center text-center">

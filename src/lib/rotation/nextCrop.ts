@@ -110,6 +110,11 @@ export interface NextCropInput {
 }
 
 const r10 = (n: number) => Math.round(n * 10) / 10
+/**
+ * Helada fuerte: la noche más fría del mes (T2M_MIN de NASA POWER) llega a −3 °C o menos.
+ * Las papas y ocas nativas aguantan heladas suaves (0 a −3 °C) con cuidado.
+ */
+export const HARD_FROST = -3
 
 export function assessNextCrop(input: NextCropInput, clim: Climatology): NextCropResult {
   const { prev, next, month, irrigation, elevation } = input
@@ -128,8 +133,12 @@ export function assessNextCrop(input: NextCropInput, clim: Climatology): NextCro
 
   // 2. Clima: temperatura media del ciclo y heladas
   const t = r10(cycle.reduce((s, m) => s + months[m].t2m, 0) / cycle.length)
-  const frost = c.frostSensitive ? cycle.filter((m) => months[m].t2mMin < 0).length : 0
-  if (frost >= 3 || (c.perennial && frost >= 1)) {
+  // Helada fuerte (≤ −3 °C) mata el cultivo; la suave (0 a −3 °C) se aguanta con cuidado
+  // En el mes de cosecha la planta ya está madura: esa helada ya no la mata (anuales)
+  const growing = c.perennial || cycle.length < 2 ? cycle : cycle.slice(0, -1)
+  const frost = c.frostSensitive ? growing.filter((m) => months[m].t2mMin < 0).length : 0
+  const hardFrost = c.frostSensitive ? growing.filter((m) => months[m].t2mMin <= HARD_FROST).length : 0
+  if (hardFrost >= 2 || (c.perennial && frost >= 1)) {
     factors.push({ factor: 'climate', level: 'bad', code: 'climFrostBad', vars: { n: frost } })
   } else if (t < c.minMeanTemp - 2) {
     factors.push({ factor: 'climate', level: 'bad', code: 'climCold', vars: { t, min: c.minMeanTemp } })
