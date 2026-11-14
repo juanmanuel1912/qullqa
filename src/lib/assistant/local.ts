@@ -20,6 +20,8 @@ const CROP_WORDS: [RegExp, CropId][] = [
   [word('aj[ií]|aj[ií]es|rocotos?|chil[ie]s?|peppers?|uchu'), 'aji'],
   [word('quinua|quinoa|kinwa'), 'quinua'],
   [word('mangos?'), 'mango'],
+  [word('caf[eé]s?|coffee'), 'cafe'],
+  [word('cacaos?|cocoa|chocolate'), 'cacao'],
 ]
 const MONTHS: string[][] = [
   ['enero', 'january'],

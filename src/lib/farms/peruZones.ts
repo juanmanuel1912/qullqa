@@ -5,6 +5,7 @@
  */
 import type { Localized } from '@/i18n'
 import type { AltZone } from './indicators'
+import type { NextCropId } from '../rotation/nextCrop'
 
 export interface ZoneCrop {
   emoji: string
@@ -22,6 +23,8 @@ export interface PeruZone {
   altitude: string
   climate: Localized
   crops: ZoneCrop[]
+  /** Productos de Qullqa que se cultivan aquí (para filtrar el mapa) */
+  products: NextCropId[]
 }
 
 const c = (emoji: string, en: string, es: string): ZoneCrop => ({ emoji, name: { en, es } })
@@ -36,7 +39,8 @@ export const PERU_ZONES: PeruZone[] = [
     lon: -80.4,
     altitude: '0 – 300',
     climate: { en: 'Hot and dry, 24–30 °C; rain only in El Niño years.', es: 'Cálido y seco, 24–30 °C; llueve solo en años de El Niño.' },
-    crops: [c('🥭', 'Mango', 'Mango'), c('🍋', 'Lime', 'Limón'), c('🌾', 'Rice', 'Arroz'), c('🍌', 'Organic banana', 'Banano orgánico')],
+    crops: [c('🥭', 'Mango', 'Mango'), c('🍋', 'Lime', 'Limón'), c('🍌', 'Organic banana', 'Banano orgánico'), c('🍫', 'White cacao', 'Cacao blanco')],
+    products: ['mango', 'cacao'],
   },
   {
     id: 'lambayeque',
@@ -48,6 +52,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '0 – 200',
     climate: { en: 'Warm desert with river irrigation.', es: 'Desierto cálido con riego de ríos.' },
     crops: [c('🎋', 'Sugar cane', 'Caña de azúcar'), c('🌾', 'Rice', 'Arroz'), c('🥭', 'Mango (Motupe)', 'Mango (Motupe)'), c('🟡', 'Passion fruit', 'Maracuyá')],
+    products: ['mango'],
   },
   {
     id: 'libertad',
@@ -59,6 +64,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '0 – 400',
     climate: { en: 'Mild desert, 17–25 °C, almost no rain: everything is irrigated.', es: 'Desierto templado, 17–25 °C, casi sin lluvia: todo es con riego.' },
     crops: [c('🌿', 'Asparagus', 'Espárrago'), c('🥑', 'Avocado (Hass)', 'Palta (Hass)'), c('🫐', 'Blueberry', 'Arándano'), c('🎋', 'Sugar cane', 'Caña de azúcar')],
+    products: ['palta'],
   },
   {
     id: 'ica',
@@ -70,6 +76,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '300 – 500',
     climate: { en: 'Very dry and sunny desert; water from wells and the river.', es: 'Desierto muy seco y soleado; agua de pozos y del río.' },
     crops: [c('🍇', 'Grapes (pisco)', 'Uva (pisco)'), c('🌿', 'Asparagus', 'Espárrago'), c('🥑', 'Avocado', 'Palta'), c('☁️', 'Cotton', 'Algodón')],
+    products: ['palta'],
   },
   {
     id: 'arequipa',
@@ -81,6 +88,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '1 000 – 2 300',
     climate: { en: 'Sunny, dry and mild; irrigation from the Colca river.', es: 'Soleado, seco y templado; riego del río Colca.' },
     crops: [c('🧄', 'Garlic', 'Ajo'), c('🧅', 'Onion', 'Cebolla'), c('🌱', 'Alfalfa (dairy)', 'Alfalfa (leche)'), c('🌶️', 'Paprika', 'Páprika')],
+    products: ['aji', 'papa'],
   },
   {
     id: 'cajamarca',
@@ -92,6 +100,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '2 700 – 3 200',
     climate: { en: 'Temperate, 13–15 °C; rains from October to April.', es: 'Templado, 13–15 °C; lluvias de octubre a abril.' },
     crops: [c('🥔', 'Potato', 'Papa'), c('🌽', 'Maize', 'Maíz'), c('🫘', 'Beans and peas', 'Frijol y arveja'), c('🐄', 'Pasture (dairy)', 'Pastos (leche)')],
+    products: ['papa', 'maiz', 'habas'],
   },
   {
     id: 'huanuco',
@@ -103,6 +112,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '2 800 – 3 800',
     climate: { en: 'Cool, with rain from November to March. One of the largest potato producers.', es: 'Fresco, con lluvias de noviembre a marzo. Uno de los mayores productores de papa.' },
     crops: [c('🥔', 'Potato', 'Papa'), c('🟣', 'Olluco and oca', 'Olluco y oca'), c('🌽', 'Maize', 'Maíz'), c('🫘', 'Broad beans', 'Habas')],
+    products: ['papa', 'oca', 'maiz', 'habas'],
   },
   {
     id: 'mantaro',
@@ -114,6 +124,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '3 200 – 3 400',
     climate: { en: 'Temperate by day, cold nights; frost from May to August.', es: 'Templado de día, noches frías; heladas de mayo a agosto.' },
     crops: [c('🥔', 'Potato', 'Papa'), c('🌽', 'Maize', 'Maíz'), c('🌸', 'Artichoke', 'Alcachofa'), c('🫘', 'Broad beans', 'Habas')],
+    products: ['papa', 'maiz', 'habas'],
   },
   {
     id: 'junin-puna',
@@ -125,6 +136,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '4 000 – 4 400',
     climate: { en: 'Cold, frost almost every night of the year.', es: 'Frío, helada casi todas las noches del año.' },
     crops: [c('🟤', 'Maca', 'Maca'), c('🥔', 'Bitter potato (chuño)', 'Papa amarga (chuño)'), c('🌾', 'Pasture', 'Pastos'), c('🦙', 'Alpacas and sheep', 'Alpacas y ovinos')],
+    products: ['papa'],
   },
   {
     id: 'huancavelica',
@@ -136,6 +148,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '3 600 – 4 000',
     climate: { en: 'Cold, strong frosts; rain from December to March.', es: 'Frío, heladas fuertes; lluvias de diciembre a marzo.' },
     crops: [c('🥔', 'Native potatoes', 'Papas nativas'), c('🌾', 'Barley', 'Cebada'), c('🫘', 'Broad beans', 'Habas'), c('🦙', 'Alpacas', 'Alpacas')],
+    products: ['papa', 'cebada', 'habas'],
   },
   {
     id: 'sagrado',
@@ -147,6 +160,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '2 800 – 3 000',
     climate: { en: 'Mild valley, 12–16 °C; rain from November to March.', es: 'Valle templado, 12–16 °C; lluvias de noviembre a marzo.' },
     crops: [c('🌽', 'Giant white maize', 'Maíz blanco gigante'), c('🥔', 'Potato', 'Papa'), c('🫘', 'Broad beans', 'Habas'), c('🌾', 'Quinoa', 'Quinua')],
+    products: ['maiz', 'papa', 'habas', 'quinua'],
   },
   {
     id: 'andahuaylas',
@@ -158,6 +172,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '2 900 – 3 500',
     climate: { en: 'Temperate, rain from November to March.', es: 'Templado, lluvias de noviembre a marzo.' },
     crops: [c('🥔', 'Potato', 'Papa'), c('🌽', 'Maize', 'Maíz'), c('🌾', 'Quinoa', 'Quinua'), c('🌼', 'Tarwi', 'Tarwi')],
+    products: ['papa', 'maiz', 'quinua', 'tarwi'],
   },
   {
     id: 'puno',
@@ -169,6 +184,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '3 800 – 4 000',
     climate: { en: 'Cold and dry, 8–10 °C; frost from April to October. The lake softens the cold.', es: 'Frío y seco, 8–10 °C; heladas de abril a octubre. El lago suaviza el frío.' },
     crops: [c('🌾', 'Quinoa', 'Quinua'), c('🥔', 'Potato and chuño', 'Papa y chuño'), c('🌾', 'Barley and oats', 'Cebada y avena'), c('🦙', 'Alpacas', 'Alpacas')],
+    products: ['quinua', 'papa', 'cebada'],
   },
   {
     id: 'chanchamayo',
@@ -180,6 +196,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '700 – 1 500',
     climate: { en: 'Warm and rainy, 20–26 °C; more than 1 500 mm of rain a year.', es: 'Cálido y lluvioso, 20–26 °C; más de 1 500 mm de lluvia al año.' },
     crops: [c('☕', 'Coffee', 'Café'), c('🍍', 'Pineapple', 'Piña'), c('🍊', 'Citrus', 'Cítricos'), c('🍌', 'Plantain', 'Plátano')],
+    products: ['cafe'],
   },
   {
     id: 'sanmartin',
@@ -191,6 +208,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '300 – 1 200',
     climate: { en: 'Warm and humid, 23–28 °C.', es: 'Cálido y húmedo, 23–28 °C.' },
     crops: [c('🍫', 'Cacao', 'Cacao'), c('☕', 'Coffee (Alto Mayo)', 'Café (Alto Mayo)'), c('🌾', 'Rice', 'Arroz'), c('🍌', 'Plantain', 'Plátano')],
+    products: ['cacao', 'cafe'],
   },
   {
     id: 'ucayali',
@@ -202,6 +220,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '150 – 300',
     climate: { en: 'Hot and very rainy, 26 °C; river floods.', es: 'Caluroso y muy lluvioso, 26 °C; crecidas de los ríos.' },
     crops: [c('🍌', 'Plantain', 'Plátano'), c('🥔', 'Cassava (yuca)', 'Yuca'), c('🍫', 'Cacao', 'Cacao'), c('🌴', 'Oil palm', 'Palma aceitera')],
+    products: ['cacao'],
   },
   {
     id: 'loreto',
@@ -213,6 +232,7 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '80 – 200',
     climate: { en: 'Hot and rainy all year, about 27 °C.', es: 'Caluroso y lluvioso todo el año, unos 27 °C.' },
     crops: [c('🍒', 'Camu camu', 'Camu camu'), c('🥔', 'Cassava (yuca)', 'Yuca'), c('🍌', 'Plantain', 'Plátano'), c('🌴', 'Aguaje palm', 'Aguaje')],
+    products: [],
   },
   {
     id: 'madrededios',
@@ -224,5 +244,54 @@ export const PERU_ZONES: PeruZone[] = [
     altitude: '180 – 300',
     climate: { en: 'Hot and humid, 26 °C; cold winds (friaje) in winter.', es: 'Cálido y húmedo, 26 °C; vientos fríos (friaje) en invierno.' },
     crops: [c('🌰', 'Brazil nut', 'Castaña'), c('🍫', 'Cacao', 'Cacao'), c('🍌', 'Plantain', 'Plátano'), c('🥔', 'Cassava (yuca)', 'Yuca')],
+    products: ['cacao'],
+  },
+  {
+    id: 'jaen',
+    name: 'Jaén y San Ignacio (Cajamarca)',
+    region: { en: 'Northern high jungle', es: 'Selva alta del norte' },
+    zone: 'rupaRupa',
+    lat: -5.15,
+    lon: -78.95,
+    altitude: '1 200 – 2 000',
+    climate: { en: 'Mild and humid, 18–22 °C, rain from October to April. Peru’s top coffee area.', es: 'Templado y húmedo, 18–22 °C, lluvias de octubre a abril. La principal zona cafetalera del Perú.' },
+    crops: [c('☕', 'Specialty coffee', 'Café especial'), c('🍫', 'Cacao', 'Cacao'), c('🌾', 'Rice (valleys)', 'Arroz (valles)'), c('🍌', 'Plantain', 'Plátano')],
+    products: ['cafe', 'cacao'],
+  },
+  {
+    id: 'villarica',
+    name: 'Villa Rica (Pasco)',
+    region: { en: 'Central high jungle', es: 'Selva alta central' },
+    zone: 'rupaRupa',
+    lat: -10.73,
+    lon: -75.27,
+    altitude: '1 400 – 1 800',
+    climate: { en: 'Cool and rainy, 18–20 °C; coffee grows under shade trees.', es: 'Fresco y lluvioso, 18–20 °C; el café crece bajo árboles de sombra.' },
+    crops: [c('☕', 'Coffee', 'Café'), c('🍊', 'Citrus', 'Cítricos'), c('🍌', 'Plantain', 'Plátano'), c('🌳', 'Shade trees', 'Árboles de sombra')],
+    products: ['cafe'],
+  },
+  {
+    id: 'convencion',
+    name: 'La Convención (Quillabamba, Cusco)',
+    region: { en: 'Southern high jungle', es: 'Selva alta del sur' },
+    zone: 'rupaRupa',
+    lat: -12.86,
+    lon: -72.69,
+    altitude: '900 – 2 000',
+    climate: { en: 'Warm valley below Machu Picchu, 20–25 °C.', es: 'Valle cálido debajo de Machu Picchu, 20–25 °C.' },
+    crops: [c('☕', 'Coffee', 'Café'), c('🍫', 'Chuncho cacao', 'Cacao chuncho'), c('🍵', 'Tea (Huyro)', 'Té (Huyro)'), c('🍌', 'Plantain', 'Plátano')],
+    products: ['cafe', 'cacao'],
+  },
+  {
+    id: 'tingomaria',
+    name: 'Tingo María (Huánuco)',
+    region: { en: 'Central high jungle', es: 'Selva alta central' },
+    zone: 'rupaRupa',
+    lat: -9.3,
+    lon: -76.0,
+    altitude: '600 – 1 000',
+    climate: { en: 'Hot and very rainy, 24 °C, over 3 000 mm a year.', es: 'Cálido y muy lluvioso, 24 °C, más de 3 000 mm al año.' },
+    crops: [c('🍫', 'Cacao', 'Cacao'), c('☕', 'Coffee', 'Café'), c('🍌', 'Plantain', 'Plátano'), c('🍍', 'Pineapple', 'Piña')],
+    products: ['cacao', 'cafe'],
   },
 ]

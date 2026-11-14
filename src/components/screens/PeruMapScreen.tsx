@@ -1,24 +1,41 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useI18n, type Key } from '@/i18n'
 import { PERU_ZONES } from '@/lib/farms/peruZones'
 import { zoneInfo, ZONES, type AltZone } from '@/lib/farms/indicators'
 import { loadMyFarms } from '@/lib/farms/myFarms'
 import { IconArrow, Notice, Skeleton } from '@/components/common'
+import { NEXT_CROPS, type NextCropId } from '@/lib/rotation/nextCrop'
+import { CROP_MEDIA } from '@/lib/media/gallery'
+import { MediaGallery, NasaZoneImages } from '@/components/media/MediaGallery'
 
 const PeruZonesMap = lazy(() => import('@/components/map/PeruZonesMap'))
 
 /** Orden de los pisos de la costa a la cordillera y luego a la selva */
 const ZONE_ORDER: AltZone[] = ['chala', 'yunga', 'quechua', 'suni', 'puna', 'janca', 'rupaRupa', 'omagua']
 
+/** Productos para filtrar el mapa */
+const FILTERS: NextCropId[] = ['papa', 'maiz', 'quinua', 'habas', 'palta', 'mango', 'cafe', 'cacao']
+
 export default function PeruMapScreen() {
   const { t, L } = useI18n()
-  const [selected, setSelected] = useState<string | null>('sagrado')
+  const [params, setParams] = useSearchParams()
+  const initial = params.get('producto') as NextCropId | null
+  const [filter, setFilter] = useState<NextCropId | null>(initial && FILTERS.includes(initial) ? initial : null)
+  const visible = useMemo(() => PERU_ZONES.filter((z) => !filter || z.products.includes(filter)), [filter])
+  const [selected, setSelected] = useState<string | null>(() => visible[0]?.id ?? 'sagrado')
   const farms = useMemo(loadMyFarms, [])
 
+  const pickFilter = (f: NextCropId | null) => {
+    setFilter(f)
+    const first = PERU_ZONES.find((z) => !f || z.products.includes(f))
+    setSelected(f ? (first?.id ?? null) : 'sagrado')
+    setParams(f ? { producto: f } : {}, { replace: true })
+  }
+
   const zonePoints = useMemo(
-    () => PERU_ZONES.map((z) => ({ id: z.id, lat: z.lat, lon: z.lon, label: `${z.crops[0].emoji} ${z.name}`, color: zoneInfo(z.zone).color })),
-    [],
+    () => visible.map((z) => ({ id: z.id, lat: z.lat, lon: z.lon, label: `${z.crops[0].emoji} ${z.name}`, color: zoneInfo(z.zone).color })),
+    [visible],
   )
   const farmPoints = useMemo(() => farms.map((f) => ({ id: f.id, lat: f.lat, lon: f.lon, label: f.name, color: '#d4af37' })), [farms])
   const zone = PERU_ZONES.find((z) => z.id === selected)
@@ -31,6 +48,28 @@ export default function PeruMapScreen() {
         <h1 className="mt-1 font-display text-3xl text-noche-800">{t('pmap.title')}</h1>
         <p className="mt-1 text-[15px] text-tierra-700">{t('pmap.subtitle')}</p>
       </header>
+
+      {/* Filtrar por producto */}
+      <div>
+        <h2 className="mb-1.5 text-sm font-extrabold text-tierra-700">{t('pmap.filter')}</h2>
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1" role="radiogroup" aria-label={t('pmap.filter')}>
+          <button role="radio" aria-checked={!filter} onClick={() => pickFilter(null)} className={`chip shrink-0 ${!filter ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'}`}>
+            🇵🇪 {t('pmap.all')}
+          </button>
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              role="radio"
+              aria-checked={filter === f}
+              onClick={() => pickFilter(f)}
+              className={`chip shrink-0 ${filter === f ? 'border-noche-800 bg-noche-800 text-white' : 'border-tierra-200 bg-white text-tierra-800'}`}
+            >
+              {NEXT_CROPS[f].emoji} {t(`rotcrop.${f}` as Key)}
+            </button>
+          ))}
+        </div>
+        {filter && <p className="mt-1 text-xs font-bold text-tierra-600">{t('pmap.filtered', { n: visible.length, crop: t(`rotcrop.${filter}` as Key) })}</p>}
+      </div>
 
       <Suspense fallback={<Skeleton className="h-[26rem]" />}>
         <PeruZonesMap zones={zonePoints} farms={farmPoints} selected={selected} onSelect={setSelected} ariaLabel={t('pmap.title')} />
@@ -61,6 +100,8 @@ export default function PeruMapScreen() {
             </div>
           </div>
           <p className="rounded-2xl bg-noche-50 p-3 text-sm text-noche-800">💡 {t(`zone.${zone.zone}.text` as Key)}</p>
+          <NasaZoneImages lat={zone.lat} lon={zone.lon} name={zone.name} />
+          <MediaGallery items={(filter ? [filter, ...zone.products.filter((p) => p !== filter)] : zone.products).flatMap((p) => CROP_MEDIA[p] ?? []).slice(0, 6)} />
         </article>
       )}
       {farm && (

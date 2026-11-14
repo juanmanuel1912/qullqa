@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { CROP_MEDIA } from '@/lib/media/gallery'
+import { MediaGallery } from '@/components/media/MediaGallery'
 import { useI18n } from '@/i18n'
 import { CROPS, type CropInfo } from '@/lib/crops/catalog'
 import { Attribution, IconArrow, Notice } from '@/components/common'
@@ -77,6 +79,11 @@ export function CropCard({ crop: c, showOpen = true }: { crop: CropInfo; showOpe
       </div>
 
       <p className="text-sm text-tierra-800">{L(c.note)}</p>
+
+      {CROP_MEDIA[c.id] && <MediaGallery items={CROP_MEDIA[c.id]!} />}
+      <Link to={`/mapa-peru?producto=${c.id}`} className="btn-ghost min-h-[44px] w-full text-sm">
+        🗺️ {t('crops.whereMap')}
+      </Link>
 
       {showOpen && c.status === 'available' && (
         <Link to="/papas" className="btn-primary min-h-[44px] w-full text-sm">

@@ -5,7 +5,7 @@
  */
 import type { Localized } from '@/i18n'
 
-export type CropId = 'papa' | 'maiz' | 'palta' | 'aji' | 'quinua' | 'mango'
+export type CropId = 'papa' | 'maiz' | 'palta' | 'aji' | 'quinua' | 'mango' | 'cafe' | 'cacao'
 
 export interface CropInfo {
   id: CropId
@@ -142,6 +142,52 @@ export const CROPS: CropInfo[] = [
     uses: { en: 'Fresh fruit, juices, desserts, ceviche de mango', es: 'Fruta fresca, jugos, postres, ceviche de mango' },
     note: { en: 'Piura is the main mango region of Peru, and Kent mango is a major export.', es: 'Piura es la principal región mangera del Perú, y el mango Kent es un gran producto de exportación.' },
     req: { altitude: [0, 1000], minMeanTemp: 20, frostSensitive: true, cycleMonths: 42, perennial: true },
+  },
+  {
+    id: 'cafe',
+    emoji: '☕',
+    name: { en: 'Coffee', es: 'Café' },
+    scientific: 'Coffea arabica',
+    status: 'soon',
+    color: '#6f4e37',
+    varieties: 'Typica, Bourbon, Caturra, Catimor, Geisha',
+    regions: {
+      en: 'High jungle: Jaén and San Ignacio (Cajamarca), Chanchamayo (Junín), Villa Rica (Pasco), La Convención (Cusco), Moyobamba (San Martín)',
+      es: 'Selva alta: Jaén y San Ignacio (Cajamarca), Chanchamayo (Junín), Villa Rica (Pasco), La Convención (Cusco), Moyobamba (San Martín)',
+    },
+    altitude: '800 – 2 000 m',
+    sowMonths: [],
+    harvestMonths: [3, 4, 5, 6, 7, 8],
+    cycle: { en: 'Perennial shrub: first harvest 3 years after planting; produces for 15–20 years', es: 'Arbusto perenne: primera cosecha a los 3 años; produce 15–20 años' },
+    uses: { en: 'Specialty and organic coffee for export, local coffee shops', es: 'Café especial y orgánico de exportación, cafeterías locales' },
+    note: {
+      en: 'Peru is one of the largest exporters of organic coffee. It grows best under shade trees, which also protect the soil and store carbon.',
+      es: 'El Perú es uno de los mayores exportadores de café orgánico. Crece mejor bajo árboles de sombra, que además protegen el suelo y guardan carbono.',
+    },
+    req: { altitude: [800, 2000], minMeanTemp: 17, frostSensitive: true, cycleMonths: 36, perennial: true },
+  },
+  {
+    id: 'cacao',
+    emoji: '🍫',
+    name: { en: 'Cacao', es: 'Cacao' },
+    scientific: 'Theobroma cacao',
+    status: 'soon',
+    color: '#7b3f00',
+    varieties: 'Chuncho (Cusco), Blanco de Piura, CCN-51, native fine-aroma cacao',
+    regions: {
+      en: 'High and low jungle: San Martín, VRAEM (Cusco, Ayacucho, Junín), Tingo María (Huánuco), Ucayali, Amazonas; Piura (white cacao)',
+      es: 'Selva alta y baja: San Martín, VRAEM (Cusco, Ayacucho, Junín), Tingo María (Huánuco), Ucayali, Amazonas; Piura (cacao blanco)',
+    },
+    altitude: '0 – 1 200 m',
+    sowMonths: [],
+    harvestMonths: [2, 3, 4, 5, 6, 7],
+    cycle: { en: 'Perennial tree: first pods 3–4 years after planting', es: 'Árbol perenne: primeras mazorcas 3–4 años después de plantar' },
+    uses: { en: 'Fine chocolate, cocoa butter and powder, nibs', es: 'Chocolate fino, manteca y polvo de cacao, nibs' },
+    note: {
+      en: 'Peru has native fine-aroma cacao. It replaced illegal coca crops in San Martín and the VRAEM, a social and environmental success.',
+      es: 'El Perú tiene cacao nativo fino de aroma. Reemplazó cultivos ilegales de coca en San Martín y el VRAEM, un éxito social y ambiental.',
+    },
+    req: { altitude: [0, 1200], minMeanTemp: 22, frostSensitive: true, cycleMonths: 42, perennial: true },
   },
 ]
 

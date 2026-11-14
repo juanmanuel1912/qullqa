@@ -19,6 +19,8 @@ export type NextCropId =
   | 'aji'
   | 'palta'
   | 'mango'
+  | 'cafe'
+  | 'cacao'
 
 export type PrevCropId = NextCropId | 'descanso'
 
@@ -54,6 +56,8 @@ export const NEXT_CROPS: Record<NextCropId, NextCrop> = {
   aji: { id: 'aji', emoji: '🌶️', family: 'solanacea', feeder: 'heavy', altitude: [0, 2500], minMeanTemp: 16, frostSensitive: true, cycle: 6, perennial: false, waterMm: 600 },
   palta: { id: 'palta', emoji: '🥑', family: 'tree', feeder: 'medium', altitude: [0, 2700], minMeanTemp: 15, frostSensitive: true, cycle: 3, perennial: true, waterMm: 1000 },
   mango: { id: 'mango', emoji: '🥭', family: 'tree', feeder: 'medium', altitude: [0, 1500], minMeanTemp: 20, frostSensitive: true, cycle: 4, perennial: true, waterMm: 900 },
+  cafe: { id: 'cafe', emoji: '☕', family: 'tree', feeder: 'medium', altitude: [800, 2000], minMeanTemp: 17, frostSensitive: true, cycle: 3, perennial: true, waterMm: 1400 },
+  cacao: { id: 'cacao', emoji: '🍫', family: 'tree', feeder: 'medium', altitude: [0, 1200], minMeanTemp: 22, frostSensitive: true, cycle: 4, perennial: true, waterMm: 1500 },
 }
 
 export const NEXT_IDS = Object.keys(NEXT_CROPS) as NextCropId[]
@@ -188,7 +192,8 @@ export function assessNextCrop(input: NextCropInput, clim: Climatology): NextCro
     )
 
   // 7. El producto
-  factors.push({ factor: 'product', level: c.perennial ? 'warn' : 'ok', code: `prod.${next}`, vars: { years: c.cycle } })
+  // Que un árbol ocupa la chacra por años ya lo avisa el factor "tiempo": aquí es informativo
+  factors.push({ factor: 'product', level: 'ok', code: `prod.${next}`, vars: { years: c.cycle } })
 
   const bad = factors.some((f) => f.level === 'bad')
   const warns = factors.filter((f) => f.level === 'warn').length

@@ -5,6 +5,8 @@ import { compareStrategies, CRITERIA, farmSeason, ROT_CROPS, type Priority, type
 import { Attribution, Notice, Skeleton } from '@/components/common'
 import { BareSoilArt, ChooseCropArt, GreenSoilArt } from '@/components/rotation/RotationArt'
 import { NextCropChecker } from '@/components/rotation/NextCropChecker'
+import { ClimateNowPanel } from '@/components/rotation/ClimateNowPanel'
+import { adjustToElevation } from '@/lib/farms/indicators'
 
 const PRIORITIES: Priority[] = ['balanced', 'soil', 'water', 'income']
 const PRIO_ICON: Record<Priority, string> = { balanced: '⚖️', soil: '🌱', water: '💧', income: '💰' }
@@ -26,7 +28,9 @@ export default function RotationScreen() {
   const [priority, setPriority] = useState<Priority>('balanced')
   const elevation = Math.round(forecast?.elevation ?? climatology?.elevation ?? 0)
 
-  const season = useMemo(() => (climatology ? farmSeason(climatology, elevation) : null), [climatology, elevation])
+  // Clima NASA ajustado a la altura real de tu chacra (las celdas NASA promedian ~50 km)
+  const clim = useMemo(() => (climatology ? adjustToElevation(climatology, elevation).clim : null), [climatology, elevation])
+  const season = useMemo(() => (clim ? farmSeason(clim, elevation) : null), [clim, elevation])
   const ranked = useMemo(() => (season ? compareStrategies(season, priority) : []), [season, priority])
 
   return (
@@ -36,6 +40,9 @@ export default function RotationScreen() {
         <h1 className="mt-1 font-display text-3xl text-noche-800">{t('rot.title')}</h1>
         <p className="mt-1 text-[15px] text-tierra-700">{t('rot.subtitle')}</p>
       </header>
+
+      {/* Tu clima y altura ahora → qué sembrar esta semana */}
+      <ClimateNowPanel climatology={clim} elevation={elevation} />
 
       <section className="card space-y-1">
         <h2 className="font-extrabold">🔄 {t('rot.whatTitle')}</h2>
@@ -59,7 +66,7 @@ export default function RotationScreen() {
       </section>
 
       {/* ¿Qué siembro después? */}
-      {climatology ? <NextCropChecker climatology={climatology} elevation={elevation} /> : <Skeleton className="h-64" />}
+      {clim ? <NextCropChecker climatology={clim} elevation={elevation} /> : <Skeleton className="h-64" />}
 
       {/* Reglas sencillas */}
       <section className="card space-y-2">
