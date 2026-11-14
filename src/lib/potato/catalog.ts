@@ -19,11 +19,14 @@ export interface PotatoInfo {
   uses: Localized
   note: Localized
   mostSold?: boolean
+  /** Punto representativo de su zona principal de cultivo (aprox.) */
+  map: [number, number]
 }
 
 export const POTATOES: PotatoInfo[] = [
   {
     id: 'yungay',
+    map: [-12.07, -75.2],
     name: 'Yungay',
     kind: 'improved',
     skin: '#e8d3b0',
@@ -42,6 +45,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'canchan',
+    map: [-9.93, -76.24],
     name: 'Canchán (INIA 303)',
     kind: 'improved',
     skin: '#c9606e',
@@ -56,6 +60,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'unica',
+    map: [-13.08, -76.39],
     name: 'Única',
     kind: 'improved',
     skin: '#c97a6a',
@@ -70,6 +75,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'amarilis',
+    map: [-9.6, -76.0],
     name: 'Amarilis (INIA)',
     kind: 'improved',
     skin: '#e4c9a0',
@@ -84,6 +90,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'amarilla',
+    map: [-10.68, -76.26],
     name: 'Amarilla Tumbay',
     kind: 'native',
     skin: '#e9c46a',
@@ -98,6 +105,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'peruanita',
+    map: [-11.78, -75.5],
     name: 'Peruanita',
     kind: 'native',
     skin: '#d1495b',
@@ -112,6 +120,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'huayro',
+    map: [-12.79, -74.97],
     name: 'Huayro',
     kind: 'native',
     skin: '#7b2d43',
@@ -126,6 +135,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'huamantanga',
+    map: [-11.47, -76.62],
     name: 'Huamantanga',
     kind: 'native',
     skin: '#3b2c45',
@@ -137,6 +147,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'ccompis',
+    map: [-13.53, -71.97],
     name: 'Ccompis',
     kind: 'native',
     skin: '#9c6a8a',
@@ -151,6 +162,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'imilla',
+    map: [-15.84, -70.02],
     name: 'Imilla negra',
     kind: 'native',
     skin: '#2b1f33',
@@ -162,6 +174,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'lukki',
+    map: [-16.2, -69.6],
     name: "Luk'i (papa amarga)",
     kind: 'bitter',
     skin: '#8a8f6a',
@@ -176,6 +189,7 @@ export const POTATOES: PotatoInfo[] = [
   },
   {
     id: 'locka',
+    map: [-16.09, -69.64],
     name: 'Locka',
     kind: 'bitter',
     skin: '#b4a58a',

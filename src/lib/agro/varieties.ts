@@ -7,7 +7,7 @@
  * de la sierra peruana (Canchán ~140 d, Yungay ~160 d, Huayro ~185 d).
  */
 
-export type VarietyId = 'yungay' | 'canchan' | 'huayro';
+export type VarietyId = 'yungay' | 'canchan' | 'huayro' | 'russet';
 
 export interface PotatoVariety {
   id: VarietyId;
@@ -46,8 +46,20 @@ export const VARIETIES: Record<VarietyId, PotatoVariety> = {
     typicalDays: [170, 190],
     description: 'Papa nativa harinosa, de gran sabor. Ciclo largo.',
   },
+  /**
+   * Ejemplo para la chacra de EE. UU. (Idaho). Variedad de ciclo largo de climas templados.
+   * Meta aproximada para que, con el clima NASA de Idaho, la cosecha caiga en septiembre.
+   */
+  russet: {
+    id: 'russet',
+    name: 'Russet Burbank',
+    gddToHarvest: 2100,
+    typicalDays: [120, 150],
+    description: 'Variedad de ciclo largo de Norteamérica (ejemplo para la chacra de EE. UU.).',
+  },
 };
 
+/** Variedades andinas que el agricultor puede elegir (Russet solo se usa en el ejemplo de EE. UU.). */
 export const VARIETY_LIST: PotatoVariety[] = [VARIETIES.canchan, VARIETIES.yungay, VARIETIES.huayro];
 
 export function getVariety(id: VarietyId): PotatoVariety {

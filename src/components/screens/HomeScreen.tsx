@@ -4,6 +4,7 @@ import { useI18n, type Key } from '@/i18n'
 import { IncaStory } from '@/components/incas/IncaStory'
 import { Attribution, IconArrow, IconPlanet, Mountains, Pleiades, ProgressRing, Skeleton, Starfield } from '@/components/common'
 import { VARIETIES } from '@/lib/agro'
+import { weatherIcon } from '@/services/weather/openMeteo'
 
 export function HomeScreen() {
   const { profile } = useQullqa()
@@ -30,6 +31,7 @@ export function HomeScreen() {
         <Mountains className="absolute inset-x-0 bottom-0 h-12 w-full" />
       </section>
 
+      <WeatherCard />
       <StatusCard />
       <IncaStory />
 
@@ -64,6 +66,38 @@ export function HomeScreen() {
 
       <Attribution />
     </div>
+  )
+}
+
+/** Clima de ahora y el consejo principal de la semana. */
+function WeatherCard() {
+  const { profile, forecast, weekPlan } = useQullqa()
+  const { t } = useI18n()
+  if (!forecast || !weekPlan) return null
+  const icon = weatherIcon(forecast.current.code, forecast.current.isDay)
+  const tip = weekPlan.frostDays.length
+    ? t('wx.action.frost')
+    : weekPlan.irrigateOn.length
+      ? t('wx.action.irrigate')
+      : weekPlan.heavyRainDays.length
+        ? t('wx.action.heavyRain')
+        : null
+  return (
+    <Link to="/clima" className="card flex items-center gap-4 py-4">
+      <span className="text-5xl" aria-hidden="true">
+        {icon.emoji}
+      </span>
+      <div className="flex-1">
+        <p className="text-xl font-extrabold">{t('home.weatherNow', { t: Math.round(forecast.current.tempC), place: profile.placeName })}</p>
+        <p className="text-sm text-tierra-700">
+          {t(`wx.${icon.key}` as Key)} · 💧 {Math.round(forecast.days[0]?.rainProb ?? 0)}%
+          {tip && <span className="ml-1 rounded-full bg-inti-100 px-2 py-0.5 text-xs font-bold text-inti-900">{tip}</span>}
+        </p>
+      </div>
+      <span className="flex items-center gap-1 text-sm font-bold text-noche-600">
+        {t('home.weatherCta')} <IconArrow size={16} />
+      </span>
+    </Link>
   )
 }
 

@@ -12,6 +12,8 @@ const MyCropScreen = lazy(() => import('@/components/screens/MyCropScreen'))
 const PotatoScreen = lazy(() => import('@/components/screens/PotatoScreen'))
 const MarsScreen = lazy(() => import('@/components/screens/MarsScreen'))
 const SkyScreen = lazy(() => import('@/components/screens/SkyScreen'))
+const WeatherScreen = lazy(() => import('@/components/screens/WeatherScreen'))
+const LandsScreen = lazy(() => import('@/components/screens/LandsScreen'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -39,6 +41,8 @@ function Shell() {
               <Route path="/papas" element={<PotatoScreen />} />
               <Route path="/marte" element={<MarsScreen />} />
               <Route path="/cielo" element={<SkyScreen />} />
+              <Route path="/clima" element={<WeatherScreen />} />
+              <Route path="/tierras" element={<LandsScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

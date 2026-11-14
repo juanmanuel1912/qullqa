@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom'
 import { useI18n, type Key } from '@/i18n'
 import { DISHES, PLANTING_STEPS, POTATOES, PROCESSES, ZONES, type PotatoInfo, type PotatoKind } from '@/lib/potato/catalog'
 import { Attribution, IconArrow } from '@/components/common'
+import { PotatoMap } from '@/components/potato/PotatoMap'
+import { Contribute } from '@/components/potato/Contribute'
+import { useContributions } from '@/lib/potato/contributions'
 
-type Tab = 'varieties' | 'zones' | 'planting' | 'kitchen' | 'chuno'
-const TABS: Tab[] = ['varieties', 'zones', 'planting', 'kitchen', 'chuno']
+type Tab = 'varieties' | 'map' | 'zones' | 'planting' | 'kitchen' | 'chuno' | 'contribute'
+const TABS: Tab[] = ['varieties', 'map', 'zones', 'planting', 'kitchen', 'chuno', 'contribute']
 
 export default function PotatoScreen() {
   const { t, lang } = useI18n()
@@ -50,6 +53,8 @@ export default function PotatoScreen() {
       </nav>
 
       {tab === 'varieties' && <Varieties />}
+      {tab === 'map' && <PotatoMap />}
+      {tab === 'contribute' && <Contribute />}
       {tab === 'zones' && <Zones />}
       {tab === 'planting' && <Planting />}
       {tab === 'kitchen' && <Kitchen />}
@@ -81,10 +86,12 @@ const KIND_STYLE: Record<PotatoKind, string> = {
 
 function Varieties() {
   const { t, L } = useI18n()
-  const [filter, setFilter] = useState<'all' | PotatoKind>('all')
+  const [filter, setFilter] = useState<'all' | PotatoKind | 'community'>('all')
+  const { approved } = useContributions()
   const [q, setQ] = useState('')
   const list = useMemo(() => {
     const term = q.trim().toLowerCase()
+    if (filter === 'community') return []
     return POTATOES.filter((p) => (filter === 'all' || p.kind === filter) && (!term || `${p.name} ${L(p.uses)} ${L(p.where)}`.toLowerCase().includes(term)))
   }, [filter, q, L])
 
@@ -99,7 +106,7 @@ function Varieties() {
         className="block min-h-[48px] w-full rounded-2xl border-2 border-tierra-200 bg-white px-4 text-base"
       />
       <div className="flex flex-wrap gap-2">
-        {(['all', 'improved', 'native', 'bitter'] as const).map((k) => (
+        {(['all', 'improved', 'native', 'bitter', 'community'] as const).map((k) => (
           <button
             key={k}
             onClick={() => setFilter(k)}
@@ -110,7 +117,40 @@ function Varieties() {
         ))}
       </div>
 
-      {list.length === 0 && <p className="py-6 text-center text-sm text-tierra-600">{t('pot.noResults')}</p>}
+      {/* Aportes aprobados por un revisor */}
+      {(filter === 'all' || filter === 'community') && approved.length > 0 && (
+        <ul className="space-y-3">
+          {approved
+            .filter((c) => !q.trim() || `${c.name} ${c.where} ${c.dishes}`.toLowerCase().includes(q.trim().toLowerCase()))
+            .map((c) => (
+              <li key={c.id} className="card space-y-2 ring-2 ring-good/40">
+                <div className="flex items-start gap-3">
+                  {c.photo ? (
+                    <img src={c.photo} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <span className="text-3xl" aria-hidden="true">🥔</span>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-lg font-extrabold leading-tight">{c.name}</p>
+                    <span className="mt-1 inline-block rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-bold text-green-800">✓ {t('pot.communityBadge')}</span>
+                  </div>
+                </div>
+                <p className="text-sm">
+                  <strong className="text-tierra-600">{t('pot.grows')}:</strong> {c.where}
+                  {c.altitude && ` · ${c.altitude} m`}
+                </p>
+                {c.dishes && c.dishes !== '—' && (
+                  <p className="text-sm">
+                    <strong className="text-tierra-600">{t('pot.uses')}:</strong> {c.dishes}
+                  </p>
+                )}
+                {c.description && <p className="text-sm text-tierra-800">{c.description}</p>}
+              </li>
+            ))}
+        </ul>
+      )}
+
+      {list.length === 0 && filter !== 'community' && <p className="py-6 text-center text-sm text-tierra-600">{t('pot.noResults')}</p>}
 
       <ul className="space-y-3">
         {list.map((p) => (

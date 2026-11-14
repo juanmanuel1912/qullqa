@@ -4,3 +4,4 @@ export * from './calendar';
 export * from './sowing';
 export * from './crop';
 export * from './motivation';
+export * from './weekPlan';

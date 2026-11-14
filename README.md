@@ -26,7 +26,9 @@ For centuries, Andean farmers have watched the **Pleiades** (in Quechua, **_Qull
 | **My field** | GPS location (Cusco by default) and potato variety: Yungay, Canchán or Huayro |
 | **Inca calendar** | A circular calendar of the 12 Inca agricultural months, each colored green, yellow or red for rain and frost risk. It marks the best month to plant and the expected harvest month |
 | **My crop** | Growth progress from real NASA daily temperatures, current crop stage, a countdown to harvest, and frost and irrigation alerts |
-| **Potatoes** | A guide to Peru's potatoes: a curated catalog of improved, native and bitter varieties with their altitude, regions and best uses; the Andean altitude zones; how to plant in 7 steps; which potato for which dish (causa, papa rellena, pastel de papa…); and how chuño, tunta, papa seca and potato starch are made |
+| **Weather** | Current conditions and a 7-day forecast for the farm, with a plan for the week: which day to irrigate (FAO-56 water balance), frost and heavy-rain warnings, and this week's rain compared with the NASA POWER normal for the month |
+| **My land** *(demo)* | A sample signed-in farmer with fields in Peru, Chile and the USA on one map. Each field shows its crop, progress and harvest date, or when to plant, computed from NASA data for that location |
+| **Potatoes** | A guide to Peru's potatoes: a curated catalog of improved, native and bitter varieties with their altitude, regions and best uses; the Andean altitude zones; how to plant in 7 steps; which potato for which dish (causa, papa rellena, pastel de papa…); and how chuño, tunta, papa seca and potato starch are made. It also includes a map of where each variety grows and a **community contribution form** (photo, region, dishes, disease resistance) with an expert review queue. That form is the path toward documenting all 3,000+ varieties. *(Demo: contributions are stored on the device.)* |
 | **Qullqa telescope** | A live planetarium aimed at the Pleiades from the farmer's location, both now and at dawn on the Inti Raymi (June 20) as the Incas saw them. It computes tonight's viewing window, shows real NASA images of the Pleiades (Spitzer, WISE, Cassini, and from the surface of Mars), and tells the Inca story in three illustrated steps |
 | **Qullqa on Mars** | A Martian greenhouse simulator with temperature, light and water sliders. It runs the same crop model and compares the result with Earth |
 
@@ -43,7 +45,9 @@ For centuries, Andean farmers have watched the **Pleiades** (in Quechua, **_Qull
 | [NASA Image and Video Library](https://images.nasa.gov) | Pleiades images from Spitzer, WISE, Cassini and the Martian surface (PIA09262, PIA09263, PIA13121, PIA11482, PIA06339) | Telescope screen |
 | NASA Mars Fact Sheet | Sol length, sunlight (43% of Earth's), surface temperature | Mars greenhouse simulation |
 
-All data is fetched directly from NASA's public APIs in the browser, so there is no backend. The app caches responses and falls back to bundled NASA POWER data for Cusco, so it keeps working offline in remote areas.
+NASA POWER has no forecast (its daily data arrives about 3 days late), so the current weather and 7-day forecast come from [Open-Meteo](https://open-meteo.com). The app labels which source each figure comes from.
+
+All data is fetched directly from public APIs in the browser, so there is no backend. The app caches responses and falls back to bundled NASA POWER data for Cusco, so it keeps working offline in remote areas.
 
 ## The crop model
 
@@ -68,6 +72,9 @@ Optional: create `.env.local` with `VITE_NASA_API_KEY=<your key from api.nasa.go
 React, Vite, TypeScript (strict), Tailwind CSS, Recharts, React-Leaflet, Vitest and Playwright. Deployed on Vercel. Built with Kiro and Claude Code.
 
 ## Future work
+
+- **Accounts:** sign-in, editable fields per farmer, and expert reviewer profiles backed by a shared database (e.g. Supabase) for community potato entries and photos
+- **Regional calibration:** frost thresholds tuned per region (today's model is calibrated for the Andes; irrigated temperate farms use their local season)
 
 - **Pleiades visibility index:** use satellite cloud data (e.g. MODIS cirrus) from June dawns as a modern version of the Inca forecast
 - **Quechua voice mode** for farmers who don't read

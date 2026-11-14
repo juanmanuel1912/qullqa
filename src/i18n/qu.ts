@@ -86,4 +86,16 @@ export const qu: Partial<Record<Key, string>> = {
   'pot.tab.varieties': 'Papakuna',
   'pot.tab.planting': 'Tarpuy',
   'pot.tab.kitchen': 'Mikhuy',
+
+  // --- Clima, tierras, mapa de papas y aportes
+  'nav.lands': "Allpaykuna",
+  'wx.now': "Kunan",
+  'wx.wind': "Wayra",
+  'wx.today': "Kunan",
+  'wx.tomorrow': "Paqarin",
+  'wx.rain': "Para",
+  'wx.action.frost': "Qasa",
+  'wx.action.noIrrigate': "Para",
+  'lands.title': "Allpaykuna",
+  'contrib.sent': "Sulpayki!",
 }

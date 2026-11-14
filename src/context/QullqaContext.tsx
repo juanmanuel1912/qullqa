@@ -5,6 +5,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { CUSCO, fetchApod, fetchClimatology, fetchDaily } from '@/services/nasa'
 import type { ApodData, Climatology, DailyRecord } from '@/services/nasa/types'
+import { fetchForecast, type Forecast } from '@/services/weather/openMeteo'
 import {
   buildCalendar,
   getCropStatus,
@@ -15,6 +16,8 @@ import {
   type SowingRecommendation,
   type VarietyId,
   type WeekPoint,
+  planWeek,
+  type WeekPlan,
 } from '@/lib/agro'
 import { addDaysIso, todayIso, todayUtc } from '@/utils/format'
 
@@ -67,6 +70,11 @@ interface QullqaState {
   daily: DailyRecord[]
   dailyLoading: boolean
   apod: ApodData | null
+  /** Pronóstico de 7 días (Open-Meteo); null si no hay conexión */
+  forecast: Forecast | null
+  forecastLoading: boolean
+  /** Qué hacer esta semana (riego, heladas, lluvias) */
+  weekPlan: WeekPlan | null
   calendar: CalendarMonth[] | null
   sowing: SowingRecommendation | null
   crop: CropStatus | null
@@ -83,6 +91,8 @@ export function QullqaProvider({ children }: { children: ReactNode }) {
   const [daily, setDaily] = useState<DailyRecord[]>([])
   const [dailyLoading, setDailyLoading] = useState(false)
   const [apod, setApod] = useState<ApodData | null>(null)
+  const [forecast, setForecast] = useState<Forecast | null>(null)
+  const [forecastLoading, setForecastLoading] = useState(true)
 
   const updateProfile = useCallback((patch: Partial<FarmProfile>) => {
     setProfile((prev) => {
@@ -110,6 +120,21 @@ export function QullqaProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         if (!ctrl.signal.aborted) setClimateLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [profile.lat, profile.lon])
+
+  // Pronóstico: cada vez que cambia la ubicación
+  useEffect(() => {
+    const ctrl = new AbortController()
+    setForecastLoading(true)
+    fetchForecast(profile.lat, profile.lon, ctrl.signal)
+      .then(setForecast)
+      .catch(() => {
+        if (!ctrl.signal.aborted) setForecast(null)
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setForecastLoading(false)
       })
     return () => ctrl.abort()
   }, [profile.lat, profile.lon])
@@ -152,6 +177,11 @@ export function QullqaProvider({ children }: { children: ReactNode }) {
     }
   }, [climatology, daily, profile.variety, profile.plantingDate, today])
 
+  const weekPlan = useMemo(
+    () => (forecast ? planWeek(forecast.days, derived.crop ? derived.crop.progress : null, climatology) : null),
+    [forecast, derived.crop, climatology],
+  )
+
   const value: QullqaState = {
     profile,
     updateProfile,
@@ -161,6 +191,9 @@ export function QullqaProvider({ children }: { children: ReactNode }) {
     daily,
     dailyLoading,
     apod,
+    forecast,
+    forecastLoading,
+    weekPlan,
     ...derived,
   }
 
