@@ -4,5 +4,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/api/enso/oni", "destination": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt" },
+    { "source": "/api/enso/nino12", "destination": "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

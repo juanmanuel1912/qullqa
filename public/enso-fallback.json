@@ -1,0 +1,368 @@
+{
+"oni": [
+{
+"season": "SON",
+"year": 2023,
+"anom": 1.74
+},
+{
+"season": "OND",
+"year": 2023,
+"anom": 1.9
+},
+{
+"season": "NDJ",
+"year": 2023,
+"anom": 1.99
+},
+{
+"season": "DJF",
+"year": 2024,
+"anom": 1.84
+},
+{
+"season": "JFM",
+"year": 2024,
+"anom": 1.53
+},
+{
+"season": "FMA",
+"year": 2024,
+"anom": 1.18
+},
+{
+"season": "MAM",
+"year": 2024,
+"anom": 0.77
+},
+{
+"season": "AMJ",
+"year": 2024,
+"anom": 0.43
+},
+{
+"season": "MJJ",
+"year": 2024,
+"anom": 0.18
+},
+{
+"season": "JJA",
+"year": 2024,
+"anom": 0.06
+},
+{
+"season": "JAS",
+"year": 2024,
+"anom": -0.04
+},
+{
+"season": "ASO",
+"year": 2024,
+"anom": -0.12
+},
+{
+"season": "SON",
+"year": 2024,
+"anom": -0.19
+},
+{
+"season": "OND",
+"year": 2024,
+"anom": -0.29
+},
+{
+"season": "NDJ",
+"year": 2024,
+"anom": -0.43
+},
+{
+"season": "DJF",
+"year": 2025,
+"anom": -0.46
+},
+{
+"season": "JFM",
+"year": 2025,
+"anom": -0.22
+},
+{
+"season": "FMA",
+"year": 2025,
+"anom": -0.08
+},
+{
+"season": "MAM",
+"year": 2025,
+"anom": 0.02
+},
+{
+"season": "AMJ",
+"year": 2025,
+"anom": -0.04
+},
+{
+"season": "MJJ",
+"year": 2025,
+"anom": -0.02
+},
+{
+"season": "JJA",
+"year": 2025,
+"anom": -0.11
+},
+{
+"season": "JAS",
+"year": 2025,
+"anom": -0.26
+},
+{
+"season": "ASO",
+"year": 2025,
+"anom": -0.43
+},
+{
+"season": "SON",
+"year": 2025,
+"anom": -0.57
+},
+{
+"season": "OND",
+"year": 2025,
+"anom": -0.61
+},
+{
+"season": "NDJ",
+"year": 2025,
+"anom": -0.6
+},
+{
+"season": "DJF",
+"year": 2026,
+"anom": -0.39
+},
+{
+"season": "JFM",
+"year": 2026,
+"anom": -0.21
+},
+{
+"season": "FMA",
+"year": 2026,
+"anom": 0.11
+},
+{
+"season": "MAM",
+"year": 2026,
+"anom": 0.46
+},
+{
+"season": "AMJ",
+"year": 2026,
+"anom": 0.95
+},
+{
+"season": "MJJ",
+"year": 2026,
+"anom": 1.39
+},
+{
+"season": "JJA",
+"year": 2026,
+"anom": 1.8
+},
+{
+"season": "JAS",
+"year": 2026,
+"anom": 2.16
+},
+{
+"season": "ASO",
+"year": 2026,
+"anom": 2.46
+}
+],
+"nino12": [
+{
+"year": 2023,
+"month": 11,
+"anom": 2.22
+},
+{
+"year": 2023,
+"month": 12,
+"anom": 1.41
+},
+{
+"year": 2024,
+"month": 1,
+"anom": 0.83
+},
+{
+"year": 2024,
+"month": 2,
+"anom": 0.92
+},
+{
+"year": 2024,
+"month": 3,
+"anom": 0.28
+},
+{
+"year": 2024,
+"month": 4,
+"anom": 0.08
+},
+{
+"year": 2024,
+"month": 5,
+"anom": -0.68
+},
+{
+"year": 2024,
+"month": 6,
+"anom": -0.65
+},
+{
+"year": 2024,
+"month": 7,
+"anom": -0.41
+},
+{
+"year": 2024,
+"month": 8,
+"anom": -0.34
+},
+{
+"year": 2024,
+"month": 9,
+"anom": -0.68
+},
+{
+"year": 2024,
+"month": 10,
+"anom": -0.32
+},
+{
+"year": 2024,
+"month": 11,
+"anom": 0.26
+},
+{
+"year": 2024,
+"month": 12,
+"anom": -0.1
+},
+{
+"year": 2025,
+"month": 1,
+"anom": -0.2
+},
+{
+"year": 2025,
+"month": 2,
+"anom": 0.69
+},
+{
+"year": 2025,
+"month": 3,
+"anom": 1.15
+},
+{
+"year": 2025,
+"month": 4,
+"anom": 0.63
+},
+{
+"year": 2025,
+"month": 5,
+"anom": 0.16
+},
+{
+"year": 2025,
+"month": 6,
+"anom": 0.61
+},
+{
+"year": 2025,
+"month": 7,
+"anom": 0.46
+},
+{
+"year": 2025,
+"month": 8,
+"anom": 0.23
+},
+{
+"year": 2025,
+"month": 9,
+"anom": -0.18
+},
+{
+"year": 2025,
+"month": 10,
+"anom": -0.04
+},
+{
+"year": 2025,
+"month": 11,
+"anom": -0.34
+},
+{
+"year": 2025,
+"month": 12,
+"anom": -0.43
+},
+{
+"year": 2026,
+"month": 1,
+"anom": -0.29
+},
+{
+"year": 2026,
+"month": 2,
+"anom": 0.92
+},
+{
+"year": 2026,
+"month": 3,
+"anom": 1.29
+},
+{
+"year": 2026,
+"month": 4,
+"anom": 1.52
+},
+{
+"year": 2026,
+"month": 5,
+"anom": 1.81
+},
+{
+"year": 2026,
+"month": 6,
+"anom": 2.83
+},
+{
+"year": 2026,
+"month": 7,
+"anom": 3.56
+},
+{
+"year": 2026,
+"month": 8,
+"anom": 4.08
+},
+{
+"year": 2026,
+"month": 9,
+"anom": 4.69
+},
+{
+"year": 2026,
+"month": 10,
+"anom": 5.25
+}
+],
+"fetchedAt": "2026-11-14T17:52:59.174330Z",
+"note": "Instant\u00e1nea de NOAA CPC (oni.ascii.txt, sstoi.indices) para uso sin conexi\u00f3n"
+}

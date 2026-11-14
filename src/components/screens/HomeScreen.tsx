@@ -5,6 +5,7 @@ import { IncaStory } from '@/components/incas/IncaStory'
 import { Attribution, IconArrow, IconPlanet, Mountains, Pleiades, ProgressRing, Skeleton, Starfield } from '@/components/common'
 import { VARIETIES } from '@/lib/agro'
 import { weatherIcon } from '@/services/weather/openMeteo'
+import { useEnso } from '@/hooks/useEnso'
 
 export function HomeScreen() {
   const { profile } = useQullqa()
@@ -31,6 +32,7 @@ export function HomeScreen() {
         <Mountains className="absolute inset-x-0 bottom-0 h-12 w-full" />
       </section>
 
+      <EnsoBanner />
       <WeatherCard />
       <StatusCard />
       <IncaStory />
@@ -77,6 +79,37 @@ export function HomeScreen() {
 
       <Attribution />
     </div>
+  )
+}
+
+/** Aviso de El Niño / La Niña (NOAA). Si está neutral, un acceso discreto. */
+function EnsoBanner() {
+  const { status } = useEnso()
+  const { t } = useI18n()
+  if (!status) return null
+  const active = status.phase !== 'neutral' || status.coastalPhase !== 'neutral'
+  if (!active) {
+    return (
+      <Link to="/nino" className="flex items-center justify-between rounded-2xl bg-noche-50 px-4 py-3 text-sm font-bold text-noche-700">
+        🌊 {t('home.ninoInfo')} <IconArrow size={16} />
+      </Link>
+    )
+  }
+  const phase = status.phase !== 'neutral' ? status.phase : status.coastalPhase
+  const strength = status.phase !== 'neutral' ? status.strength : status.coastalStrength
+  return (
+    <Link to="/nino" className="flex items-center gap-3 rounded-3xl bg-gradient-to-r from-marte-700 to-marte-500 p-4 text-white shadow-card">
+      <span className="text-3xl" aria-hidden="true">
+        {phase === 'lanina' ? '❄️' : '🌊'}
+      </span>
+      <div className="flex-1">
+        <p className="font-extrabold leading-tight">
+          ⚠️ {t('home.ninoAlert', { phase: t(`nino.phase.${phase}` as Key), strength: strength ? t(`nino.strength.${strength}` as Key) : '' })}
+        </p>
+        <p className="text-sm text-white/90">{t('home.ninoCta')}</p>
+      </div>
+      <IconArrow className="shrink-0" />
+    </Link>
   )
 }
 

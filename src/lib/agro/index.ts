@@ -6,3 +6,4 @@ export * from './crop';
 export * from './motivation';
 export * from './weekPlan';
 export * from './timeline';
+export * from './enso';

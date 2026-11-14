@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useQullqa } from '@/context/QullqaContext'
 import { useI18n, type Key } from '@/i18n'
 import { VARIETIES } from '@/lib/agro'
@@ -148,6 +149,16 @@ export default function WeatherScreen() {
       {/* Noticias */}
       <section className="space-y-2">
         <h2 className="text-lg font-extrabold">{t('wx.news')}</h2>
+        <Link to="/nino" className="card flex items-center gap-3 p-4 ring-2 ring-marte-400">
+          <span className="text-2xl" aria-hidden="true">
+            🌊
+          </span>
+          <span className="flex-1">
+            <span className="block font-extrabold">{t('wx.ninoLink')}</span>
+            <span className="text-sm text-tierra-700">{t('wx.ninoLinkSub')}</span>
+          </span>
+          <IconArrow size={18} className="text-tierra-400" />
+        </Link>
         {[
           ['https://earthobservatory.nasa.gov/', '🛰️', t('wx.newsNasa'), t('wx.newsNasaSub')],
           ['https://www.senamhi.gob.pe/', '⚠️', t('wx.newsSenamhi'), t('wx.newsSenamhiSub')],
