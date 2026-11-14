@@ -6,7 +6,7 @@ import { INCA_MONTHS, VARIETIES, type Reason } from '@/lib/agro'
 import { IncaWheel, LIGHT_COLOR } from '@/components/calendar'
 import { CropTimeline } from '@/components/calendar/CropTimeline'
 import { PlantChecker, WhatToPlant } from '@/components/crops/Suitability'
-import { Attribution, IconDrop, IconSnow, IconThermo, Pleiades, Skeleton, SourceNotice } from '@/components/common'
+import { Attribution, IconArrow, IconDrop, IconSnow, IconThermo, Pleiades, Skeleton, SourceNotice } from '@/components/common'
 
 export default function CalendarScreen() {
   const { profile, calendar, sowing, climatology, today } = useQullqa()
@@ -186,6 +186,10 @@ export default function CalendarScreen() {
           </div>
         </div>
       </section>
+
+      <Link to="/rotacion" className="flex items-center justify-between rounded-2xl border-2 border-good/40 bg-green-50 px-4 py-3 font-extrabold text-noche-800">
+        🔄 {t('cal.rotLink')} <IconArrow size={18} />
+      </Link>
 
       <WhatToPlant month={selected} />
 

@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { useI18n } from '@/i18n'
 import { CROPS, cropById, type CropId } from '@/lib/crops/catalog'
 import { useProducts, type ProductInput } from '@/lib/farms/products'
-import { Notice } from '@/components/common'
+import { Notice, ShareButtons } from '@/components/common'
+import { DEMO_FARMER } from '@/lib/farms/demo'
 
 const EMPTY: ProductInput = { name: '', crop: 'papa', variety: '', amount: '', fromMonth: 3, toMonth: 5, notes: '' }
 
@@ -65,6 +66,18 @@ export function MyProducts() {
               </p>
               {p.notes && <p className="mt-1 text-xs text-tierra-700">{p.notes}</p>}
               <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-inti-800">{t('prod.mine')}</p>
+              <div className="mt-2">
+                <ShareButtons
+                  compact
+                  path="/perfil"
+                  text={t('share.productText', {
+                    product: `${p.name}${p.variety ? ` (${p.variety})` : ''}`,
+                    place: DEMO_FARMER.place,
+                    when: t('prod.available', { from: month(p.fromMonth), to: month(p.toMonth) }),
+                    name: DEMO_FARMER.name,
+                  })}
+                />
+              </div>
             </div>
             <button onClick={() => remove(p.id)} className="shrink-0 text-xs font-bold text-tierra-500 underline">
               {t('prod.remove')}

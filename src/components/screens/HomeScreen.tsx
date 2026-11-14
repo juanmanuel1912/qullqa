@@ -35,6 +35,16 @@ export function HomeScreen() {
       <EnsoBanner />
       <WeatherCard />
       <StatusCard />
+      <Link to="/rotacion" className="card flex items-center gap-4 py-4 ring-2 ring-good/40">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-2xl" aria-hidden="true">
+          🔄
+        </span>
+        <div className="flex-1">
+          <p className="font-display text-lg leading-tight">{t('home.rotTitle')}</p>
+          <p className="mt-0.5 text-sm text-tierra-700">{t('home.rotText')}</p>
+        </div>
+        <IconArrow className="shrink-0 text-tierra-500" />
+      </Link>
       <Link to="/alertas" className="card flex items-center gap-4 py-4">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-2xl" aria-hidden="true">
           🪲

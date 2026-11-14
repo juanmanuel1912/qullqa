@@ -102,4 +102,5 @@ export const qu: Partial<Record<Key, string>> = {
   'task.harvest.title': 'Allay',
   'chat.fab': 'Tapuy',
   'suit.good': 'Allin',
+  'rotcrop.descanso': 'Samay (laymi)',
 }

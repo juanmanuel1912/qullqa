@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useI18n } from '@/i18n'
 import { VARIETIES } from '@/lib/agro'
 import { DEMO_FARMER, DEMO_FARMS } from '@/lib/farms/demo'
-import { Attribution, IconArrow, IconPin, Mountains, Notice, Starfield } from '@/components/common'
+import { Attribution, IconArrow, IconPin, Mountains, Notice, ShareButtons, Starfield } from '@/components/common'
 import { MyProducts } from '@/components/profile/MyProducts'
 
 /** Perfil público de un agricultor (EJEMPLO estático: más adelante vendrá de una cuenta real). */
@@ -25,6 +25,10 @@ export default function ProfileScreen() {
         <p className="relative mx-auto mt-3 max-w-xs text-sm text-noche-100">{t('profile.about')}</p>
         <Mountains className="absolute inset-x-0 bottom-0 h-10 w-full" />
       </section>
+
+      <div className="-mt-2 flex justify-center">
+        <ShareButtons text={t('share.profileText', { name: DEMO_FARMER.name, place: DEMO_FARMER.place })} path="/perfil" />
+      </div>
 
       <Notice tone="info">{t('profile.demo')}</Notice>
 
@@ -56,6 +60,13 @@ export default function ProfileScreen() {
               <p className="mt-1 inline-block rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-bold text-green-800">
                 📅 {t('profile.harvest', { when: L(f.harvestWindow) })}
               </p>
+              <div className="mt-2">
+                <ShareButtons
+                  compact
+                  path="/perfil"
+                  text={t('share.productText', { product: VARIETIES[f.variety].name, place: f.place, when: L(f.harvestWindow), name: DEMO_FARMER.name })}
+                />
+              </div>
             </div>
           </article>
         ))}
