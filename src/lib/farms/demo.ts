@@ -28,6 +28,14 @@ export interface Farm {
   season?: { sow: Localized; harvest: Localized }
   /** Ventana de cosecha estimada (para el perfil de venta) */
   harvestWindow: Localized
+  
+  // Información adicional (NEW)
+  /** Productos que produce */
+  products?: Array<{ name: string; unit: string; estimatedYield?: number }>
+  /** Ganado: cantidad de vacunos */
+  cattle?: number
+  /** Personal a cargo */
+  staff?: Array<{ name: string; role: string }>
 }
 
 /** Agricultora ficticia (perfil de ejemplo). El correo usa example.com, un dominio reservado para ejemplos. */
@@ -53,6 +61,17 @@ export const DEMO_FARMS: Farm[] = [
     note: { en: 'Andean highlands, 3,400 m. Rain-fed.', es: 'Sierra andina, 3 400 m. Secano (con lluvia).' },
     calendar: 'nasa',
     harvestWindow: { en: 'April–May 2027', es: 'abril–mayo 2027' },
+    products: [
+      { name: 'Papa Yungay', unit: 'toneladas', estimatedYield: 12.5 },
+      { name: 'Habas', unit: 'kg', estimatedYield: 800 },
+      { name: 'Maíz', unit: 'kg', estimatedYield: 1200 },
+    ],
+    cattle: 8,
+    staff: [
+      { name: 'Sisa Ccori', role: 'Propietaria' },
+      { name: 'Juan Quispe', role: 'Jornalero principal' },
+      { name: 'María Cutipa', role: 'Asistente' },
+    ],
   },
   {
     id: 'chiloe',
@@ -71,6 +90,15 @@ export const DEMO_FARMS: Farm[] = [
     },
     calendar: 'nasa',
     harvestWindow: { en: 'February–March 2027', es: 'febrero–marzo 2027' },
+    products: [
+      { name: 'Papa Canchan', unit: 'toneladas', estimatedYield: 18 },
+      { name: 'Papa Nativa', unit: 'toneladas', estimatedYield: 8 },
+    ],
+    cattle: 12,
+    staff: [
+      { name: 'Carlos Millalonco', role: 'Administrador' },
+      { name: 'Rosa Antilef', role: 'Supervisora' },
+    ],
   },
   {
     id: 'idaho',
@@ -87,5 +115,15 @@ export const DEMO_FARMS: Farm[] = [
     calendar: 'local',
     season: { sow: { en: 'April–May', es: 'abril–mayo' }, harvest: { en: 'September–October', es: 'septiembre–octubre' } },
     harvestWindow: { en: 'September–October 2027', es: 'septiembre–octubre 2027' },
+    products: [
+      { name: 'Russet Potato', unit: 'toneladas', estimatedYield: 85 },
+    ],
+    cattle: 45,
+    staff: [
+      { name: 'Robert Johnson', role: 'Farm Manager' },
+      { name: 'Michael Chen', role: 'Operations Lead' },
+      { name: 'Sarah Davis', role: 'Irrigation Specialist' },
+      { name: 'Tom Martinez', role: 'Equipment Manager' },
+    ],
   },
 ]

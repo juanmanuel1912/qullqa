@@ -14,6 +14,7 @@ const MarsScreen = lazy(() => import('@/components/screens/MarsScreen'))
 const SkyScreen = lazy(() => import('@/components/screens/SkyScreen'))
 const WeatherScreen = lazy(() => import('@/components/screens/WeatherScreen'))
 const LandsScreen = lazy(() => import('@/components/screens/LandsScreen'))
+const FarmDetailScreen = lazy(() => import('@/components/screens/FarmDetailScreen'))
 const ProfileScreen = lazy(() => import('@/components/screens/ProfileScreen'))
 const CropsScreen = lazy(() => import('@/components/screens/CropsScreen'))
 const ElNinoScreen = lazy(() => import('@/components/screens/ElNinoScreen'))
@@ -59,6 +60,7 @@ function Shell() {
             <Routes>
               <Route path="/" element={<HomeScreen />} />
               <Route path="/chacra" element={<MyFarmScreen />} />
+              <Route path="/chacra-detalle/:farmId" element={<FarmDetailScreen />} />
               <Route path="/calendario" element={<CalendarScreen />} />
               <Route path="/cultivo" element={<MyCropScreen />} />
               <Route path="/papas" element={<PotatoScreen />} />

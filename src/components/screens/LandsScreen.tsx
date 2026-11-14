@@ -108,6 +108,7 @@ export default function LandsScreen() {
             highlighted={selected === f.id}
             onSelect={() => setSelected(f.id)}
             onOpen={() => open(f)}
+            onViewDetail={(farmId) => navigate(`/chacra-detalle/${farmId}`)}
           />
         ))}
       </ul>
@@ -135,6 +136,7 @@ function FarmCard(props: {
   highlighted: boolean
   onSelect: () => void
   onOpen: () => void
+  onViewDetail: (farmId: string) => void
 }) {
   const { farm: f, clim, forecast, today } = props
   const { t, L, month, fmtLong } = useI18n()
@@ -252,7 +254,7 @@ function FarmCard(props: {
         <button
           onClick={(e) => {
             e.stopPropagation()
-            props.onOpen()
+            props.onViewDetail(f.id)
           }}
           className="btn-dark min-h-[40px] w-full text-sm"
         >
