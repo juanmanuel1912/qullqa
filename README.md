@@ -4,7 +4,7 @@
 
 > Inca wisdom, NASA data. A mobile web app that tells Andean potato farmers **when to plant**, **how their crop is doing**, and **when they will harvest**, using NASA Earth observation data. It also simulates growing potatoes **on Mars**.
 
-🔗 **Live demo:** https://qullqa-five.vercel.app · 🎬 **Video (30 s):** _TODO: YouTube link_ · 👥 **Team:** _TODO_
+🔗 **Live demo:** https://qullqa-five.vercel.app · 🎬 **Video (30 s):** https://www.youtube.com/watch?v=bQMnsquHxuc · 👤 **Solo project by** [@juanmanuel1912](https://github.com/juanmanuel1912)
 
 ---
 
